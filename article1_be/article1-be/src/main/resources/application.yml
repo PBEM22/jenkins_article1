@@ -5,6 +5,9 @@ spring:
     username: ${db.username}
     password: ${db.password}
 
+  profiles:
+    include: aws
+
   jpa:
     hibernate:
       ddl-auto: update
