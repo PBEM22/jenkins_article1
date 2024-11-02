@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS BAN;
 DROP TABLE IF EXISTS USER;
 
 CREATE TABLE USER (
-                      user_seq BIGINT NOT NULL,
+                      user_seq BIGINT NOT NULL AUTO_INCREMENT,
                       user_social_site VARCHAR(50) NOT NULL COMMENT 'KAKAO, NAVER, GOOGLE',
                       user_id VARCHAR(255) NOT NULL,
                       user_name VARCHAR(50) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE USER (
 );
 
 CREATE TABLE PREFERENCE (
-                            user_seq BIGINT NOT NULL,
+                            user_seq BIGINT NOT NULL AUTO_INCREMENT,
                             preference_condition VARCHAR(50) NOT NULL DEFAULT 'NORMAL' COMMENT 'HOT, COLD, NORMAL',
                             preference_style VARCHAR(50) NOT NULL DEFAULT 'NORMAL' COMMENT 'CASUAL, SPORTY, FORMAL, NORMAL',
                             PRIMARY KEY (user_seq)
