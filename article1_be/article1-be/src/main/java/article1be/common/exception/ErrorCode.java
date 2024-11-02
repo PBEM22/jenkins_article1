@@ -34,6 +34,12 @@ public enum ErrorCode {
     // 사용자 (user)
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
+    // 날씨
+    NOT_FOUND_WEATHER_DATA(HttpStatus.NOT_FOUND, "해당하는 날씨 데이터를 찾을 수 없습니다."),
+
+    // 대기
+    NOT_FOUND_AIR_DATA(HttpStatus.NOT_FOUND, "해당하는 대기 데이터를 찾을 수 없습니다."),
+
 
     /**
      * == 409 CONFLICT ==

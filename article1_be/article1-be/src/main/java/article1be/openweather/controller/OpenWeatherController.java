@@ -3,6 +3,7 @@ package article1be.openweather.controller;
 import article1be.openweather.dto.OpenWeather5DayDTO;
 import article1be.openweather.dto.OpenWeatherDTO;
 import article1be.openweather.dto.OpenWeatherAirDTO;
+import article1be.openweather.dto.ResponseTodayDTO;
 import article1be.openweather.service.OpenWeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class OpenWeatherController {
     public ResponseEntity<?> get5DayWeather(@RequestParam("lat") String lat,
                                             @RequestParam("lon") String lon) throws UnsupportedEncodingException {
 
-        OpenWeather5DayDTO weatherData = openWeatherService.get5DayWeatherData(lat, lon);
+        OpenWeather5DayDTO weatherData = openWeatherService.get5DayWeatherData(lat, lon, 3);
 
         int dt = weatherData.getList().get(0).getDt();
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(dt), ZoneId.of("Asia/Seoul"));
@@ -51,6 +52,7 @@ public class OpenWeatherController {
         return ResponseEntity.ok(weatherData);
     }
 
+    // 현재시잔 공기질 수준을 나타냄
     @GetMapping("/air")
     public ResponseEntity<?> getAirData(@RequestParam("lat") String lat,
                                         @RequestParam("lon") String lon) throws UnsupportedEncodingException {
@@ -58,5 +60,15 @@ public class OpenWeatherController {
         OpenWeatherAirDTO currentAirData = openWeatherService.getCurrentAirData(lat, lon);
 
         return ResponseEntity.ok(currentAirData);
+    }
+
+    // 테스트 용도로 만든 현재시간 ~ 다음날 00시 이전의 데이터
+    @GetMapping("/today")
+    public ResponseEntity<?> getTodayData(@RequestParam("lat") String lat,
+                                          @RequestParam("lon") String lon) throws UnsupportedEncodingException {
+
+        ResponseTodayDTO todayWeatherData = openWeatherService.getTodayWeatherData(lat, lon);
+
+        return ResponseEntity.ok(todayWeatherData);
     }
 }

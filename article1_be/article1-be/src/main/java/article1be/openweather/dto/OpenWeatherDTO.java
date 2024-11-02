@@ -1,5 +1,6 @@
 package article1be.openweather.dto;
 
+import article1be.openweather.dto.weathers.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -11,20 +12,20 @@ import java.util.List;
 @Data
 public class OpenWeatherDTO {
 
-    private List<Weather> weather;
+    private List<WeatherDTO> weather;
 
     // 내부 매개변수
     private String base;
 
-    private Main main;
+    private MainDTO main;
 
 //    private Wind wind;
 
-    private Clouds clouds;
+    private CloudsDTO clouds;
 
-    private Rain rain;
+    private RainDTO rain;
 
-    private Snow snow;
+    private SnowDTO snow;
 
     /** 가시성 */
     private int visibility;
@@ -44,49 +45,49 @@ public class OpenWeatherDTO {
     /** 내부 매개 변수 */
     private int cod;
 
-    @Data
-    public static class Weather {
+//    @Data
+//    public static class Weather {
+//
+//        /** 기상 조건 ID */
+//        private int id;
+//
+//        /** 날씨 매개 변수 그룹 (비, 눈, 극한 등) */
+//        private String main;
+//
+//        /** 그룹 내 날씨 조건 */
+//        private String description;
+//
+//        /** 날씨 아이콘 ID */
+//        private String icon;
+//    }
 
-        /** 기상 조건 ID */
-        private int id;
-
-        /** 날씨 매개 변수 그룹 (비, 눈, 극한 등) */
-        private String main;
-
-        /** 그룹 내 날씨 조건 */
-        private String description;
-
-        /** 날씨 아이콘 ID */
-        private String icon;
-    }
-
-    @Data
-    public static class Main {
-
-        /** 온도. 단위 기본값 : 켈빈, 미터법 : 섭씨, 임페리얼 : 화씨 */
-        private float temp;
-
-        /** 온도. 단위 기본값 : 켈빈, 미터법 : 섭씨, 임페리얼 : 화씨 */
-        private float feels_like;
-
-        /** 현재 최저 온도.(대규모 대도시 및 도시 지역 내) */
-        private float temp_min;
-
-        /** 현재 최대 온도.(대규모 대도시 및 도시 지역 내)*/
-        private float temp_max;
-
-        /** 대기압 (해수면, 해수면 또는 grnd_level 데이터가 없는 경우), hPa */
-        private int pressure;
-
-        /** 습도, % */
-        private float humidity;
-
-        /** 해수면의 대기압, hPa */
-        private float sea_level;
-
-        /** 지면에서의 대기압, hPa */
-        private float grnd_level;
-    }
+//    @Data
+//    public static class Main {
+//
+//        /** 온도. 단위 기본값 : 켈빈, 미터법 : 섭씨, 임페리얼 : 화씨 */
+//        private float temp;
+//
+//        /** 온도. 단위 기본값 : 켈빈, 미터법 : 섭씨, 임페리얼 : 화씨 */
+//        private float feels_like;
+//
+//        /** 현재 최저 온도.(대규모 대도시 및 도시 지역 내) */
+//        private float temp_min;
+//
+//        /** 현재 최대 온도.(대규모 대도시 및 도시 지역 내)*/
+//        private float temp_max;
+//
+//        /** 대기압 (해수면, 해수면 또는 grnd_level 데이터가 없는 경우), hPa */
+//        private int pressure;
+//
+//        /** 습도, % */
+//        private float humidity;
+//
+//        /** 해수면의 대기압, hPa */
+//        private float sea_level;
+//
+//        /** 지면에서의 대기압, hPa */
+//        private float grnd_level;
+//    }
 
 //    @Data
 //    public static class Wind {
@@ -100,37 +101,37 @@ public class OpenWeatherDTO {
 //        /**  바람 돌풍. 단위 기본값 : meter/sec, 미터법 : meter/sec, 임페리얼 : miles/hour */
 //        private float gust;
 //    }
+//
+//    @Data
+//    public static class Clouds {
+//
+//        /** 흐림, % */
+//        private int all;
+//    }
 
-    @Data
-    public static class Clouds {
+//    @Data
+//    public static class Rain {
+//
+//        /** 지난 1 시간 동안의 강우량, mm */
+//        @JsonProperty("1h")
+//        private float rain1h;
+//
+//        /** 지난 3 시간 동안의 강우량, mm */
+//        @JsonProperty("3h")
+//        private float rain3h;
+//    }
 
-        /** 흐림, % */
-        private int all;
-    }
-
-    @Data
-    public static class Rain {
-
-        /** 지난 1 시간 동안의 강우량, mm */
-        @JsonProperty("1h")
-        private float rain1h;
-
-        /** 지난 3 시간 동안의 강우량, mm */
-        @JsonProperty("3h")
-        private float rain3h;
-    }
-
-    @Data
-    public static class Snow {
-
-        /** 지난 1 시간 동안의 눈량, mm */
-        @JsonProperty("1h")
-        private float snow1h;
-
-        /** 지난 3 시간 동안의 눈량, mm */
-        @JsonProperty("3h")
-        private float snow3h;
-    }
+//    @Data
+//    public static class Snow {
+//
+//        /** 지난 1 시간 동안의 눈량, mm */
+//        @JsonProperty("1h")
+//        private float snow1h;
+//
+//        /** 지난 3 시간 동안의 눈량, mm */
+//        @JsonProperty("3h")
+//        private float snow3h;
+//    }
 
     @Data
     public static class Sys {
