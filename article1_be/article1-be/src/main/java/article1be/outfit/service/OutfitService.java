@@ -10,6 +10,7 @@ import article1be.outfit.entity.OutfitLevel;
 import article1be.outfit.repository.OutfitRepository;
 import article1be.outfit.repository.OutfitSituationRepository;
 import article1be.outfit.repository.OutfitStyleRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,20 +24,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OutfitService {
     private final OpenWeatherService weatherService;
     private final OutfitRepository outfitRepository; // Outfit 데이터를 가져오는 Repository
     private final OutfitSituationRepository outfitSituationRepository;
     private final OutfitStyleRepository outfitStyleRepository;
-
-    @Autowired
-    public OutfitService(OpenWeatherService weatherService, OutfitRepository outfitRepository, OutfitSituationRepository outfitSituationRepository, OutfitStyleRepository outfitStyleRepository) {
-        this.weatherService = weatherService;
-        this.outfitRepository = outfitRepository;
-        this.outfitSituationRepository = outfitSituationRepository;
-        this.outfitStyleRepository = outfitStyleRepository;
-
-    }
 
     public  Map<OutfitCategory, List<OutfitResponseDTO>> getRecommendedOutfits(OutfitRequestDTO requestDTO) throws UnsupportedEncodingException, UnsupportedEncodingException {
 
