@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeUtil {
 
     // 분까지만 포매팅
-    private static final DateTimeFormatter mFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter mFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm");
 
     // 문자열을 LocalDateTime으로 변환
     public static LocalDateTime stringParseToLocalDateTime(String inputTime) {
