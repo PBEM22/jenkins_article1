@@ -79,7 +79,6 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), styleSeq, airQuality/*, previouslyChosenOutfitIds*/),
                             calculateScore(o1, requestDTO.getSituationSeq(), styleSeq,airQuality/*, previouslyChosenOutfitIds*/)
                     ))
-                    .limit(3)
                     .map(outfit -> new OutfitResponseDTO(outfit.getOutfitName(), outfit.getOutfitImg()))
                     .collect(Collectors.toList());
 
@@ -117,14 +116,11 @@ public class OutfitService {
                 airQuality >= 4) { // 예를 들어, airQuality가 4 이상이면 공기질이 안 좋음
             score += 999;
         }
-        
+
         // 회원이 이전에 선택한 옷에 추가 점수
         /*if (previouslyChosenOutfitIds.contains(outfit.getOutfitSeq())) {
             score += 3;
         }*/
-
-
-
         return score;
     }
 
