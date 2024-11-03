@@ -54,7 +54,6 @@ public class ReviewService {
     public ReviewDTO getReviewById(Long reviewSeq) {
         Review review = reviewRepository.findById(reviewSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-        log.info(" 리뷰 조회 완료: {}", reviewSeq);
 
         return new ReviewDTO(
                 review.getReviewSeq(),
@@ -71,7 +70,6 @@ public class ReviewService {
 
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
         List<Review> reviews = reviewRepository.findByUserSeq(userSeq);
-        log.info(" {}의 리뷰 조회 완료: {} ", userSeq, reviews.size());
 
         return reviews.stream().map(review -> new ReviewDTO(
                 review.getReviewSeq(),
