@@ -72,7 +72,7 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), styleSeq, airQuality/*, previouslyChosenOutfitIds*/),
                             calculateScore(o1, requestDTO.getSituationSeq(), styleSeq,airQuality/*, previouslyChosenOutfitIds*/)
                     ))
-                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitName(), outfit.getOutfitImg()))
+                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(),outfit.getOutfitName(), outfit.getOutfitImg()))
                     .collect(Collectors.toList());
 
             recommendedOutfits.put(outfitCategory, topOutfits);

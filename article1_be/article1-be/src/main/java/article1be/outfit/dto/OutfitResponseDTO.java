@@ -6,6 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutfitResponseDTO {
+    private Long outfitSeq;
     private String outfitName;
     private String outfitImg;
 }
