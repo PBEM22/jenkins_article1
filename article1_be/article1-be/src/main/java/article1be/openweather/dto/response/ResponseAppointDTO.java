@@ -18,33 +18,30 @@ public class ResponseAppointDTO {
     // 공기질 지수 (1 매우 좋음, 2 좋음, 3 보통, 4 나쁨, 5 매우 나쁨)
     private int aqi;
 
-    // 미세먼지 농도
-    private int pm25;
-
     // 지정시점 ~ 24시이전까지의 날씨 데이터
-    private List<ResponseWeatherListDTO> list;
+    private List<ChangeWeatherListDTO> list;
 
     // WeatherListDTO 변환 및 세팅
     public void setList(List<WeatherListDTO> list) {
         // 변환한 데이터를 담을 리스트 생성
-        List<ResponseWeatherListDTO> responseList = new ArrayList<>();
+        List<ChangeWeatherListDTO> responseList = new ArrayList<>();
 
         // 데이터 변환
         for (WeatherListDTO weatherListDTO : list) {
 
             // DTO 데이터 변환
-            ResponseWeatherListDTO responseWeatherListDTO = new ResponseWeatherListDTO();
-            responseWeatherListDTO.setDt(weatherListDTO.getDt());
-            responseWeatherListDTO.setWeather(weatherListDTO.getWeather());
+            ChangeWeatherListDTO changeWeatherListDTO = new ChangeWeatherListDTO();
+            changeWeatherListDTO.setDt(weatherListDTO.getDt());
+            changeWeatherListDTO.setWeather(weatherListDTO.getWeather());
 
             // MainDTO 데이터 변환
-            ResponseMainDTO responseMainDTO = new ResponseMainDTO(weatherListDTO.getMain());
+            ChangeMainDTO changeMainDTO = new ChangeMainDTO(weatherListDTO.getMain());
             // MainDTO 저장
-            responseWeatherListDTO.setMain(responseMainDTO);
+            changeWeatherListDTO.setMain(changeMainDTO);
             // Rain 데이터 저장
-            responseWeatherListDTO.setRain(weatherListDTO.getRain());
+            changeWeatherListDTO.setRain(weatherListDTO.getRain());
 
-            responseList.add(responseWeatherListDTO);
+            responseList.add(changeWeatherListDTO);
         }
 
         // 저장

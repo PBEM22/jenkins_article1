@@ -28,7 +28,7 @@ public class ResponseTodayDTO {
     private SnowDTO snow;
 
     // 지정시점 ~ 24시이전까지의 날씨 데이터
-    private List<ResponseWeatherListDTO> list;
+    private List<ChangeWeatherListDTO> list;
 
     // 하루 중 최저온도
     private float lowTemp;
@@ -50,25 +50,25 @@ public class ResponseTodayDTO {
     // WeatherListDTO 변환 및 세팅
     public void setList(List<WeatherListDTO> list) {
         // 변환한 데이터를 담을 리스트 생성
-        List<ResponseWeatherListDTO> responseList = new ArrayList<>();
+        List<ChangeWeatherListDTO> responseList = new ArrayList<>();
 
         // 데이터 변환
         for (WeatherListDTO weatherListDTO : list) {
 
             // DTO 데이터 변환
-            ResponseWeatherListDTO responseWeatherListDTO = new ResponseWeatherListDTO();
-            responseWeatherListDTO.setDt(weatherListDTO.getDt());
-            responseWeatherListDTO.setWeather(weatherListDTO.getWeather());
+            ChangeWeatherListDTO changeWeatherListDTO = new ChangeWeatherListDTO();
+            changeWeatherListDTO.setDt(weatherListDTO.getDt());
+            changeWeatherListDTO.setWeather(weatherListDTO.getWeather());
 
             // MainDTO 데이터 변환
-            ResponseMainDTO responseMainDTO = new ResponseMainDTO(weatherListDTO.getMain());
+            ChangeMainDTO changeMainDTO = new ChangeMainDTO(weatherListDTO.getMain());
             // MainDTO 저장
-            responseWeatherListDTO.setMain(responseMainDTO);
+            changeWeatherListDTO.setMain(changeMainDTO);
             // Rain 데이터 저장
-            responseWeatherListDTO.setRain(weatherListDTO.getRain());
+            changeWeatherListDTO.setRain(weatherListDTO.getRain());
 
             // 저장
-            responseList.add(responseWeatherListDTO);
+            responseList.add(changeWeatherListDTO);
         }
 
         // 저장

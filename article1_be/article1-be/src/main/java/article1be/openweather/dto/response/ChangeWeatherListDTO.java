@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class ResponseWeatherListDTO {
+public class ChangeWeatherListDTO {
 
     // UTC 시간 데이터
     private int dt;
     
     // Main 데이터
-    private ResponseMainDTO main;
+    private ChangeMainDTO main;
 
     // 날씨데이터들
     private List<WeatherDTO> weather;
