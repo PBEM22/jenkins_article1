@@ -1,8 +1,9 @@
-package article1be.common.aggregate.entity;
+package article1be.review.aggregate.entity;
 
+import article1be.common.aggregate.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -43,7 +44,6 @@ public class Review extends BaseTimeEntity {
     @Column(name = "review_report", nullable = false)
     private Integer reviewReport; // 신고 개수
 
-    @Builder
     public Review(Long userSeq, Long selectSeq, String reviewContent, Double reviewWeather,
                   Double reviewLocation, Boolean reviewBlind, Boolean reviewLikeYn,
                   Integer reviewReport) {
@@ -57,7 +57,7 @@ public class Review extends BaseTimeEntity {
         this.reviewReport = reviewReport != null ? reviewReport : 0;
     }
 
-    // 리뷰 내용 업데이트 메소드
+    // 리뷰 내용 업데이트
     public void updateReview(String reviewContent, Double reviewWeather, Double reviewLocation,
                              Boolean reviewBlind, Boolean reviewLikeYn) {
         this.reviewContent = reviewContent;
