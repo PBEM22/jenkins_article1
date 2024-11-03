@@ -1,5 +1,5 @@
 package article1be.outfit.entity;
-
+import article1be.outfit.dto.OutfitSelectionRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,21 +38,19 @@ public class SelectRecord {
 
     private Double precipitation; //강수량
 
-    public static SelectRecord create(Long userSeq, Long situationSeq, LocalDateTime selectDate,
-                                      LocalDateTime customDate,String customLocation, Integer weatherCode,
-                                      Double highTemp, Double lowTemp, Double dailyTemp, Double curTemp, Double precipitation) {
+    public static SelectRecord create(OutfitSelectionRequestDTO requestDTO) {
         SelectRecord selectRecord = new SelectRecord();
-        selectRecord.userSeq = userSeq;
-        selectRecord.situationSeq = situationSeq;
-        selectRecord.selectDate = selectDate;
-        selectRecord.customDate = customDate;
-        selectRecord.customLocation = customLocation;
-        selectRecord.weatherCode = weatherCode;
-        selectRecord.highTemp = highTemp;
-        selectRecord.lowTemp = lowTemp;
-        selectRecord.dailyTemp = dailyTemp;
-        selectRecord.curTemp = curTemp;
-        selectRecord.precipitation = precipitation;
+        selectRecord.userSeq = requestDTO.getUserSeq();
+        selectRecord.situationSeq = requestDTO.getSituationSeq();
+        selectRecord.selectDate = LocalDateTime.now(); // selectDate를 현재 시간으로 설정
+        selectRecord.customDate = requestDTO.getCustomDate();
+        selectRecord.customLocation = requestDTO.getCustomLocation();
+        selectRecord.highTemp = requestDTO.getHighTemp();
+        selectRecord.lowTemp = requestDTO.getLowTemp();
+        selectRecord.dailyTemp = requestDTO.getDailyTemp();
+        selectRecord.curTemp = requestDTO.getCurTemp();
+        selectRecord.precipitation = requestDTO.getPrecipitation();
+        selectRecord.weatherCode = requestDTO.getWeatherCode();
         return selectRecord;
     }
 }
