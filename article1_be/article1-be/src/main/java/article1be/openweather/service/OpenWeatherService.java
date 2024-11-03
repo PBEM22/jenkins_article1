@@ -2,11 +2,17 @@ package article1be.openweather.service;
 
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.common.utils.DateTimeUtil;
 import article1be.openweather.dto.OpenWeather5DayDTO;
 import article1be.openweather.dto.OpenWeatherAirDTO;
 import article1be.openweather.dto.OpenWeatherDTO;
-import article1be.openweather.dto.ResponseTodayDTO;
+import article1be.openweather.dto.airs.AirListDTO;
+import article1be.openweather.dto.airs.MainAirDTO;
+import article1be.openweather.dto.response.ResponseAppointDTO;
+import article1be.openweather.dto.response.ResponseTodayDTO;
 import article1be.openweather.dto.weathers.WeatherListDTO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,18 +20,22 @@ import org.springframework.web.client.RestTemplate;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class OpenWeatherService {
 
     // env에 있는 apikey값
     @Value("${open.weather.api.key}")
     private String openWeatherApiKey;
 
-    // 해당 위치 날씨 요청하기 위해서 보내는 주소
+    // 해당 위치 현재시간 날씨 요청하기 위해서 보내는 주소
     @Value("${open.weather.current.api.url}")
     private String openWeatherApiUrl;
 
@@ -33,10 +43,17 @@ public class OpenWeatherService {
     @Value("${open.weather.5day.api.url}")
     private String openWeather5DayApiUrl;
 
+    // 해당 위치 현재시간 대기질을 요청하기 위한 주소
     @Value("${open.weather.air.api.url}")
     private String openWeatherAirApiUrl;
 
-    // 현재 날씨 데이터 불러오기
+    // 해당 위치 5일간의 대기질을 요청하기 위한 주소
+    @Value("${open.weather.air.forecast.url}")
+    private String openWeatherAirForecastApiUrl;
+
+    /**
+     *  현재 날씨 데이터 불러오기
+    * */
     public OpenWeatherDTO getCurrentWeatherData(String lat, String lon) throws UnsupportedEncodingException {
 
 //        urlBuilder.append("?" + URLEncoder.encode("q", "UTF-8") + "=Seoul");
@@ -52,7 +69,9 @@ public class OpenWeatherService {
     }
 
 
-    // 일정시점으로부터 5일동안 3시간 간격의 날씨 데이터 받기
+    /**
+     * 일정시점으로부터 5일동안 3시간 간격의 날씨 데이터 받기
+    * */
     public OpenWeather5DayDTO get5DayWeatherData(String lat, String lon, int cnt) throws UnsupportedEncodingException {
 
         // 가져올 양 = cnt
@@ -68,7 +87,9 @@ public class OpenWeatherService {
         return restTemplate.getForObject(urlBuilder, OpenWeather5DayDTO.class);
     }
 
-    // 미세먼지 농도를 가져오는 서비스
+    /**
+     *   현재 시간의 미세먼지 농도를 가져오는 서비스
+      */
     public OpenWeatherAirDTO getCurrentAirData(String lat, String lon) throws UnsupportedEncodingException {
 
         String urlBuilder = openWeatherAirApiUrl + "?" + URLEncoder.encode("lat", "UTF-8") + "=" +  lat+
@@ -80,11 +101,26 @@ public class OpenWeatherService {
         return restTemplate.getForObject(urlBuilder, OpenWeatherAirDTO.class);
     }
 
-    // 현재시간에 대한 온도와 체감온도, 미세먼지 농도, 현재 시간~24시까지의 데이터를 반환해주는 서비스 (최고기온, 최저기온, 날씨코드)
-    public ResponseTodayDTO getTodayWeatherData(String lat, String lon) throws UnsupportedEncodingException {
+    /**
+     * 5일간의 미세먼지 농도를 가져오는 서비스
+     */
+    public OpenWeatherAirDTO get5DayAirData(String lat, String lon, int cnt) throws UnsupportedEncodingException {
+        // 가져올 양 = cnt
+        String urlBuilder = openWeatherAirForecastApiUrl + "?" + URLEncoder.encode("lat", "UTF-8") + "=" + lat+
+                "&" + URLEncoder.encode("lon", "UTF-8") + "=" + lon +
+                "&" + URLEncoder.encode("cnt", "UTF-8") + "=" + cnt +
+                "&" + URLEncoder.encode("appid", "UTF-8") + "=" + openWeatherApiKey;
 
-        // 주요 포인트 dt를 우리나라 시간으로 바꾸고, 처리해야함
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.getForObject(urlBuilder, OpenWeatherAirDTO.class);
+    }
+
+    // ================== 서비스 로직 ====================== // 
+    /**
+     *   현재시간에 대한 온도와 체감온도, 미세먼지 농도, 현재 시간~24시까지의 데이터를 반환해주는 서비스 (최고기온, 최저기온, 날씨코드)
+      */
+    public ResponseTodayDTO getTodayWeatherData(String lat, String lon) throws UnsupportedEncodingException {
 
         // 위치에 대한 현재 시간에 대한 데이터 가져오기
         OpenWeatherDTO currentWeatherData = getCurrentWeatherData(lat, lon);
@@ -100,18 +136,14 @@ public class OpenWeatherService {
         // 현재 시간 dt
         long nowDt = currentWeatherData.getDt();
 
-        // 현재 시간 Dt를 LocalDateTime으로 변환하기
-        LocalDateTime nowTime = Instant.ofEpochSecond(nowDt)
-                .atZone(ZoneId.of("UTC"))
-                .withZoneSameInstant(zoneId)
-                .toLocalDateTime();
+        // dt를 LocalDateTime으로 변환
+        LocalDateTime nowTime = DateTimeUtil.dtParseToLocalDateTime(nowDt);
 
         // 다음날 00시 계산
-        LocalDateTime tomorrowTime = nowTime.plusDays(1).toLocalDate().atStartOfDay();
+        LocalDateTime tomorrowTime = getTomorrowTime(nowTime);
 
         // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
-        long times = Duration.between(nowTime, tomorrowTime).toHours();
-        int cnt = (int) (times / 3) + 1;
+        int cnt = getCnt(nowTime, tomorrowTime);
 
         // 미래 날씨 데이터 가져오기
         OpenWeather5DayDTO openWeather5DayDTO = get5DayWeatherData(lat, lon, cnt);
@@ -153,4 +185,105 @@ public class OpenWeatherService {
 
         return responseTodayDTO;
     }
+
+    /**
+     * 지정시간 ~ 00시까지의 날씨 데이터 반환 서비스
+      */
+    public ResponseAppointDTO getAppointmentWeatherData(String inputTime, String lat, String lon) throws UnsupportedEncodingException {
+
+        // 입력 받은 시간을 LocalDateTime으로 변경
+        LocalDateTime inputLocalDateTime = DateTimeUtil.stringParseToLocalDateTime(inputTime);
+
+        // 다음날 00시 계산
+        LocalDateTime tomorrowTime = getTomorrowTime(inputLocalDateTime);
+
+        // 현재 시간
+        LocalDateTime nowTime = LocalDateTime.now();
+
+        // 현재시간 ~ 사용자가 입력한 시간까지의 데이터 개수
+        int excludeCnt = getCnt(nowTime, inputLocalDateTime);
+
+        // 현재시간 ~ 사용자가 입력한 시간의 다음날 00시까지의 데이터 개수
+        // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
+        int cnt = getCnt(nowTime, tomorrowTime);
+
+
+        // 미래 데이터 가져오기
+        OpenWeather5DayDTO openWeather5DayDTO = get5DayWeatherData(lat, lon, cnt);
+
+        // 만일 데이터가 없으면 예외 발생
+        if (openWeather5DayDTO == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_WEATHER_DATA);
+        }
+
+        // 전체 데이터 리스트에서 현재 시간 ~ 사용자가 입력한 시간까지 제외하기
+        List<WeatherListDTO> weatherListDTOS = openWeather5DayDTO.getList().subList(excludeCnt, openWeather5DayDTO.getList().size());
+
+        // 반환할 데이터 DTO 인스턴스 할당
+        ResponseAppointDTO responseAppointDTO = new ResponseAppointDTO();
+        responseAppointDTO.setList(weatherListDTOS);
+
+        // 받은데이터 하루 중 최저 온도, 최고 온도 계산하기
+        float minTemp = 100, maxTemp = 0;
+        for(WeatherListDTO weatherListDTO : openWeather5DayDTO.getList()){
+            // 최저기온
+            minTemp = Math.min(minTemp, weatherListDTO.getMain().getTemp_max());
+
+            // 최고기온
+            maxTemp = Math.max(maxTemp, weatherListDTO.getMain().getTemp_max());
+        }
+
+        // 최저기온
+        responseAppointDTO.setLowTemp(minTemp);
+        
+        // 최고기온
+        responseAppointDTO.setHighTemp(maxTemp);
+
+        // 현재 시간 ~ 다음날 00시까지의 대기질 수준 가져오기
+        OpenWeatherAirDTO openWeatherAirDTO = get5DayAirData(lat, lon, cnt);
+
+        // 데이터가 없으면 예외처리
+        if (openWeatherAirDTO == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_AIR_DATA);
+        }
+
+        // 전체 데이터 리스트에서 현재 시간 ~ 사용자가 입력한 시간까지 제외
+        List<AirListDTO> airListDTOS = openWeatherAirDTO.getList().subList(excludeCnt, openWeatherAirDTO.getList().size());
+
+        // 제일 많이 나온 대기질 수준 반환
+        int aqi = airListDTOS.stream()      // 스트림으로 변환
+                .map(AirListDTO::getMain)                   // Main 데이터 꺼내기
+                .map(MainAirDTO::getAqi)                    // 꺼낸 Main 데이터에서 대기질 수준 꺼내기
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // 빈도 계산하기
+                .entrySet()                                 // Map으로 만들기
+                .stream()                                   // 스트림으로 변환
+                .max(Map.Entry.comparingByValue())          // 가장 많이 나온 값 찾기
+                .map(Map.Entry::getKey)                     // 값의 키 꺼내기
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_AIR_DATA));      // 없을 시에 예외 처리
+
+        log.info("max aqi {}", aqi);
+
+        responseAppointDTO.setAqi(aqi);
+
+        return responseAppointDTO;
+    }
+
+    /**
+     * 다음날 00시 구하기
+     */
+    private LocalDateTime getTomorrowTime(LocalDateTime inputLocalDateTime){
+        // 다음날 00시 계산
+        return inputLocalDateTime.plusDays(1).toLocalDate().atStartOfDay();
+    }
+
+    /**
+     * 지정 시간 ~ 다음날 00시 까지의 갯수 구하기
+     */
+    private int getCnt(LocalDateTime inputTime, LocalDateTime tomorrowTime) {
+        // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
+        long times = Duration.between(inputTime, tomorrowTime).toHours();
+
+        return (int) (times / 3) + 1;
+    }
+
 }
