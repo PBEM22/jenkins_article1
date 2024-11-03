@@ -13,7 +13,6 @@ import java.util.List;
 public class OutfitSelectionRequestDTO {
     private Long userSeq;
     private Long situationSeq;
-    private LocalDateTime selectDate;
     private LocalDateTime customDate;
     private String customLocation;
     private Integer weatherCode;
