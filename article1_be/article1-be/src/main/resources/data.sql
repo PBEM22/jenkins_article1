@@ -62,11 +62,11 @@ INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_mi
 ('휴대용_선풍기', 800, 100, 20, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image52.jpg'),
 ('핫팩', 801, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED', 'example.com/image53.jpg'),
 ('우산', 500, 100, -100, 'ACCESSORY', 'N', 'REQUIRED', 'example.com/image54.jpg'),
-('마스크', 804, 100, -100, 'ACCESSORY', 'N', 'REQUIRED', 'example.com/image55.jpg'),
+('마스크', NULL, 100, -100, 'ACCESSORY', 'N', 'REQUIRED', 'example.com/image55.jpg'),
 ('비니', 800, 10, -100, 'ACCESSORY', 'N', 'RECOMMENDED', 'example.com/image56.jpg'),
-('손목시계', 800, 100, -100, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image57.jpg'),
-('보조_배터리', 800, 100, -100, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image58.jpg'),
-('손수건', 800, 100, -100, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image59.jpg');
+('손목시계', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image57.jpg'),
+('보조_배터리', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image58.jpg'),
+('손수건', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION', 'example.com/image59.jpg');
 
 INSERT INTO style (style_name) VALUES
                                    ('casual'),   -- 1
