@@ -23,18 +23,21 @@ public class ReviewController {
     public List<ReviewDTO> getReviewsByUser(@PathVariable Long userSeq) {
         return reviewService.getReviewsByUser(userSeq);
     }
-    @PostMapping    // 리뷰 생성
-    public ReviewDTO createReview(@RequestBody ReviewDTO reviewDto) {
+
+    @PostMapping("/{clothingSeq}")    // 리뷰 작성
+    public ReviewDTO createReview(@PathVariable Long clothingSeq, @RequestBody ReviewDTO reviewDto) {
+        reviewDto.setSelectSeq(clothingSeq);
         return reviewService.createReview(reviewDto);
     }
-    
-    @PutMapping("/review/{reviewseq}")    // 리뷰 업데이트
-    public ReviewDTO updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDto) {
-        return reviewService.updateReview(id, reviewDto);
+
+    @PutMapping("/{reviewSeq}")    // 리뷰 수정
+    public ReviewDTO updateReview(@PathVariable Long reviewSeq, @RequestBody ReviewDTO reviewDto) {
+        return reviewService.updateReview(reviewSeq, reviewDto);
     }
 
-    @DeleteMapping("/review/{reviewseq}")  // 리뷰 삭제
-    public void deleteReview(@PathVariable Long id) {
-        reviewService.deleteReview(id);
+    @DeleteMapping("/{reviewSeq}")  // 리뷰 삭제
+    public void deleteReview(@RequestBody ReviewDTO reviewDto) {
+        reviewService.deleteReview(reviewDto.getReviewSeq());
     }
+
 }
