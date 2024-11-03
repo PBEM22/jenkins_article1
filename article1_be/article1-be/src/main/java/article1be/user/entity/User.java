@@ -1,8 +1,12 @@
-package article1be.common.aggregate.entity;
+package article1be.user.entity;
 
+import article1be.user.dto.UserDataDTO;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,13 +15,20 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "USER")
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @SQLDelete(sql = "UPDATE user SET user_state = 'DELETE', del_date = LOCALTIME WHERE user_seq = ?")
-public class User extends BaseTimeEntity{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_seq")
     private Long userSeq;                       // 회원번호
+
+    @Column(name = "style_seq")
+    private Long styleSeq;                      // 스타일 번호
+
+    @Column(name = "condition_seq")
+    private Long conditionSeq;                  // 체질 번호
 
     @Column(name = "user_social_site")
     @Enumerated(EnumType.STRING)
@@ -46,12 +57,16 @@ public class User extends BaseTimeEntity{
     @Enumerated(EnumType.STRING)
     private UserState userState;                // 상태 Enum (ACTIVE, BAN, DELETE)
 
+    @CreatedDate
+    @Column(name = "reg_date", nullable = false)
+    private LocalDateTime regDate;              // 가입 일자
+
     @Column(name = "del_date")
     private LocalDateTime delDate;              // 탈퇴일자
 
     @Column(name = "user_auth")
     @Enumerated(EnumType.STRING)
-    private UserAuth userAuth;            // 권한 Enum (USER, ADMIN)
+    private UserAuth userAuth;                  // 권한 Enum (USER, ADMIN)
 
 
     @Builder
@@ -67,4 +82,15 @@ public class User extends BaseTimeEntity{
         this.userAuth = userAuth;
     }
 
+    // 회원가입 시 닉네임, 선호도 등록
+    public void createUserData(@Valid UserDataDTO userData) {
+        this.userNickname = userData.getUserNickname();
+        this.styleSeq = userData.getStyleSeq();
+        this.conditionSeq = userData.getConditionSeq();
+    }
+
+    // 회원정보(닉네임) 수정
+    public void updateUser(String newNickname) {
+        this.userNickname = newNickname;
+    }
 }
