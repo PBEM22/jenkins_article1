@@ -75,10 +75,11 @@ public class OpenWeatherController {
 
     // 테스트 용도로 만든 지정시간 ~ 다음날 00시 이전의 데이터
     @GetMapping("/appoint")
-    public ResponseEntity<?> getAppointData(@RequestParam("lat") String lat,
+    public ResponseEntity<?> getAppointData(@RequestParam("time") String inputTime,
+                                            @RequestParam("lat") String lat,
                                             @RequestParam("lon") String lon) throws UnsupportedEncodingException{
 
-        ResponseAppointDTO appointmentWeatherData = openWeatherService.getAppointmentWeatherData("2024-11-04 10:00", lat, lon);
+        ResponseAppointDTO appointmentWeatherData = openWeatherService.getAppointmentWeatherData(inputTime, lat, lon);
 
         return ResponseEntity.ok(appointmentWeatherData);
     }
