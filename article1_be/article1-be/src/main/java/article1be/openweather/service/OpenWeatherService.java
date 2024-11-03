@@ -9,6 +9,7 @@ import article1be.openweather.dto.OpenWeatherDTO;
 import article1be.openweather.dto.airs.AirListDTO;
 import article1be.openweather.dto.airs.MainAirDTO;
 import article1be.openweather.dto.response.ResponseAppointDTO;
+import article1be.openweather.dto.response.ResponseMainWeatherDTO;
 import article1be.openweather.dto.response.ResponseTodayDTO;
 import article1be.openweather.dto.weathers.WeatherListDTO;
 import lombok.RequiredArgsConstructor;
@@ -269,6 +270,87 @@ public class OpenWeatherService {
     }
 
     /**
+     * 지정시간 ~ 다음날 00시까지의 데이터 조회 서비스 (날씨코드, 온도, 체감온도, 날씨아이콘, 미세먼지 농도, 초미세먼지 농도, 지정시간 ~ 다음날 00시까지의 (최저기온, 최고기온)
+     */
+    public ResponseMainWeatherDTO getMainWeatherData(String inputTime, String lat, String lon) throws UnsupportedEncodingException {
+        // 입력 받은 시간을 LocalDateTime으로 변경
+        LocalDateTime inputLocalDateTime = DateTimeUtil.stringParseToLocalDateTime(inputTime);
+
+        // 다음날 00시 계산
+        LocalDateTime tomorrowTime = getTomorrowTime(inputLocalDateTime);
+
+        // 현재 시간
+        LocalDateTime nowTime = LocalDateTime.now();
+
+        // 현재시간 ~ 사용자가 입력한 시간까지의 데이터 개수
+        int excludeCnt = getCnt(nowTime, inputLocalDateTime);
+
+        // 현재시간 ~ 사용자가 입력한 시간의 다음날 00시까지의 데이터 개수
+        // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
+        int cnt = getCnt(nowTime, tomorrowTime);
+
+        // 미래 데이터 가져오기
+        OpenWeather5DayDTO openWeather5DayDTO = get5DayWeatherData(lat, lon, cnt);
+
+        // 만일 데이터가 없으면 예외 발생
+        if (openWeather5DayDTO == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_WEATHER_DATA);
+        }
+
+        // 전체 데이터 리스트에서 현재 시간 ~ 사용자가 입력한 시간까지 제외하기
+        List<WeatherListDTO> weatherListDTOS = openWeather5DayDTO.getList().subList(excludeCnt, openWeather5DayDTO.getList().size());
+
+        // 반환할 객체 인스턴스 할당
+        ResponseMainWeatherDTO responseMainWeatherDTO = new ResponseMainWeatherDTO();
+
+        // 지정시간에 가장 가까운 (날씨코드, 아이콘, 온도, 체감온도) 기입
+        responseMainWeatherDTO.setNowWeatherCode(weatherListDTOS.get(0).getWeather().get(0).getId());
+        responseMainWeatherDTO.setNowWeatherIcon(weatherListDTOS.get(0).getWeather().get(0).getIcon());
+        responseMainWeatherDTO.setNowTemp(weatherListDTOS.get(0).getMain().getTemp());
+        responseMainWeatherDTO.setNowFeelsLike(weatherListDTOS.get(0).getMain().getFeels_like());
+
+        // 가장가깝게 가져온 시간 기입 dt변환
+        LocalDateTime appointmentTime = DateTimeUtil.dtParseToLocalDateTime(weatherListDTOS.get(0).getDt());
+        responseMainWeatherDTO.setNowTime(appointmentTime);
+
+        // 이후 시간들의 데이터 기입
+        responseMainWeatherDTO.setList(weatherListDTOS);
+
+        // 받은데이터 하루 중 최저 온도, 최고 온도 계산하기
+        float minTemp = 100, maxTemp = 0;
+        for(WeatherListDTO weatherListDTO : openWeather5DayDTO.getList()){
+            // 최저기온
+            minTemp = Math.min(minTemp, weatherListDTO.getMain().getTemp_max());
+
+            // 최고기온
+            maxTemp = Math.max(maxTemp, weatherListDTO.getMain().getTemp_max());
+        }
+
+        // 최저기온
+        responseMainWeatherDTO.setLowTemp(minTemp);
+
+        // 최고기온
+        responseMainWeatherDTO.setHighTemp(maxTemp);
+
+        // 현재 시간 ~ 다음날 00시까지의 대기질 수준 가져오기
+        OpenWeatherAirDTO openWeatherAirDTO = get5DayAirData(lat, lon, cnt);
+
+        // 데이터가 없으면 예외처리
+        if (openWeatherAirDTO == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_AIR_DATA);
+        }
+
+        // 전체 데이터 리스트에서 현재 시간 ~ 사용자가 입력한 시간까지 제외
+        List<AirListDTO> airListDTOS = openWeatherAirDTO.getList().subList(excludeCnt, openWeatherAirDTO.getList().size());
+
+        // 지정시간 이후 가장 가까운 대기 데이터의 미세먼지, 초미세먼지 농도 기입
+        responseMainWeatherDTO.setPm2_5(airListDTOS.get(0).getComponents().getPm2_5());
+        responseMainWeatherDTO.setPm10(airListDTOS.get(0).getComponents().getPm10());
+
+        return responseMainWeatherDTO;
+    }
+
+    /**
      * 다음날 00시 구하기
      */
     private LocalDateTime getTomorrowTime(LocalDateTime inputLocalDateTime){
@@ -282,6 +364,11 @@ public class OpenWeatherService {
     private int getCnt(LocalDateTime inputTime, LocalDateTime tomorrowTime) {
         // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
         long times = Duration.between(inputTime, tomorrowTime).toHours();
+
+        // 21시 이후 조회시 00시의 데이터만 가져옴
+        if (times == 0){
+            return 0;
+        }
 
         return (int) (times / 3) + 1;
     }

@@ -11,6 +11,6 @@ public class ComponentsDTO {
     private double o3; // 오존
     private double so2; // 이산화황
     private double pm2_5; // 미세먼지(PM2.5)
-    private double pm10; // 미세먼지(PM10)
+    private double pm10; // 초미세먼지(PM10)
     private double nh3; // 암모니아
 }
