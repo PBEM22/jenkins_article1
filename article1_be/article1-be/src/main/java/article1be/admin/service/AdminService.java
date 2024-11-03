@@ -6,6 +6,7 @@ import article1be.common.aggregate.entity.User;
 import article1be.common.aggregate.entity.UserState;
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.review.aggregate.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -66,5 +67,44 @@ public class AdminService {
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.NOT_FOUND_USER);
         }
+    }
+    public List<AdminDTO.ReviewInfo> getAllReviews() {
+        return reviewRepository.findAll().stream()
+                .map(review -> new AdminDTO.ReviewInfo(
+                        review.getReviewSeq(),
+                        review.getUserSeq(),
+                        review.getReviewContent(),
+                        review.getReviewBlind(),
+                        review.getRegDate().toLocalDate()
+                )).collect(Collectors.toList());
+    }
+
+    // ADM 005: 특정 리뷰 정보 조회
+    public AdminDTO.ReviewInfo getReviewDetail(Long reviewSeq) {
+        Review review = reviewRepository.findById(reviewSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        return new AdminDTO.ReviewInfo(
+                review.getReviewSeq(),
+                review.getUserSeq(),
+                review.getReviewContent(),
+                review.getReviewBlind(),
+                review.getRegDate().toLocalDate()
+        );
+    }
+
+    // ADM 006: 리뷰 블라인드 상태 업데이트
+    public void updateReviewBlindStatus(AdminDTO.ReviewBlindStatusUpdateRequest statusUpdate) {
+        Review review = reviewRepository.findById(statusUpdate.getReviewSeq())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        review.updateReview(
+                review.getReviewContent(),
+                review.getReviewWeather(),
+                review.getReviewLocation(),
+                statusUpdate.getReviewBlind(),
+                review.getReviewLikeYn()
+        );
+
+        reviewRepository.save(review);
     }
 }

@@ -26,4 +26,21 @@ public class AdminDTO {
         private Long userSeq;
         private String userState;
     }
+
+    @Data
+    @AllArgsConstructor
+    public static class ReviewInfo {
+        private Long reviewSeq;
+        private Long userSeq;
+        private String reviewContent;
+        private Boolean reviewBlind;
+        private LocalDate regDate;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class ReviewBlindStatusUpdateRequest {
+        private Long reviewSeq;
+        private Boolean reviewBlind; // 블라인드 여부
+    }
 }
