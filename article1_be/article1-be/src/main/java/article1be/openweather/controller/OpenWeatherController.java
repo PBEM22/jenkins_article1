@@ -3,7 +3,7 @@ package article1be.openweather.controller;
 import article1be.openweather.dto.OpenWeather5DayDTO;
 import article1be.openweather.dto.OpenWeatherDTO;
 import article1be.openweather.dto.OpenWeatherAirDTO;
-import article1be.openweather.dto.ResponseTodayDTO;
+import article1be.openweather.dto.response.ResponseTodayDTO;
 import article1be.openweather.service.OpenWeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
