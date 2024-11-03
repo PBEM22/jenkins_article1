@@ -67,4 +67,8 @@ public class User extends BaseTimeEntity{
         this.userAuth = userAuth;
     }
 
+    public void changeUserState(UserState newState) {
+        this.userState = newState;
+    }
+
 }
