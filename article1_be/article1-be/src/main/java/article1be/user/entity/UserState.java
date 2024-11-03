@@ -1,4 +1,4 @@
-package article1be.common.aggregate.entity;
+package article1be.user.entity;
 
 public enum UserState {
     ACTIVE,     // 활성화
