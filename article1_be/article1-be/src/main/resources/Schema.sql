@@ -1,20 +1,22 @@
-DROP TABLE IF EXISTS BLAME;
-DROP TABLE IF EXISTS REVIEW;
-DROP TABLE IF EXISTS REPLY;
-DROP TABLE IF EXISTS PICTURE;
-DROP TABLE IF EXISTS SELECT_CLOTHING;
-DROP TABLE IF EXISTS OUTFIT_STYLE;
-DROP TABLE IF EXISTS OUTFIT_SITUATION;
-DROP TABLE IF EXISTS SELECT_RECORD;
-DROP TABLE IF EXISTS BOARD;
-DROP TABLE IF EXISTS OUTFIT;
-DROP TABLE IF EXISTS STYLE;
-DROP TABLE IF EXISTS SITUATION;
-DROP TABLE IF EXISTS PREFERENCE;
-DROP TABLE IF EXISTS BAN;
-DROP TABLE IF EXISTS USER;
+DROP TABLE IF EXISTS blame;
+DROP TABLE IF EXISTS review;
+DROP TABLE IF EXISTS reply;
+DROP TABLE IF EXISTS picture;
+DROP TABLE IF EXISTS select_outfit;
+DROP TABLE IF EXISTS outfit_style;
+DROP TABLE IF EXISTS outfit_situation;
+DROP TABLE IF EXISTS board;
+DROP TABLE IF EXISTS style;
+DROP TABLE IF EXISTS preference;
+DROP TABLE IF EXISTS ban;
+DROP TABLE IF EXISTS select_record;
+DROP TABLE IF EXISTS situation;
+DROP TABLE IF EXISTS outfit;
+DROP TABLE IF EXISTS user;
 
-CREATE TABLE USER (
+ALTER DATABASE article CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE user (
                       user_seq BIGINT NOT NULL AUTO_INCREMENT,
                       user_social_site VARCHAR(50) NOT NULL COMMENT 'KAKAO, NAVER, GOOGLE',
                       user_id VARCHAR(255) NOT NULL,
@@ -30,14 +32,14 @@ CREATE TABLE USER (
                       PRIMARY KEY (user_seq)
 );
 
-CREATE TABLE PREFERENCE (
+CREATE TABLE preference (
                             user_seq BIGINT NOT NULL AUTO_INCREMENT,
                             preference_condition VARCHAR(50) NOT NULL DEFAULT 'NORMAL' COMMENT 'HOT, COLD, NORMAL',
                             preference_style VARCHAR(50) NOT NULL DEFAULT 'NORMAL' COMMENT 'CASUAL, SPORTY, FORMAL, NORMAL',
                             PRIMARY KEY (user_seq)
 );
 
-CREATE TABLE OUTFIT (
+CREATE TABLE outfit (
                         outfit_seq BIGINT NOT NULL AUTO_INCREMENT,
                         outfit_name VARCHAR(50) NOT NULL,
                         outfit_weather INT NULL COMMENT '악세서리만',
@@ -50,19 +52,19 @@ CREATE TABLE OUTFIT (
                         PRIMARY KEY (outfit_seq)
 );
 
-CREATE TABLE STYLE (
+CREATE TABLE style (
                        style_seq BIGINT NOT NULL AUTO_INCREMENT,
                        style_name VARCHAR(50) NOT NULL COMMENT '캐주얼, 포멀, 스포티',
                        PRIMARY KEY (style_seq)
 );
 
-CREATE TABLE SITUATION (
+CREATE TABLE situation (
                            situation_seq BIGINT NOT NULL AUTO_INCREMENT,
                            situation_name VARCHAR(50) NOT NULL COMMENT '일상, 여행, 운동, 데이트, 격식있는자리',
                            PRIMARY KEY (situation_seq)
 );
 
-CREATE TABLE SELECT_RECORD (
+CREATE TABLE select_record (
                                select_seq BIGINT NOT NULL AUTO_INCREMENT,
                                user_seq BIGINT NOT NULL,
                                situation_seq BIGINT NOT NULL,
@@ -78,7 +80,7 @@ CREATE TABLE SELECT_RECORD (
                                PRIMARY KEY (select_seq)
 );
 
-CREATE TABLE BOARD (
+CREATE TABLE board (
                        board_seq BIGINT NOT NULL AUTO_INCREMENT,
                        user_seq BIGINT NOT NULL,
                        board_title VARCHAR(50) NOT NULL,
@@ -91,7 +93,7 @@ CREATE TABLE BOARD (
                        PRIMARY KEY (board_seq)
 );
 
-CREATE TABLE REVIEW (
+CREATE TABLE review (
                         review_seq BIGINT NOT NULL,
                         user_seq BIGINT NOT NULL,
                         select_seq BIGINT NOT NULL,
@@ -107,7 +109,7 @@ CREATE TABLE REVIEW (
                         PRIMARY KEY (review_seq, user_seq)
 );
 
-CREATE TABLE BLAME (
+CREATE TABLE blame (
                        blame_seq BIGINT NOT NULL AUTO_INCREMENT,
                        blame_user_seq BIGINT NOT NULL,
                        blame_board_seq BIGINT NULL,
@@ -120,7 +122,7 @@ CREATE TABLE BLAME (
                        PRIMARY KEY (blame_seq)
 );
 
-CREATE TABLE REPLY (
+CREATE TABLE reply (
                        reply_seq BIGINT NOT NULL AUTO_INCREMENT,
                        board_seq BIGINT NOT NULL,
                        reply_user_seq BIGINT NOT NULL,
@@ -131,7 +133,7 @@ CREATE TABLE REPLY (
                        PRIMARY KEY (reply_seq)
 );
 
-CREATE TABLE PICTURE (
+CREATE TABLE picture (
                          picture_seq BIGINT NOT NULL AUTO_INCREMENT,
                          picture_board_seq BIGINT NOT NULL,
                          picture_originename VARCHAR(255) NOT NULL,
@@ -144,28 +146,28 @@ CREATE TABLE PICTURE (
                          PRIMARY KEY (picture_seq)
 );
 
-CREATE TABLE SELECT_CLOTHING (
-                                 select_clothing_seq BIGINT NOT NULL AUTO_INCREMENT,
+CREATE TABLE select_outfit (
+                                 select_outfit_seq BIGINT NOT NULL AUTO_INCREMENT,
                                  outfit_seq BIGINT NOT NULL,
                                  select_seq BIGINT NOT NULL,
-                                 PRIMARY KEY (select_clothing_seq)
+                                 PRIMARY KEY (select_outfit_seq)
 );
 
-CREATE TABLE OUTFIT_STYLE (
+CREATE TABLE outfit_style (
                               select_style_seq BIGINT NOT NULL AUTO_INCREMENT,
                               style_seq BIGINT NOT NULL,
                               outfit_seq BIGINT NOT NULL,
                               PRIMARY KEY (select_style_seq)
 );
 
-CREATE TABLE OUTFIT_SITUATION (
+CREATE TABLE outfit_situation (
                                   outfit_situation_seq BIGINT NOT NULL AUTO_INCREMENT,
                                   outfit_seq BIGINT NOT NULL,
                                   situation_seq BIGINT NOT NULL,
                                   PRIMARY KEY (outfit_situation_seq)
 );
 
-CREATE TABLE BAN (
+CREATE TABLE ban (
                      ban_seq BIGINT NOT NULL AUTO_INCREMENT,
                      ban_user_seq BIGINT NOT NULL,
                      ban_startdate DATETIME NOT NULL DEFAULT LOCALTIME,
@@ -175,22 +177,22 @@ CREATE TABLE BAN (
 );
 
 
-ALTER TABLE PREFERENCE ADD CONSTRAINT FK_user_TO_PREFERENCE_1 FOREIGN KEY (user_seq) REFERENCES USER (user_seq);
-ALTER TABLE SELECT_RECORD ADD CONSTRAINT FK_user_TO_SELECT_RECORD FOREIGN KEY (user_seq) REFERENCES USER (user_seq);
-ALTER TABLE SELECT_RECORD ADD CONSTRAINT FK_situation_TO_SELECT_RECORD FOREIGN KEY (situation_seq) REFERENCES SITUATION (situation_seq);
-ALTER TABLE BOARD ADD CONSTRAINT FK_user_TO_BOARD FOREIGN KEY (user_seq) REFERENCES USER (user_seq);
-ALTER TABLE REVIEW ADD CONSTRAINT FK_user_TO_REVIEW FOREIGN KEY (user_seq) REFERENCES USER (user_seq);
-ALTER TABLE REVIEW ADD CONSTRAINT FK_select_TO_REVIEW FOREIGN KEY (select_seq) REFERENCES SELECT_RECORD (select_seq);
-ALTER TABLE BLAME ADD CONSTRAINT FK_user_TO_BLAME FOREIGN KEY (blame_user_seq) REFERENCES USER (user_seq);
-ALTER TABLE BLAME ADD CONSTRAINT FK_board_TO_BLAME FOREIGN KEY (blame_board_seq) REFERENCES BOARD (board_seq);
-ALTER TABLE BLAME ADD CONSTRAINT FK_review_TO_BLAME FOREIGN KEY (blame_review_seq) REFERENCES REVIEW (review_seq);
-ALTER TABLE REPLY ADD CONSTRAINT FK_board_TO_REPLY FOREIGN KEY (board_seq) REFERENCES BOARD (board_seq);
-ALTER TABLE REPLY ADD CONSTRAINT FK_user_TO_REPLY FOREIGN KEY (reply_user_seq) REFERENCES USER (user_seq);
-ALTER TABLE PICTURE ADD CONSTRAINT FK_board_TO_PICTURE FOREIGN KEY (picture_board_seq) REFERENCES BOARD (board_seq);
-ALTER TABLE SELECT_CLOTHING ADD CONSTRAINT FK_outfit_TO_SELECT_CLOTHING FOREIGN KEY (outfit_seq) REFERENCES OUTFIT (outfit_seq);
-ALTER TABLE SELECT_CLOTHING ADD CONSTRAINT FK_select_TO_SELECT_CLOTHING FOREIGN KEY (select_seq) REFERENCES SELECT_RECORD (select_seq);
-ALTER TABLE OUTFIT_STYLE ADD CONSTRAINT FK_style_TO_OUTFIT_STYLE FOREIGN KEY (style_seq) REFERENCES STYLE (style_seq);
-ALTER TABLE OUTFIT_STYLE ADD CONSTRAINT FK_outfit_TO_OUTFIT_STYLE FOREIGN KEY (outfit_seq) REFERENCES OUTFIT (outfit_seq);
-ALTER TABLE OUTFIT_SITUATION ADD CONSTRAINT FK_outfit_TO_OUTFIT_SITUATION FOREIGN KEY (outfit_seq) REFERENCES OUTFIT (outfit_seq);
-ALTER TABLE OUTFIT_SITUATION ADD CONSTRAINT FK_situation_TO_OUTFIT_SITUATION FOREIGN KEY (situation_seq) REFERENCES SITUATION (situation_seq);
-ALTER TABLE BAN ADD CONSTRAINT FK_user_TO_BAN FOREIGN KEY (ban_user_seq) REFERENCES USER (user_seq);
+ALTER TABLE preference ADD CONSTRAINT FK_user_TO_preference FOREIGN KEY (user_seq) REFERENCES user (user_seq);
+ALTER TABLE select_record ADD CONSTRAINT FK_user_TO_select_record FOREIGN KEY (user_seq) REFERENCES user (user_seq);
+ALTER TABLE select_record ADD CONSTRAINT FK_situation_TO_select_record FOREIGN KEY (situation_seq) REFERENCES situation (situation_seq);
+ALTER TABLE board ADD CONSTRAINT FK_user_TO_board FOREIGN KEY (user_seq) REFERENCES user (user_seq);
+ALTER TABLE review ADD CONSTRAINT FK_user_TO_review FOREIGN KEY (user_seq) REFERENCES user (user_seq);
+ALTER TABLE review ADD CONSTRAINT FK_select_TO_review FOREIGN KEY (select_seq) REFERENCES select_record (select_seq);
+ALTER TABLE blame ADD CONSTRAINT FK_user_TO_blame FOREIGN KEY (blame_user_seq) REFERENCES user (user_seq);
+ALTER TABLE blame ADD CONSTRAINT FK_board_TO_blame FOREIGN KEY (blame_board_seq) REFERENCES board (board_seq);
+ALTER TABLE blame ADD CONSTRAINT FK_review_TO_blame FOREIGN KEY (blame_review_seq) REFERENCES review (review_seq);
+ALTER TABLE reply ADD CONSTRAINT FK_board_TO_reply FOREIGN KEY (board_seq) REFERENCES board (board_seq);
+ALTER TABLE reply ADD CONSTRAINT FK_user_TO_reply FOREIGN KEY (reply_user_seq) REFERENCES user (user_seq);
+ALTER TABLE picture ADD CONSTRAINT FK_board_TO_picture FOREIGN KEY (picture_board_seq) REFERENCES board (board_seq);
+ALTER TABLE select_outfit ADD CONSTRAINT FK_outfit_TO_select_outfit FOREIGN KEY (outfit_seq) REFERENCES outfit (outfit_seq);
+ALTER TABLE select_outfit ADD CONSTRAINT FK_select_TO_select_outfit FOREIGN KEY (select_seq) REFERENCES select_record (select_seq);
+ALTER TABLE outfit_style ADD CONSTRAINT FK_style_TO_outfit_style FOREIGN KEY (style_seq) REFERENCES style (style_seq);
+ALTER TABLE outfit_style ADD CONSTRAINT FK_outfit_TO_outfit_style FOREIGN KEY (outfit_seq) REFERENCES outfit (outfit_seq);
+ALTER TABLE outfit_situation ADD CONSTRAINT FK_outfit_TO_outfit_situation FOREIGN KEY (outfit_seq) REFERENCES outfit (outfit_seq);
+ALTER TABLE outfit_situation ADD CONSTRAINT FK_situation_TO_outfit_situation FOREIGN KEY (situation_seq) REFERENCES situation (situation_seq);
+ALTER TABLE ban ADD CONSTRAINT FK_user_TO_ban FOREIGN KEY (ban_user_seq) REFERENCES user (user_seq);
