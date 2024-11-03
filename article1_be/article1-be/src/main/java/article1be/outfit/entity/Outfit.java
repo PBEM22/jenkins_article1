@@ -1,6 +1,5 @@
 package article1be.outfit.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,7 +35,5 @@ public class Outfit {
 
     @Enumerated(EnumType.STRING)
     private OutfitCategory outfitCategory;
-
-
 
 }
