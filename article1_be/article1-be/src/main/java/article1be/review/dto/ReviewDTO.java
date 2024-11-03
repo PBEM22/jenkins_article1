@@ -1,14 +1,12 @@
 package article1be.review.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ReviewDTO {
 
     private Long reviewSeq;         // 리뷰 번호
