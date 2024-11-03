@@ -1,14 +1,22 @@
 package article1be.openweather.service;
 
+import article1be.common.exception.CustomException;
+import article1be.common.exception.ErrorCode;
 import article1be.openweather.dto.OpenWeather5DayDTO;
-import article1be.openweather.dto.OpenWeatherDTO;
 import article1be.openweather.dto.OpenWeatherAirDTO;
+import article1be.openweather.dto.OpenWeatherDTO;
+import article1be.openweather.dto.ResponseTodayDTO;
+import article1be.openweather.dto.weathers.WeatherListDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 public class OpenWeatherService {
@@ -17,10 +25,6 @@ public class OpenWeatherService {
     @Value("${open.weather.api.key}")
     private String openWeatherApiKey;
 
-    /**
-     * https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-     * https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
-     */
     // 해당 위치 날씨 요청하기 위해서 보내는 주소
     @Value("${open.weather.current.api.url}")
     private String openWeatherApiUrl;
@@ -49,11 +53,9 @@ public class OpenWeatherService {
 
 
     // 일정시점으로부터 5일동안 3시간 간격의 날씨 데이터 받기
-    public OpenWeather5DayDTO get5DayWeatherData(String lat, String lon) throws UnsupportedEncodingException {
+    public OpenWeather5DayDTO get5DayWeatherData(String lat, String lon, int cnt) throws UnsupportedEncodingException {
 
-        // 가져올 양
-        int cnt = 3;
-
+        // 가져올 양 = cnt
         String urlBuilder = openWeather5DayApiUrl + "?" + URLEncoder.encode("lat", "UTF-8") + "=" + lat +
                 "&" + URLEncoder.encode("lon", "UTF-8") + "=" + lon +
                 "&" + URLEncoder.encode("cnt", "UTF-8") + "=" + cnt +
@@ -76,5 +78,79 @@ public class OpenWeatherService {
         RestTemplate restTemplate = new RestTemplate();
 
         return restTemplate.getForObject(urlBuilder, OpenWeatherAirDTO.class);
+    }
+
+    // 현재시간에 대한 온도와 체감온도, 미세먼지 농도, 현재 시간~24시까지의 데이터를 반환해주는 서비스 (최고기온, 최저기온, 날씨코드)
+    public ResponseTodayDTO getTodayWeatherData(String lat, String lon) throws UnsupportedEncodingException {
+
+        // 주요 포인트 dt를 우리나라 시간으로 바꾸고, 처리해야함
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+
+        // 위치에 대한 현재 시간에 대한 데이터 가져오기
+        OpenWeatherDTO currentWeatherData = getCurrentWeatherData(lat, lon);
+
+        // 현재 시간에 대한 데이터 존재하지 않을 시
+        if (currentWeatherData == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_WEATHER_DATA);
+        }
+
+        // 반환 데이터 객체 생성 및 현재 데이터 넣기
+        ResponseTodayDTO responseTodayDTO = new ResponseTodayDTO(currentWeatherData);
+
+        // 현재 시간 dt
+        long nowDt = currentWeatherData.getDt();
+
+        // 현재 시간 Dt를 LocalDateTime으로 변환하기
+        LocalDateTime nowTime = Instant.ofEpochSecond(nowDt)
+                .atZone(ZoneId.of("UTC"))
+                .withZoneSameInstant(zoneId)
+                .toLocalDateTime();
+
+        // 다음날 00시 계산
+        LocalDateTime tomorrowTime = nowTime.plusDays(1).toLocalDate().atStartOfDay();
+
+        // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
+        long times = Duration.between(nowTime, tomorrowTime).toHours();
+        int cnt = (int) (times / 3) + 1;
+
+        // 미래 날씨 데이터 가져오기
+        OpenWeather5DayDTO openWeather5DayDTO = get5DayWeatherData(lat, lon, cnt);
+
+        // 데이터가 없으면
+        if (openWeather5DayDTO == null){
+            throw new CustomException(ErrorCode.NOT_FOUND_WEATHER_DATA);
+        }
+
+        // 가져온 데이터 넣기
+        responseTodayDTO.setList(openWeather5DayDTO.getList());
+
+        // 받은데이터 하루 중 최저 온도, 최고 온도 계산하기
+        float minTemp = 100, maxTemp = 0;
+        for(WeatherListDTO weatherListDTO : openWeather5DayDTO.getList()){
+            // 최저온도
+            minTemp = Math.min(minTemp, weatherListDTO.getMain().getTemp_max());
+
+            // 최고온도
+            maxTemp = Math.max(maxTemp, weatherListDTO.getMain().getTemp_max());
+        }
+
+        // 최저온도 넣기
+        responseTodayDTO.setLowTemp(minTemp);
+
+        // 최고온도 넣기
+        responseTodayDTO.setHighTemp(maxTemp);
+
+        // 으음.. 만약 앞으로 3시간 뒤는 맑음인데, 6시간 뒤에는 비가 오고, 9시간 뒤에는 맑음이라면??
+        // 해당 시간의 미세먼지를 넣기 (대기질 수준 자체를 넣는건 어떨까?)
+        OpenWeatherAirDTO currentAirData = getCurrentAirData(lat, lon);
+
+        // 대기질 데이터가 없으면
+        if (currentAirData == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_AIR_DATA);
+        }
+        // 공기질 수준 넣기
+        responseTodayDTO.setAqi(currentAirData.getList().get(0).getMain().getAqi());
+
+        return responseTodayDTO;
     }
 }
