@@ -36,7 +36,6 @@ public class ReviewService {
         );
 
         review = reviewRepository.save(review);
-        log.info(" 리뷰가 성공적으로 생성되었습니다: {}", review.getReviewSeq());
 
         return new ReviewDTO(
                 review.getReviewSeq(),
@@ -99,7 +98,6 @@ public class ReviewService {
         );
 
         reviewRepository.save(review);
-        log.info("리뷰가 성공적으로 업데이트되었습니다: {}", reviewSeq);
 
         return new ReviewDTO(
                 review.getReviewSeq(),
@@ -120,6 +118,5 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         reviewRepository.delete(review);
-        log.info("리뷰가 성공적으로 삭제되었습니다: {}", reviewSeq);
     }
 }
