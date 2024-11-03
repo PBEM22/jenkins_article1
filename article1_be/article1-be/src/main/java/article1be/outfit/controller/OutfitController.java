@@ -3,7 +3,6 @@ package article1be.outfit.controller;
 import article1be.outfit.dto.OutfitResponseDTO;
 import article1be.outfit.dto.OutfitRequestDTO;
 import article1be.outfit.dto.OutfitSelectionRequestDTO;
-import article1be.outfit.dto.OutfitSelectionResponseDTO;
 import article1be.outfit.entity.OutfitCategory;
 import article1be.outfit.service.OutfitSelectionService;
 import article1be.outfit.service.OutfitService;

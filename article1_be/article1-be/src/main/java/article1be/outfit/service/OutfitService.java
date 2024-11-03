@@ -1,6 +1,6 @@
 package article1be.outfit.service;
 
-import article1be.openweather.dto.ResponseTodayDTO;
+import article1be.openweather.dto.response.ResponseTodayDTO;
 import article1be.openweather.service.OpenWeatherService;
 import article1be.outfit.dto.OutfitRequestDTO;
 import article1be.outfit.dto.OutfitResponseDTO;
