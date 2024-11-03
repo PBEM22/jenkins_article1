@@ -6,6 +6,7 @@ import article1be.outfit.dto.OutfitRequestDTO;
 import article1be.outfit.dto.OutfitResponseDTO;
 import article1be.outfit.entity.Outfit;
 import article1be.outfit.entity.OutfitCategory;
+import article1be.outfit.entity.OutfitLevel;
 import article1be.outfit.repository.OutfitRepository;
 import article1be.outfit.repository.OutfitSituationRepository;
 import article1be.outfit.repository.OutfitStyleRepository;
@@ -75,8 +76,8 @@ public class OutfitService {
             //필터링된 옷들에 대해 점수를 계산하고 내림차순으로 정렬, 상위 3개만 return.
             List<OutfitResponseDTO> topOutfits = outfits.stream()
                     .sorted((o1, o2) -> Integer.compare(
-                            calculateScore(o2, requestDTO.getSituationSeq(), styleSeq/*, previouslyChosenOutfitIds*/),
-                            calculateScore(o1, requestDTO.getSituationSeq(), styleSeq/*, previouslyChosenOutfitIds*/)
+                            calculateScore(o2, requestDTO.getSituationSeq(), styleSeq, airQuality/*, previouslyChosenOutfitIds*/),
+                            calculateScore(o1, requestDTO.getSituationSeq(), styleSeq,airQuality/*, previouslyChosenOutfitIds*/)
                     ))
                     .limit(3)
                     .map(outfit -> new OutfitResponseDTO(outfit.getOutfitName(), outfit.getOutfitImg()))
@@ -90,7 +91,7 @@ public class OutfitService {
     }
 
     // 각 옷에 점수를 매기는 메서드
-    private int calculateScore(Outfit outfit, Long situationSeq , Long styleSeq/*, Set<Long> previouslyChosenOutfitIds*/) {
+    private int calculateScore(Outfit outfit, Long situationSeq , Long styleSeq, int airQuality/*, Set<Long> previouslyChosenOutfitIds*/) {
         int score = 0;
 
         // 상황에 맞는 옷에 점수 추가
@@ -103,10 +104,26 @@ public class OutfitService {
             score += 5;
         }
 
+        // 필수, 권장, 선택에 따라 점수 추가
+        if (outfit.getOutfitLevel() == OutfitLevel.REQUIRED) {
+            score += 20;
+        } else if (outfit.getOutfitLevel() == OutfitLevel.RECOMMENDED) {
+            score += 10;
+        }
+
+        // 해당 outfit이 마스크이고, 공기질이 안좋으면 점수 999점 추가
+        if (outfit.getOutfitCategory() == OutfitCategory.ACCESSORY &&
+                "마스크".equals(outfit.getOutfitName()) &&
+                airQuality >= 4) { // 예를 들어, airQuality가 4 이상이면 공기질이 안 좋음
+            score += 999;
+        }
+        
         // 회원이 이전에 선택한 옷에 추가 점수
         /*if (previouslyChosenOutfitIds.contains(outfit.getOutfitSeq())) {
             score += 3;
         }*/
+
+
 
         return score;
     }
