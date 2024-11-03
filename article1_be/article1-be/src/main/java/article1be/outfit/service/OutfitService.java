@@ -1,6 +1,6 @@
 package article1be.outfit.service;
 
-import article1be.openweather.dto.ResponseTodayDTO;
+import article1be.openweather.dto.response.ResponseTodayDTO;
 import article1be.openweather.service.OpenWeatherService;
 import article1be.outfit.dto.OutfitRequestDTO;
 import article1be.outfit.dto.OutfitResponseDTO;
@@ -10,6 +10,7 @@ import article1be.outfit.entity.OutfitLevel;
 import article1be.outfit.repository.OutfitRepository;
 import article1be.outfit.repository.OutfitSituationRepository;
 import article1be.outfit.repository.OutfitStyleRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,20 +24,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OutfitService {
     private final OpenWeatherService weatherService;
     private final OutfitRepository outfitRepository; // Outfit 데이터를 가져오는 Repository
     private final OutfitSituationRepository outfitSituationRepository;
     private final OutfitStyleRepository outfitStyleRepository;
-
-    @Autowired
-    public OutfitService(OpenWeatherService weatherService, OutfitRepository outfitRepository, OutfitSituationRepository outfitSituationRepository, OutfitStyleRepository outfitStyleRepository) {
-        this.weatherService = weatherService;
-        this.outfitRepository = outfitRepository;
-        this.outfitSituationRepository = outfitSituationRepository;
-        this.outfitStyleRepository = outfitStyleRepository;
-
-    }
 
     public  Map<OutfitCategory, List<OutfitResponseDTO>> getRecommendedOutfits(OutfitRequestDTO requestDTO) throws UnsupportedEncodingException, UnsupportedEncodingException {
 
@@ -79,8 +72,7 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), styleSeq, airQuality/*, previouslyChosenOutfitIds*/),
                             calculateScore(o1, requestDTO.getSituationSeq(), styleSeq,airQuality/*, previouslyChosenOutfitIds*/)
                     ))
-                    .limit(3)
-                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitName(), outfit.getOutfitImg()))
+                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(),outfit.getOutfitName(), outfit.getOutfitImg()))
                     .collect(Collectors.toList());
 
             recommendedOutfits.put(outfitCategory, topOutfits);
@@ -117,14 +109,11 @@ public class OutfitService {
                 airQuality >= 4) { // 예를 들어, airQuality가 4 이상이면 공기질이 안 좋음
             score += 999;
         }
-        
+
         // 회원이 이전에 선택한 옷에 추가 점수
         /*if (previouslyChosenOutfitIds.contains(outfit.getOutfitSeq())) {
             score += 3;
         }*/
-
-
-
         return score;
     }
 
