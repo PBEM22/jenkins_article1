@@ -39,8 +39,8 @@
   }
   h1{
     margin-top: 0;
-    font-weight: bold;
-    font-size: 2.5em;
+    font-weight: bolder;
+    font-size: 3em;
     margin-bottom: 5%;
   }
   .main-sub_title{
@@ -48,7 +48,7 @@
   }
   .main-content{
     background-color: rgb(255, 255, 255, 0.5);
-    width: 85%;
+    width: 80%;
     height: 80%;
     border-radius: 50px;
     position: relative;
