@@ -25,8 +25,8 @@ public class ReviewController {
     }
 
     @PostMapping("/{clothingSeq}")    // 리뷰 작성
-    public ReviewDTO createReview(@PathVariable Long clothingSeq, @RequestBody ReviewDTO reviewDto) {
-        reviewDto.setSelectSeq(clothingSeq);
+    public ReviewDTO createReview(@PathVariable Long userSeq, @RequestBody ReviewDTO reviewDto) {
+        reviewDto.setSelectSeq(userSeq);
         return reviewService.createReview(reviewDto);
     }
 
