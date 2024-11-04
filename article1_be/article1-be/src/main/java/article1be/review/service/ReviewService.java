@@ -5,6 +5,7 @@ import article1be.review.dto.ReviewDTO;
 import article1be.review.repository.ReviewRepository;
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,30 +21,40 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository; // UserRepository 추가
 
     public List<ReviewDTO> getAllReviews() {
         return reviewRepository.findAll().stream()
-                .map(review -> new ReviewDTO(
-                        review.getReviewSeq(),
-                        review.getUserSeq(),
-                        "userNickname",
-                        "location",
-                        review.getReviewWeather() + "°C",
-                        review.getReviewContent(),
-                        review.getReviewBlind() ? "BLIND" : "ACTIVE",
-                        review.getReviewReport()
-                ))
+                .map(review -> {
+                    String userNickname = userRepository.findById(review.getUserSeq())
+                            .map(user -> user.getUserNickname())
+                            .orElse("Unknown User"); // User 닉네임 조회 추가
+                    return new ReviewDTO(
+                            review.getReviewSeq(),
+                            review.getUserSeq(),
+                            userNickname,
+                            review.getReviewLocation(),
+                            review.getReviewWeather(),
+                            review.getReviewContent(),
+                            review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                            review.getReviewReport()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
+        String userNickname = userRepository.findById(userSeq)
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
+
         return reviewRepository.findByUserSeq(userSeq).stream()
                 .map(review -> new ReviewDTO(
                         review.getReviewSeq(),
                         review.getUserSeq(),
-                        "userNickname",
-                        "location",
-                        review.getReviewWeather() + "°C",
+                        userNickname,
+                        review.getReviewLocation(),
+                        review.getReviewWeather(),
                         review.getReviewContent(),
                         review.getReviewBlind() ? "BLIND" : "ACTIVE",
                         review.getReviewReport()
@@ -57,19 +68,24 @@ public class ReviewService {
                 reviewDto.getUserSeq(),
                 Optional.ofNullable(reviewDto.getReviewSeq()).orElse(0L),
                 reviewDto.getReviewContent(),
-                parseWeather(reviewDto.getWeather()),
-                Optional.ofNullable(reviewDto.getLocation()).map(Double::parseDouble).orElse(0.0),
+                reviewDto.getWeather(),
+                reviewDto.getLocation(),
                 "BLIND".equals(reviewDto.getReviewStatus()),
                 false,
                 Optional.ofNullable(reviewDto.getReviewReport()).orElse(0)
         );
         review = reviewRepository.save(review);
+
+        String userNickname = userRepository.findById(review.getUserSeq())
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
+
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                "userNickname",
-                "location",
-                review.getReviewWeather() + "°C",
+                userNickname,
+                review.getReviewLocation(),
+                review.getReviewWeather(),
                 review.getReviewContent(),
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
@@ -83,18 +99,23 @@ public class ReviewService {
 
         review.updateReview(
                 reviewDto.getReviewContent(),
-                parseWeather(reviewDto.getWeather()),
-                Optional.ofNullable(reviewDto.getLocation()).map(Double::parseDouble).orElse(0.0),
+                reviewDto.getWeather(),
+                reviewDto.getLocation(),
                 "BLIND".equals(reviewDto.getReviewStatus()),
                 false
         );
         reviewRepository.save(review);
+
+        String userNickname = userRepository.findById(review.getUserSeq())
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
+
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                "userNickname",
-                "location",
-                review.getReviewWeather() + "°C",
+                userNickname,
+                review.getReviewLocation(),
+                review.getReviewWeather(),
                 review.getReviewContent(),
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
@@ -114,19 +135,20 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
         review.addReport();
         reviewRepository.save(review);
+
+        String userNickname = userRepository.findById(review.getUserSeq())
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
+
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                "userNickname",
-                "location",
-                review.getReviewWeather() + "°C",
+                userNickname,
+                review.getReviewLocation(),
+                review.getReviewWeather(),
                 review.getReviewContent(),
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
         );
-    }
-
-    private Double parseWeather(String weather) {
-        return Double.parseDouble(weather.replace("°C", ""));
     }
 }
