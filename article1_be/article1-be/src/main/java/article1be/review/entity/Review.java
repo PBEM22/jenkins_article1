@@ -72,5 +72,6 @@ public class Review extends BaseTimeEntity {
         if (this.reviewReport >= 10) {
             this.reviewBlind = true;
         }
+
     }
 }
