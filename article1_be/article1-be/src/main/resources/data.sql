@@ -1,37 +1,3 @@
-INSERT INTO USER (user_seq, user_social_site, user_id, user_name, user_nickname, user_phone_num, user_birth_date, user_gender, user_state, reg_date, del_date, user_auth) VALUES
- (1, 'KAKAO', 'user1@naver.com', '김민수', '민수짱', '010-1234-5678', '1990-01-01', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (2, 'NAVER', 'user2@naver.com', '이영희', '영희님', '010-2345-6789', '1992-02-02', 'FEMALE', 'BAN', NOW(), NULL, 'USER'),
- (3, 'GOOGLE', 'user3@google.com', '박지현', '지현이', '010-3456-7890', '1988-03-03', 'FEMALE', 'ACTIVE', NOW(), NULL, 'ADMIN'),
- (4, 'KAKAO', 'user4@kakao.com', '최동욱', '동욱이', '010-4567-8901', '1995-04-04', 'MALE', 'DELETE', NOW(), NOW(), 'USER'),
- (5, 'NAVER', 'user5@naver.com', '정하늘', '하늘이', '010-5678-9012', '1985-05-05', 'FEMALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (6, 'GOOGLE', 'user6@google.com', '오민재', '민재형', '010-6789-0123', '1991-06-06', 'MALE', 'BAN', NOW(), NULL, 'ADMIN'),
- (7, 'KAKAO', 'user7@kakao.com', '임수정', '수정씨', '010-7890-1234', '1993-07-07', 'FEMALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (8, 'NAVER', 'user8@naver.com', '유재석', '재석이', '010-8901-2345', '1987-08-08', 'MALE', 'DELETE', NOW(), NOW(), 'USER'),
- (9, 'GOOGLE', 'user9@google.com', '김태희', '태희언니', '010-9012-3456', '1980-09-09', 'FEMALE', 'ACTIVE', NOW(), NULL, 'ADMIN'),
- (10, 'KAKAO', 'user10@kakao.com', '한지민', '지민이', '010-0123-4567', '1994-10-10', 'FEMALE', 'BAN', NOW(), NULL, 'USER'),
- (11, 'NAVER', 'user11@naver.com', '이상민', '상민이', '010-1234-1111', '1992-11-11', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (12, 'GOOGLE', 'user12@google.com', '김소연', '소연이', '010-2345-2222', '1993-12-12', 'FEMALE', 'BAN', NOW(), NULL, 'USER'),
- (13, 'KAKAO', 'user13@kakao.com', '최재훈', '재훈이', '010-3456-3333', '1989-01-13', 'MALE', 'ACTIVE', NOW(), NULL, 'ADMIN'),
- (14, 'NAVER', 'user14@naver.com', '정유진', '유진이', '010-4567-4444', '1994-02-14', 'FEMALE', 'DELETE', NOW(), NOW(), 'USER'),
- (15, 'GOOGLE', 'user15@google.com', '오세훈', '세훈이', '010-5678-5555', '1991-03-15', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (16, 'KAKAO', 'user16@kakao.com', '임하영', '하영이', '010-6789-6666', '1986-04-16', 'FEMALE', 'BAN', NOW(), NULL, 'ADMIN'),
- (17, 'NAVER', 'user17@naver.com', '유정민', '정민이', '010-7890-7777', '1995-05-17', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (18, 'GOOGLE', 'user18@google.com', '김다혜', '다혜언니', '010-8901-8888', '1990-06-18', 'FEMALE', 'DELETE', NOW(), NOW(), 'USER'),
- (19, 'KAKAO', 'user19@kakao.com', '박신혜', '신혜씨', '010-9012-9999', '1988-07-19', 'FEMALE', 'ACTIVE', NOW(), NULL, 'ADMIN'),
- (20, 'NAVER', 'user20@naver.com', '최민수', '민수형', '010-0123-0000', '1993-08-20', 'MALE', 'BAN', NOW(), NULL, 'USER'),
- (21, 'GOOGLE', 'user21@google.com', '이현우', '현우야', '010-1234-1112', '1987-09-21', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (22, 'KAKAO', 'user22@kakao.com', '김지수', '지수짱', '010-2345-2223', '1992-10-22', 'FEMALE', 'DELETE', NOW(), NOW(), 'USER'),
- (23, 'NAVER', 'user23@naver.com', '박정민', '정민이', '010-3456-3334', '1990-11-23', 'MALE', 'ACTIVE', NOW(), NULL, 'ADMIN'),
- (24, 'GOOGLE', 'user24@google.com', '오진영', '진영이', '010-4567-4445', '1991-12-24', 'FEMALE', 'BAN', NOW(), NULL, 'USER'),
- (25, 'KAKAO', 'user25@kakao.com', '임지훈', '지훈이', '010-5678-5556', '1985-01-25', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),
- (26, 'NAVER', 'user26@naver.com', '유소영', '소영이', '010-6789-6667', '1989-02-26', 'FEMALE', 'DELETE', NOW(), NOW(), 'USER'),
- (27, 'GOOGLE', 'user27@google.com', '김영철', '영철이', '010-7890-7778', '1988-03-27', 'MALE', 'ACTIVE', NOW(), NULL, 'ADMIN'),
- (28, 'KAKAO', 'user28@kakao.com', '최예린', '예린이', '010-8901-8889', '1994-04-28', 'FEMALE', 'BAN', NOW(), NULL, 'USER'),
- (29, 'NAVER', 'user29@kakao.com', '박상혁', '상혁이', '010-9012-9990', '1991-05-29', 'MALE', 'ACTIVE', NOW(), NULL, 'USER'),                                                                                                                                                                             (30, 'GOOGLE', 'user30@google.com', '이서연', '서연이', '010-0123-0001', '1993-06-30', 'FEMALE', 'DELETE', NOW(), NOW(), 'USER');
-
-
-
-
 INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_min, outfit_category, outfit_gender, outfit_level, outfit_img) VALUES
 -- 상의
 ('맨투맨', NULL, 20, -100, 'TOP', 'N', NULL, 'example.com/image1.jpg'),
@@ -105,7 +71,8 @@ INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_mi
 INSERT INTO style (style_name) VALUES
                                    ('casual'),   -- 1
                                    ('formal'),   -- 2
-                                   ('sporty');   -- 3
+                                   ('sporty'),   -- 3
+                                   ('normal');   -- 4
 
 INSERT INTO outfit_style (outfit_seq, style_seq) VALUES
 -- 캐주얼 스타일
@@ -216,3 +183,31 @@ INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
 (35, 5),  -- 로퍼
 (37, 5),  -- 플랫슈즈
 (38, 5);  -- 하이힐
+
+INSERT INTO `condition` (condition_name) VALUES
+                                   ('HOT'),
+                                   ('COLD'),
+                                   ('NORMAL');
+
+-- 사용자 더미 데이터 삽입
+INSERT INTO USER (user_social_site, user_id, user_name, user_nickname, user_phone_num, user_birth_date, user_gender, user_state, reg_date, style_seq, condition_seq, user_auth) VALUES
+('KAKAO', 'user1@kakao.com', '사용자 1', '닉네임 1', '010-1111-1111', '1990-01-01', 'MALE', 'ACTIVE', NOW(), 1, 1, 'USER'),
+('NAVER', 'user2@naver.com', '사용자 2', '닉네임 2', '010-2222-2222', '1992-02-02', 'FEMALE', 'ACTIVE', NOW(), 2, 2, 'USER'),
+('GOOGLE', 'user3@gmail.com', '사용자 3', '닉네임 3', '010-3333-3333', '1989-03-03', 'MALE', 'ACTIVE', NOW(), 1, 3, 'USER'),
+('KAKAO', 'user4@kakao.com', '사용자 4', '닉네임 4', '010-4444-4444', '1995-04-04', 'FEMALE', 'ACTIVE', NOW(), 2, 1, 'USER'),
+('NAVER', 'user5@naver.com', '사용자 5', '닉네임 5', '010-5555-5555', '1988-05-05', 'MALE', 'ACTIVE', NOW(), 1, 2, 'USER'),
+('GOOGLE', 'user6@gmail.com', '사용자 6', '닉네임 6', '010-6666-6666', '1993-06-06', 'FEMALE', 'ACTIVE', NOW(), 2, 3, 'USER'),
+('KAKAO', 'user7@kakao.com', '사용자 7', '닉네임 7', '010-7777-7777', '1991-07-07', 'MALE', 'ACTIVE', NOW(), 1, 1, 'USER'),
+('NAVER', 'user8@naver.com', '사용자 8', '닉네임 8', '010-8888-8888', '1985-08-08', 'FEMALE', 'ACTIVE', NOW(), 2, 2, 'USER'),
+('GOOGLE', 'user9@gmail.com', '사용자 9', '닉네임 9', '010-9999-9999', '1994-09-09', 'MALE', 'ACTIVE', NOW(), 1, 3, 'USER'),
+('KAKAO', 'user10@kakao.com', '사용자 10', '닉네임 10', '010-0000-0000', '1990-10-10', 'FEMALE', 'ACTIVE', NOW(), 2, 1, 'USER'),
+('NAVER', 'user11@naver.com', '사용자 11', '닉네임 11', '010-1212-1212', '1986-11-11', 'MALE', 'ACTIVE', NOW(), 1, 2, 'USER'),
+('GOOGLE', 'user12@gmail.com', '사용자 12', '닉네임 12', '010-1313-1313', '1995-12-12', 'FEMALE', 'ACTIVE', NOW(), 2, 3, 'USER'),
+('KAKAO', 'user13@kakao.com', '사용자 13', '닉네임 13', '010-1414-1414', '1992-01-13', 'MALE', 'ACTIVE', NOW(), 1, 1, 'USER'),
+('NAVER', 'user14@naver.com', '사용자 14', '닉네임 14', '010-1515-1515', '1988-02-14', 'FEMALE', 'ACTIVE', NOW(), 2, 2, 'USER'),
+('GOOGLE', 'user15@gmail.com', '사용자 15', '닉네임 15', '010-1616-1616', '1993-03-15', 'MALE', 'ACTIVE', NOW(), 1, 3, 'USER'),
+('KAKAO', 'user16@kakao.com', '사용자 16', '닉네임 16', '010-1717-1717', '1991-04-16', 'FEMALE', 'ACTIVE', NOW(), 2, 1, 'USER'),
+('NAVER', 'user17@naver.com', '사용자 17', '닉네임 17', '010-1818-1818', '1994-05-17', 'MALE', 'ACTIVE', NOW(), 1, 2, 'USER'),
+('GOOGLE', 'user18@gmail.com', '사용자 18', '닉네임 18', '010-1919-1919', '1992-06-18', 'FEMALE', 'ACTIVE', NOW(), 2, 3, 'USER'),
+('KAKAO', 'user19@kakao.com', '사용자 19', '닉네임 19', '010-2020-2020', '1989-07-19', 'MALE', 'ACTIVE', NOW(), 1, 1, 'USER'),
+('NAVER', 'user20@naver.com', '사용자 20', '닉네임 20', '010-2121-2121', '1995-08-20', 'FEMALE', 'ACTIVE', NOW(), 2, 2, 'USER');

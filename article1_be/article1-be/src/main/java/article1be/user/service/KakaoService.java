@@ -1,9 +1,9 @@
 package article1be.user.service;
 
-import article1be.common.aggregate.entity.*;
 import article1be.user.dto.KakaoAccount;
 import article1be.user.dto.KakaoTokenDTO;
 import article1be.user.dto.KakaoUserDTO;
+import article1be.user.entity.*;
 import article1be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
