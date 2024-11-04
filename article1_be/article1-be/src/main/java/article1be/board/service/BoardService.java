@@ -67,7 +67,7 @@ public class BoardService {
             Board board = optionalBoard.get();
 
             // 게시물 번호에 해당하는 사진들을 호출
-            List<PictureDTO> pictureDTOList = pictureRepository.findByBoard_BoardSeq(boardSeq)
+            List<PictureDTO> pictureDTOList = pictureRepository.findByPictureBoardSeq(boardSeq)
                     .stream()
                     .map(picture -> PictureDTO.builder()
                             .pictureSeq(picture.getPictureSeq())
