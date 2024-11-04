@@ -5,8 +5,12 @@ spring:
     username: ${db.username}
     password: ${db.password}
 
+  profiles:
+    include: aws
+
   jpa:
     hibernate:
+      dialect: org.hibernate.dialect.MariaDBDialect
       ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
@@ -26,10 +30,9 @@ spring:
             scope:
               - email
               - profile
-          # 네이버는 기본적으로 provider가 아니다. 그래서 추가적인 설정 파일이 있다. 아래 코드 참고.
           naver:
             client-id: ${naver.api.client_id}
-            client-secret: ${naver.api.client_secret}
+            client-secret: ${naver.api.client.secret}
             scope:
               - name
               - gender
@@ -38,7 +41,7 @@ spring:
               - mobile
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: ${naver.api.redirect_uri}
+            redirect-uri: ${naver.api.redirect.uri}
 
         provider:
           naver:
@@ -54,8 +57,4 @@ logging:
 springdoc:
   swagger-ui:
     path: /
-    groups-order: DESC # path, query, body, response 순으로 출력
-
-
-
-
+    groups-order: DESC  # path, query, body, response 순으로 출력
