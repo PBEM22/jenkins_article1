@@ -5,7 +5,6 @@ import article1be.admin.repository.AdminRepository;
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
 import article1be.user.entity.User;
-import article1be.user.entity.UserState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +18,13 @@ public class AdminService {
     private final AdminRepository adminRepository;
 
     // 전체 회원 정보 조회
-    public List<AdminDTO.MemberInfo> getAllMembers() {
+    public List<AdminDTO.UserInfo> getAllMembers() {
         List<User> users = adminRepository.findAll();
         if (users.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER); // 사용자가 없을 경우 예외 발생
+            throw new CustomException(ErrorCode.NOT_FOUND_USER);
         }
         return users.stream()
-                .map(user -> new AdminDTO.MemberInfo(
+                .map(user -> new AdminDTO.UserInfo(
                         user.getUserSeq(),
                         user.getUserId(),
                         user.getUserName(),
@@ -38,10 +37,10 @@ public class AdminService {
     }
 
     // 회원 정보 상세 조회
-    public AdminDTO.MemberInfo getMemberDetail(Long userSeq) {
+    public AdminDTO.UserInfo getMemberDetail(Long userSeq) {
         User user = adminRepository.findById(userSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER)); // 사용자를 찾을 수 없을 경우 예외 발생
-        return new AdminDTO.MemberInfo(
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        return new AdminDTO.UserInfo(
                 user.getUserSeq(),
                 user.getUserId(),
                 user.getUserName(),
@@ -54,11 +53,11 @@ public class AdminService {
     }
 
     // 회원 상태 변경
-    public void updateMemberStatus(AdminDTO.MemberStatusUpdateRequest statusUpdate) {
+    public void updateUserStatus(AdminDTO.UserStatusUpdateRequest statusUpdate) {
         User user = adminRepository.findById(statusUpdate.getUserSeq())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        user.setUserState(statusUpdate.getUserState()); // 전달받은 상태로 업데이트
+        user.setUserState(statusUpdate.getUserState());
         adminRepository.save(user);
     }
 }
