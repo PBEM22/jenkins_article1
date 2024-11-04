@@ -41,7 +41,7 @@ public class BoardService {
     // 게시글 목록 조회
     public List<BoardDTO> getBoardList() {
 
-        List<BoardDTO> boardDTOList = boardRepository.findByIsBlindFalse()
+        List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindFalse()
                 .stream()
                 .map(board -> BoardDTO.builder()
                         .boardSeq(board.getBoardSeq())
