@@ -39,9 +39,6 @@ out/
 ### .env 설정값 무시 ###
 *.env
 
-### AWS ###
-application-aws.yml
-
 # Logs
 logs
 *.log
