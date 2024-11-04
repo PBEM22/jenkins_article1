@@ -26,33 +26,33 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAll();
 
         return reviews.stream().map(review -> new ReviewDTO(
-                review.getReviewSeq(),
-                review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
-                review.getReviewReport()
-        )).collect(Collectors.toList());
+                        review.getReviewSeq(),
+                        review.getUserSeq(),
+                        "userNickname", // 닉네임은 User 테이블과 조인하여 가져와야 함
+                        "location",     // 위치 정보 (임의 설정)
+                        review.getReviewWeather() + "°C", // 날씨 정보 포맷팅
+                        review.getReviewContent(),
+                        review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                        review.getReviewReport()
+                ))
+                .collect(Collectors.toList());
     }
 
-    // 자신의 리뷰 조회
+    // 특정 사용자의 리뷰 조회
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
         List<Review> reviews = reviewRepository.findByUserSeq(userSeq);
 
         return reviews.stream().map(review -> new ReviewDTO(
-                review.getReviewSeq(),
-                review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
-                review.getReviewReport()
-        )).collect(Collectors.toList());
+                        review.getReviewSeq(),
+                        review.getUserSeq(),
+                        "userNickname", // 닉네임은 User 테이블과 조인하여 가져와야 함
+                        "location",     // 위치 정보 (임의 설정)
+                        review.getReviewWeather() + "°C",
+                        review.getReviewContent(),
+                        review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                        review.getReviewReport()
+                ))
+                .collect(Collectors.toList());
     }
 
     // 리뷰 생성
@@ -60,12 +60,12 @@ public class ReviewService {
     public ReviewDTO createReview(ReviewDTO reviewDto) {
         Review review = new Review(
                 reviewDto.getUserSeq(),
-                reviewDto.getSelectSeq(),
+                0L, // selectSeq - 필요시 적절한 값을 설정하거나 DTO에서 받도록 수정 필요
                 reviewDto.getReviewContent(),
-                reviewDto.getReviewWeather(),
-                reviewDto.getReviewLocation(),
-                reviewDto.getReviewBlind(),
-                reviewDto.getReviewLikeYn(),
+                Double.parseDouble(reviewDto.getWeather().replace("°C", "")), // 문자열에서 온도 값 추출
+                0.0, // location - 적절한 위치 값을 설정 필요
+                reviewDto.getReviewStatus().equals("BLIND"),
+                false,
                 Optional.ofNullable(reviewDto.getReviewReport()).orElse(0)
         );
 
@@ -74,12 +74,11 @@ public class ReviewService {
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                review.getSelectSeq(),
+                "userNickname",
+                "location",
+                review.getReviewWeather() + "°C",
                 review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
         );
     }
@@ -92,10 +91,10 @@ public class ReviewService {
 
         review.updateReview(
                 reviewDto.getReviewContent(),
-                reviewDto.getReviewWeather(),
-                reviewDto.getReviewLocation(),
-                reviewDto.getReviewBlind(),
-                reviewDto.getReviewLikeYn()
+                Double.parseDouble(reviewDto.getWeather().replace("°C", "")),
+                0.0, // location - 적절한 위치 값을 설정 필요
+                reviewDto.getReviewStatus().equals("BLIND"),
+                false
         );
 
         reviewRepository.save(review);
@@ -103,12 +102,11 @@ public class ReviewService {
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                review.getSelectSeq(),
+                "userNickname",
+                "location",
+                review.getReviewWeather() + "°C",
                 review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
         );
     }
@@ -135,12 +133,11 @@ public class ReviewService {
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                review.getSelectSeq(),
+                "userNickname",
+                "location",
+                review.getReviewWeather() + "°C",
                 review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
         );
     }
