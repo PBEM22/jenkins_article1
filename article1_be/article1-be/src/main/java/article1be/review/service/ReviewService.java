@@ -38,7 +38,7 @@ public class ReviewService {
         )).collect(Collectors.toList());
     }
 
-    // 자신의 리뷰 조회
+    // 자신의 리뷰 조회 -> 임의의 값으로 조회
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
         List<Review> reviews = reviewRepository.findByUserSeq(userSeq);
 

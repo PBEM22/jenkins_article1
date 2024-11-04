@@ -20,7 +20,8 @@ public class ReviewController {
         return reviewService.getAllReviews();
     }
 
-    // 자신의 리뷰 조회 
+    // 특정 사용자의 리뷰 조회
+    // 시큐리티 적용 전으로 임의의 userSeq를 사용
     @GetMapping("/user/{userSeq}")
     public List<ReviewDTO> getReviewsByUser(@PathVariable Long userSeq) {
         return reviewService.getReviewsByUser(userSeq);
