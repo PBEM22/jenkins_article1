@@ -8,36 +8,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/review/{reviewseq}")    // 리뷰 조회
-    public ReviewDTO getReviewById(@PathVariable Long id) {
-        return reviewService.getReviewById(id);
+    // 모든 리뷰 조회
+    @GetMapping
+    public List<ReviewDTO> getAllReviews() {
+        return reviewService.getAllReviews();
     }
 
-    @GetMapping("/review/{userSeq}")  // 자신의 모든 리뷰 조회
+    // 자신의 리뷰 조회 
+    @GetMapping("/user/{userSeq}")
     public List<ReviewDTO> getReviewsByUser(@PathVariable Long userSeq) {
         return reviewService.getReviewsByUser(userSeq);
     }
 
-    @PostMapping()    // 리뷰 작성
+    // 리뷰 등록
+    @PostMapping("/user/{userSeq}")
     public ReviewDTO createReview(@PathVariable Long userSeq, @RequestBody ReviewDTO reviewDto) {
-        reviewDto.setSelectSeq(userSeq);
+        reviewDto.setUserSeq(userSeq);
         return reviewService.createReview(reviewDto);
     }
 
-    @PutMapping("/{reviewSeq}")    // 리뷰 수정
+    // 리뷰 수정
+    @PutMapping("/{reviewSeq}")
     public ReviewDTO updateReview(@PathVariable Long reviewSeq, @RequestBody ReviewDTO reviewDto) {
         return reviewService.updateReview(reviewSeq, reviewDto);
     }
 
-    @DeleteMapping("/{reviewSeq}")  // 리뷰 삭제
-    public void deleteReview(@RequestBody ReviewDTO reviewDto) {
-        reviewService.deleteReview(reviewDto.getReviewSeq());
+    // 리뷰 삭제
+    @DeleteMapping("/{reviewSeq}")
+    public void deleteReview(@PathVariable Long reviewSeq) {
+        reviewService.deleteReview(reviewSeq);
     }
-
 }
