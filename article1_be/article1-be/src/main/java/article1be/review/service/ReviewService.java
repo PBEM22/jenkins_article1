@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    
+
     public ReviewDTO getReviewById(Long reviewSeq) {
         Review review = reviewRepository.findById(reviewSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
