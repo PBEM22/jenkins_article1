@@ -31,7 +31,7 @@ public class OutfitService {
     private final OutfitSituationRepository outfitSituationRepository;
     private final OutfitStyleRepository outfitStyleRepository;
 
-    public  Map<OutfitCategory, List<OutfitResponseDTO>> getRecommendedOutfits(OutfitRequestDTO requestDTO) throws UnsupportedEncodingException, UnsupportedEncodingException {
+    public  Map<OutfitCategory, List<OutfitResponseDTO>> getRecommendedOutfits(OutfitRequestDTO requestDTO) throws UnsupportedEncodingException {
 
         // 1. 날씨 데이터 가져오기 - 날짜,시간이 적용될 수 있도록 수정되어야 할듯.
         ResponseTodayDTO weatherData = weatherService.getTodayWeatherData(String.valueOf(requestDTO.getLatitude()), String.valueOf(requestDTO.getLongitude()));
