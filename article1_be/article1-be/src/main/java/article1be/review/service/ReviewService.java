@@ -1,6 +1,6 @@
 package article1be.review.service;
 
-import article1be.review.aggregate.entity.Review;
+import article1be.review.entity.Review;
 import article1be.review.dto.ReviewDTO;
 import article1be.review.repository.ReviewRepository;
 import article1be.common.exception.CustomException;

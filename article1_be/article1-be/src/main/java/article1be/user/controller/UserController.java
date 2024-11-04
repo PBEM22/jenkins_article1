@@ -61,14 +61,14 @@ public class UserController {
     }
 
     /* 회원 개인정보 조회 */
-    @GetMapping
+    @GetMapping("/detail")
     public ResponseEntity<UserResponseDTO> getUserDetails() {
 
         // 시큐리티 완성 후 적용
         //Long userSeq = SecurityUtil.getCurrentUserSeq();
         Long userSeq = 2L;  // 시큐리티 완성 전 테스트용 하드코딩
 
-        log.info("로그인 되어있는 userSeq: {}", userSeq);
+        log.info("로그인 되어 있는 userSeq: {}", userSeq);
         UserResponseDTO userDetail = userService.getUserDetail(userSeq);
         System.out.println(userDetail.toString());
         return ResponseEntity.ok(userDetail);
