@@ -1,4 +1,4 @@
-package article1be.review.aggregate.entity;
+package article1be.review.entity;
 
 import article1be.common.aggregate.entity.BaseTimeEntity;
 import jakarta.persistence.*;
