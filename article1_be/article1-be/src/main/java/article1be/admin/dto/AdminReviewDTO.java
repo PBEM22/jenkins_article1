@@ -25,7 +25,6 @@ public class AdminReviewDTO {
         private String reviewContent;   // 리뷰 내용
         private String reviewStatus;    // 리뷰 상태 (ACTIVE 또는 BLIND)
         private Integer reviewReport;   // 신고 개수
-        private LocalDateTime regDate;  // 작성일
     }
 
     // 리뷰 상태 업데이트 요청 DTO

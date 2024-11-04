@@ -29,8 +29,7 @@ public class AdminReviewService {
                         review.getReviewWeather() + "°C", // 날씨 정보 포맷팅
                         review.getReviewContent(),
                         review.getReviewBlind() ? "BLIND" : "ACTIVE",
-                        review.getReviewReport(),
-                        review.getRegDate()
+                        review.getReviewReport()
                 ))
                 .collect(Collectors.toList());
     }
