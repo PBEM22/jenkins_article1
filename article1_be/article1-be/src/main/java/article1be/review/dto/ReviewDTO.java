@@ -6,7 +6,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ReviewDTO {
 
     private Long reviewSeq;         // 리뷰 번호
