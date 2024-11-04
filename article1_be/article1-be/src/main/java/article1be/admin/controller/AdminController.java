@@ -32,22 +32,4 @@ public class AdminController {
         adminService.updateMemberStatus(statusUpdate);
     }
 
-
-    // 전체 리뷰 목록 조회
-    @GetMapping("/reviews")
-    public List<AdminDTO.ReviewInfo> getAllReviews() {
-        return adminService.getAllReviews();
-    }
-
-    // 특정 리뷰 정보 조회
-    @PostMapping("/reviewsl")
-    public AdminDTO.ReviewInfo getReviewDetail(@RequestBody AdminDTO.ReviewBlindStatusUpdateRequest request) {
-        return adminService.getReviewDetail(request.getReviewSeq());
-    }
-
-    // 리뷰 블라인드 상태 업데이트
-    @PutMapping("/reviewsd")
-    public void updateReviewBlindStatus(@RequestBody AdminDTO.ReviewBlindStatusUpdateRequest statusUpdate) {
-        adminService.updateReviewBlindStatus(statusUpdate);
-    }
 }

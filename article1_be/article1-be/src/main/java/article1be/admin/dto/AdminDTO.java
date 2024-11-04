@@ -1,46 +1,33 @@
 package article1be.admin.dto;
 
+import article1be.user.entity.UserGender;
+import article1be.user.entity.UserState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
 
+
 public class AdminDTO {
 
     @Data
     @AllArgsConstructor
-    public static class MemberInfo {
+    public static class UserInfo {
         private Long userSeq;
         private String userId;
         private String userName;
         private String userNickname;
         private String userPhoneNum;
         private LocalDate userBirthDate;
-        private String userGender;
-        private String userState;
+        private UserGender userGender;
+        private UserState userState;
     }
 
     @Data
     @AllArgsConstructor
-    public static class MemberStatusUpdateRequest {
+    public static class UserStatusUpdateRequest {
         private Long userSeq;
-        private String userState;
+        private UserState userState;
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class ReviewInfo {
-        private Long reviewSeq;
-        private Long userSeq;
-        private String reviewContent;
-        private Boolean reviewBlind;
-        private LocalDate regDate;
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class ReviewBlindStatusUpdateRequest {
-        private Long reviewSeq;
-        private Boolean reviewBlind; // 블라인드 여부
-    }
 }
