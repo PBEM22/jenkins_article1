@@ -17,7 +17,6 @@ public class Reply {
     Long boardSeq;
     Long replyUserSeq;
     String replyContent;
-    @Column(updatable = false)
     LocalDateTime regDate;
     LocalDateTime delDate;
     Boolean replyIsBlind;
@@ -32,6 +31,7 @@ public class Reply {
         reply.boardSeq = replyDTO.getBoardSeq();
         reply.replyUserSeq = replyDTO.getReplyUserSeq();
         reply.replyContent = replyDTO.getReplyContent();
+        reply.regDate = replyDTO.getRegDate();
         reply.delDate = replyDTO.getDelDate();
         reply.replyIsBlind = replyDTO.isReplyIsBlind();
 
