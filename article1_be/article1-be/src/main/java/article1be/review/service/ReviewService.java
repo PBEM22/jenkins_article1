@@ -38,7 +38,7 @@ public class ReviewService {
         )).collect(Collectors.toList());
     }
 
-    // 자신의 리뷰 조회 -> 임의의 값으로 조회
+    // 자신의 리뷰 조회
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
         List<Review> reviews = reviewRepository.findByUserSeq(userSeq);
 
@@ -120,5 +120,28 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
 
         reviewRepository.delete(review);
+    }
+
+    // 리뷰 신고 추가
+    @Transactional
+    public ReviewDTO addReportToReview(Long reviewSeq) {
+        Review review = reviewRepository.findById(reviewSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
+
+        review.addReport();  // 신고 횟수 증가 및 블라인드 처리
+
+        reviewRepository.save(review);
+
+        return new ReviewDTO(
+                review.getReviewSeq(),
+                review.getUserSeq(),
+                review.getSelectSeq(),
+                review.getReviewContent(),
+                review.getReviewWeather(),
+                review.getReviewLocation(),
+                review.getReviewBlind(),
+                review.getReviewLikeYn(),
+                review.getReviewReport()
+        );
     }
 }
