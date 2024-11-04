@@ -52,12 +52,15 @@ public class AdminService {
         );
     }
 
-    // 회원 상태 변경
-    public void updateUserStatus(AdminDTO.UserStatusUpdateRequest statusUpdate) {
-        User user = adminRepository.findById(statusUpdate.getUserSeq())
+    // 회원 상태 및 닉네임 변경
+    public void updateUser(AdminDTO.UserUpdateRequest updateRequest) {
+        User user = adminRepository.findById(updateRequest.getUserSeq())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        user.setUserState(statusUpdate.getUserState());
+        // 닉네임과 상태는 항상 필수 값으로 설정
+        user.setUserNickname(updateRequest.getUserNickname());
+        user.setUserState(updateRequest.getUserState());
+
         adminRepository.save(user);
     }
 }
