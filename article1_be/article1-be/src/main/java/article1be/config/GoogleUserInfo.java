@@ -26,7 +26,17 @@ public class GoogleUserInfo implements OAuth2UserInfo {
     }
 
     @Override
+    public String getEmail() {
+        return null;
+    }
+
+    @Override
     public String getMobile() {
+        return null;
+    }
+
+    @Override
+    public String getPhoneNumber() {
         return null;
     }
 

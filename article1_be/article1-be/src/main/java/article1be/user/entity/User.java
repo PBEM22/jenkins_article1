@@ -43,7 +43,7 @@ public class User {
     @Column(name = "user_nickname")
     private String userNickname;                // 닉네임
 
-    @Column(name = "user_phone_num", unique = true)
+    @Column(name = "user_phone_num")
     private String userPhoneNum;                // 휴대폰 번호
 
     @Column(name = "user_birth_date")

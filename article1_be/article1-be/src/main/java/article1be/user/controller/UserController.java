@@ -61,7 +61,7 @@ public class UserController {
     }
 
     /* 회원 개인정보 조회 */
-    @GetMapping
+    @GetMapping("/detail")
     public ResponseEntity<UserResponseDTO> getUserDetails() {
 
         // 시큐리티 완성 후 적용
