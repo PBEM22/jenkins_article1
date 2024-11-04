@@ -32,4 +32,9 @@ public class Picture {
         this.delDate = null;
         this.pictureIsDelete = false;
     }
+
+    public void setBlind() {
+        this.delDate = LocalDateTime.now();
+        this.pictureIsDelete = true;
+    }
 }

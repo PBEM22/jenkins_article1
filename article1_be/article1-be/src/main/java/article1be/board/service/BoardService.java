@@ -10,6 +10,7 @@ import article1be.board.entity.Picture;
 import article1be.board.repository.BoardRepository;
 import article1be.board.repository.PictureRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -100,6 +101,7 @@ public class BoardService {
     }
 
     // 게시글 생성
+    @Transactional
     public Board createBoard(RequestBoard newBoard) throws IOException {
         Board board = new Board().create(
                 123L,           // 테스트 데이터(로그인 구현완료되면 수정할 예정)
@@ -111,7 +113,7 @@ public class BoardService {
         Board result = boardRepository.save(board);
 
 
-        for(MultipartFile image : newBoard.getImageList()){
+        for (MultipartFile image : newBoard.getImageList()) {
             // 2. Amazon S3 버킷에 이미지 저장
             AmazonS3Service.MetaData metaData = amazonS3Service.upload(image);
 
@@ -133,11 +135,23 @@ public class BoardService {
     }
 
     // 게시글 삭제
+    @Transactional
     public void deleteBoard(Long boardSeq) {
+        // 1. DB(BOARD)에 해당 게시글 삭제
         boardRepository.deleteById(boardSeq);
+
+        // 2. DB(PICTURE)에 해당 게시글 번호로 된 모든 데이터 블라인드 처리
+        List<Picture> pictureList = pictureRepository.findByPictureBoardSeq(boardSeq);
+
+        // 각 Picture 객체의 블라인드 처리
+        for (Picture picture : pictureList) {
+            picture.setBlind();
+            pictureRepository.save(picture); // 변경된 Picture 객체를 저장
+        }
     }
 
     // 게시글 수정
+    @Transactional
     public Board upDateBoard(Long boardSeq, RequestBoard modData) throws IOException {
         Optional<Board> optionalBoard = boardRepository.findById(boardSeq);
 
