@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "USER")
-@Getter
+@Data
 @EntityListeners(AuditingEntityListener.class)
 @SQLDelete(sql = "UPDATE user SET user_state = 'DELETE', del_date = LOCALTIME WHERE user_seq = ?")
 public class User {
@@ -55,7 +55,7 @@ public class User {
 
     @Column(name = "user_state", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserState userState;                // 상태 Enum (ACTIVE, BAN, DELETE)
+    private UserState userState = UserState.ACTIVE;                // 상태 Enum (ACTIVE, BAN, DELETE)
 
     @CreatedDate
     @Column(name = "reg_date", nullable = false)
@@ -66,7 +66,7 @@ public class User {
 
     @Column(name = "user_auth")
     @Enumerated(EnumType.STRING)
-    private UserAuth userAuth;                  // 권한 Enum (USER, ADMIN)
+    private UserAuth userAuth = UserAuth.USER;                  // 권한 Enum (USER, ADMIN)
 
 
     @Builder
@@ -93,4 +93,5 @@ public class User {
     public void updateUser(String newNickname) {
         this.userNickname = newNickname;
     }
+
 }
