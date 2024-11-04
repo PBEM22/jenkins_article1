@@ -1,6 +1,5 @@
 package article1be.review.service;
 
-
 import article1be.review.aggregate.entity.Review;
 import article1be.review.dto.ReviewDTO;
 import article1be.review.repository.ReviewRepository;
@@ -22,11 +21,11 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    public ReviewDTO getReviewById(Long reviewSeq) {
-        Review review = reviewRepository.findById(reviewSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+    // 모든 리뷰 조회
+    public List<ReviewDTO> getAllReviews() {
+        List<Review> reviews = reviewRepository.findAll();
 
-        return new ReviewDTO(
+        return reviews.stream().map(review -> new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
                 review.getSelectSeq(),
@@ -36,9 +35,10 @@ public class ReviewService {
                 review.getReviewBlind(),
                 review.getReviewLikeYn(),
                 review.getReviewReport()
-        );
+        )).collect(Collectors.toList());
     }
 
+    // 자신의 리뷰 조회
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
         List<Review> reviews = reviewRepository.findByUserSeq(userSeq);
 
@@ -55,6 +55,7 @@ public class ReviewService {
         )).collect(Collectors.toList());
     }
 
+    // 리뷰 생성
     @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDto) {
         Review review = new Review(
@@ -83,13 +84,11 @@ public class ReviewService {
         );
     }
 
-
-
-
+    // 리뷰 수정
     @Transactional
     public ReviewDTO updateReview(Long reviewSeq, ReviewDTO reviewDto) {
         Review review = reviewRepository.findById(reviewSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
 
         review.updateReview(
                 reviewDto.getReviewContent(),
@@ -114,10 +113,11 @@ public class ReviewService {
         );
     }
 
+    // 리뷰 삭제
     @Transactional
     public void deleteReview(Long reviewSeq) {
         Review review = reviewRepository.findById(reviewSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
 
         reviewRepository.delete(review);
     }
