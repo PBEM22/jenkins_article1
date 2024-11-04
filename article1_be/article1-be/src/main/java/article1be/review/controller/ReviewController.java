@@ -21,7 +21,6 @@ public class ReviewController {
     }
 
     // 특정 사용자의 리뷰 조회
-    // 시큐리티 적용 전으로 임의의 userSeq를 사용
     @GetMapping("/user/{userSeq}")
     public List<ReviewDTO> getReviewsByUser(@PathVariable Long userSeq) {
         return reviewService.getReviewsByUser(userSeq);
@@ -44,5 +43,11 @@ public class ReviewController {
     @DeleteMapping("/{reviewSeq}")
     public void deleteReview(@PathVariable Long reviewSeq) {
         reviewService.deleteReview(reviewSeq);
+    }
+
+    // 리뷰 신고
+    @PostMapping("/{reviewSeq}/report")
+    public ReviewDTO addReportToReview(@PathVariable Long reviewSeq) {
+        return reviewService.addReportToReview(reviewSeq);
     }
 }
