@@ -21,35 +21,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-
-    @Transactional
-    public ReviewDTO createReview(ReviewDTO reviewDto) {
-        Review review = new Review(
-                reviewDto.getUserSeq(),
-                reviewDto.getSelectSeq(),
-                reviewDto.getReviewContent(),
-                reviewDto.getReviewWeather(),
-                reviewDto.getReviewLocation(),
-                reviewDto.getReviewBlind(),
-                reviewDto.getReviewLikeYn(),
-                Optional.ofNullable(reviewDto.getReviewReport()).orElse(0)
-        );
-
-        review = reviewRepository.save(review);
-
-        return new ReviewDTO(
-                review.getReviewSeq(),
-                review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
-                review.getReviewReport()
-        );
-    }
-
+    
     public ReviewDTO getReviewById(Long reviewSeq) {
         Review review = reviewRepository.findById(reviewSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
@@ -82,6 +54,36 @@ public class ReviewService {
                 review.getReviewReport()
         )).collect(Collectors.toList());
     }
+
+    @Transactional
+    public ReviewDTO createReview(ReviewDTO reviewDto) {
+        Review review = new Review(
+                reviewDto.getUserSeq(),
+                reviewDto.getSelectSeq(),
+                reviewDto.getReviewContent(),
+                reviewDto.getReviewWeather(),
+                reviewDto.getReviewLocation(),
+                reviewDto.getReviewBlind(),
+                reviewDto.getReviewLikeYn(),
+                Optional.ofNullable(reviewDto.getReviewReport()).orElse(0)
+        );
+
+        review = reviewRepository.save(review);
+
+        return new ReviewDTO(
+                review.getReviewSeq(),
+                review.getUserSeq(),
+                review.getSelectSeq(),
+                review.getReviewContent(),
+                review.getReviewWeather(),
+                review.getReviewLocation(),
+                review.getReviewBlind(),
+                review.getReviewLikeYn(),
+                review.getReviewReport()
+        );
+    }
+
+
 
 
     @Transactional
