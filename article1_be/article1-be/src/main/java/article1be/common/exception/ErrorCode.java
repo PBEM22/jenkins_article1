@@ -40,6 +40,8 @@ public enum ErrorCode {
     // 대기
     NOT_FOUND_AIR_DATA(HttpStatus.NOT_FOUND, "해당하는 대기 데이터를 찾을 수 없습니다."),
 
+    // 리뷰
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "해당하는 리뷰를 찾을 수 없습니다."),
 
     /**
      * == 409 CONFLICT ==
