@@ -25,17 +25,16 @@ public class AdminController {
     }
 
     // 회원 정보 상세 조회
-    @PostMapping("/user/{userSeq}")
+    @GetMapping("/user/{userSeq}")
     @Operation(summary = "관리자의 상세 회원 조회" , description = "관리자의 상세 회원 조회")
-    public AdminDTO.UserInfo getUserDetail(@RequestBody AdminDTO.UserStatusUpdateRequest request) {
-        return adminService.getMemberDetail(request.getUserSeq());
+    public AdminDTO.UserInfo getUserDetail(@PathVariable Long userSeq) {
+        return adminService.getMemberDetail(userSeq);
     }
 
     // 회원 상태 변경
     @PutMapping("/user/status")
-    @Operation(summary = "관리자의 회원 상태 변경" , description = "ACTIVE, BAN , DELETE")
+    @Operation(summary = "관리자의 회원 상태 변경", description = "ACTIVE, BAN, DELETE 상태로 변경")
     public void updateMemberStatus(@RequestBody AdminDTO.UserStatusUpdateRequest statusUpdate) {
         adminService.updateUserStatus(statusUpdate);
     }
-
 }
