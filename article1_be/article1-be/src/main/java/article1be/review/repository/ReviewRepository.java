@@ -1,7 +1,7 @@
 package article1be.review.repository;
 
 
-import article1be.review.aggregate.entity.Review;
+import article1be.review.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
