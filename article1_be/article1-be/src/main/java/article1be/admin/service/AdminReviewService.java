@@ -24,9 +24,9 @@ public class AdminReviewService {
                 .map(review -> new AdminReviewDTO.ReviewInfo(
                         review.getReviewSeq(),
                         review.getUserSeq(),
-                        "userNickname", // 닉네임은 User 테이블과 조인하여 가져와야 함
-                        "location",     // 위치 정보
-                        review.getReviewWeather() + "°C", // 날씨 정보 포맷팅
+                        "userNickname",
+                        "location",
+                        review.getReviewWeather() + "°C",
                         review.getReviewContent(),
                         review.getReviewBlind() ? "BLIND" : "ACTIVE",
                         review.getReviewReport()
