@@ -4,6 +4,7 @@ import article1be.reply.controller.ReplyRepository;
 import article1be.reply.dto.ReplyDTO;
 import article1be.reply.dto.RequestReply;
 import article1be.reply.entity.Reply;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ReplyService {
     }
 
     // 댓글 삭제
+    @Transactional
     public boolean deleteReply(Long replySeq) {
         Reply reply = repository.findById(replySeq).orElse(null);
 
@@ -34,6 +36,8 @@ public class ReplyService {
         }
     }
 
+    // 댓글 생성
+    @Transactional
     public Reply createReply(RequestReply requestReply) {
         ReplyDTO replyDTO = new ReplyDTO(
                 123L,
