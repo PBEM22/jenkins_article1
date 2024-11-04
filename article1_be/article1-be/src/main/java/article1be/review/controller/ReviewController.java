@@ -19,12 +19,12 @@ public class ReviewController {
         return reviewService.getReviewById(id);
     }
 
-    @GetMapping("/review/{userSeq}")  // 특정 유저의 모든 리뷰 조회
+    @GetMapping("/review/{userSeq}")  // 자신의 모든 리뷰 조회
     public List<ReviewDTO> getReviewsByUser(@PathVariable Long userSeq) {
         return reviewService.getReviewsByUser(userSeq);
     }
 
-    @PostMapping("/{clothingSeq}")    // 리뷰 작성
+    @PostMapping()    // 리뷰 작성
     public ReviewDTO createReview(@PathVariable Long userSeq, @RequestBody ReviewDTO reviewDto) {
         reviewDto.setSelectSeq(userSeq);
         return reviewService.createReview(reviewDto);
