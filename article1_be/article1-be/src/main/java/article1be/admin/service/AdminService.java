@@ -56,7 +56,7 @@ public class AdminService {
     public void updateUser(AdminDTO.UserUpdateRequest updateRequest) {
         User user = adminRepository.findById(updateRequest.getUserSeq())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-        
+
         user.setUserNickname(updateRequest.getUserNickname());
         user.setUserState(updateRequest.getUserState());
 
