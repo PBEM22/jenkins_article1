@@ -34,6 +34,6 @@ public class AdminReviewDTO {
     @NoArgsConstructor
     public static class ReviewStatusUpdateRequest {
         private Long reviewSeq;         // 리뷰 번호
-        private Boolean reviewBlind;    // 블라인드 여부
+        private Boolean reviewBlind = false;    // 블라인드 여부
     }
 }
