@@ -1,4 +1,4 @@
-package article1be.reply.controller;
+package article1be.reply.repository;
 
 import article1be.reply.entity.Reply;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
-    public List<Reply> findByBoardSeq(Long boardSeq);
+    public List<Reply> findByBoardSeqAndReplyIsBlindFalse(Long boardSeq);
 }

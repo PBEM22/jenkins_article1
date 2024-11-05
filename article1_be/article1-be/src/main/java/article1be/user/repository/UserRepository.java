@@ -7,9 +7,6 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // 회원가입 여부 확인
-    boolean existsByUserId(String email);
-
     // 회원 개인정보 조회
     Optional<User> findByUserSeq(Long userSeq);
 

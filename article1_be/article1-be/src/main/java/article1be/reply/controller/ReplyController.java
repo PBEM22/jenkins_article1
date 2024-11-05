@@ -35,11 +35,14 @@ public class ReplyController {
     }
 
     // 댓글 작성
-    @PostMapping
-    public ResponseEntity<String> createReply(@RequestBody RequestReply requestReply) {
+    @PostMapping(value = {"/{boardSeq}"})
+    public ResponseEntity<String> createReply(
+            @PathVariable Long boardSeq,
+            @RequestBody RequestReply requestReply
+    ) {
 
         // 성공
-        if (service.createReply(requestReply) != null) {
+        if (service.createReply(boardSeq, requestReply) != null) {
             return ResponseEntity.ok("댓글 작성이 완료되었습니다.");
         }
         // 실패

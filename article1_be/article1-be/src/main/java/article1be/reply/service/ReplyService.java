@@ -1,9 +1,9 @@
 package article1be.reply.service;
 
-import article1be.reply.controller.ReplyRepository;
 import article1be.reply.dto.ReplyDTO;
 import article1be.reply.dto.RequestReply;
 import article1be.reply.entity.Reply;
+import article1be.reply.repository.ReplyRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,20 @@ public class ReplyService {
 
     // 댓글 목록 조회
     public List<ReplyDTO> getReplyList(long boardSeq) {
-        return null;
+        List<ReplyDTO> replyDTOList = repository.findByBoardSeqAndReplyIsBlindFalse(boardSeq)
+                .stream()
+                .map(reply ->
+                        ReplyDTO.builder()
+                                .boardSeq(reply.getBoardSeq())
+                                .replyUserSeq(reply.getReplyUserSeq())
+                                .replyContent(reply.getReplyContent())
+                                .regDate(reply.getRegDate())
+                                .delDate(reply.getDelDate())
+                                .replyIsBlind(reply.getReplyIsBlind())
+                                .build())
+                .toList();
+
+        return replyDTOList;
     }
 
     // 댓글 삭제
@@ -38,10 +51,10 @@ public class ReplyService {
 
     // 댓글 생성
     @Transactional
-    public Reply createReply(RequestReply requestReply) {
+    public Reply createReply(Long boardSeq, RequestReply requestReply) {
         ReplyDTO replyDTO = new ReplyDTO(
+                boardSeq,
                 123L,
-                1L,
                 requestReply.getReplyContent(),
                 LocalDateTime.now(),
                 null,

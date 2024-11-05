@@ -3,7 +3,6 @@ package article1be.review.entity;
 import article1be.common.aggregate.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -41,8 +40,6 @@ public class Review extends BaseTimeEntity {
     @Column(name = "review_like_yn", nullable = false)
     private Boolean reviewLikeYn; // 좋아요 여부
 
-    @Column(name = "review_report", nullable = false)
-    private Integer reviewReport; // 신고 개수
 
     public Review(Long userSeq, Long selectSeq, String reviewContent, Double reviewWeather,
                   Double reviewLocation, Boolean reviewBlind, Boolean reviewLikeYn,
@@ -54,7 +51,6 @@ public class Review extends BaseTimeEntity {
         this.reviewLocation = reviewLocation;
         this.reviewBlind = reviewBlind;
         this.reviewLikeYn = reviewLikeYn;
-        this.reviewReport = reviewReport != null ? reviewReport : 0;
     }
 
     // 리뷰 내용 업데이트
@@ -72,6 +68,3 @@ public class Review extends BaseTimeEntity {
         this.reviewBlind = true;
     }
 }
-
-
-

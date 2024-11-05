@@ -1,9 +1,11 @@
 package article1be.admin.dto;
 
+import article1be.user.entity.UserAuth;
 import article1be.user.entity.UserGender;
 import article1be.user.entity.UserState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.time.LocalDate;
 
@@ -25,8 +27,14 @@ public class AdminDTO {
 
     @Data
     @AllArgsConstructor
-    public static class UserStatusUpdateRequest {
+    public static class UserUpdateRequest {
+        @NonNull
         private Long userSeq;
+        @NonNull
+        private String userNickname;
+        @NonNull
+        private UserAuth userAuth;
+        @NonNull
         private UserState userState;
     }
 

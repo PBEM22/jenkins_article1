@@ -5,7 +5,7 @@ package article1be.config;
 // 4-1. 그 정보를 토대로 회원 가입을 자동으로 진행시키기 가능
 // 4-2. (이메일, 전화번호, 이름, 아이디) 쇼핑몰 -> (집 주소), 백화점 -> (vip 등급, 일반 등급) 등 추가적인 구성이 필요
 
-import article1be.user.service.NaverAndGoogleService;
+import article1be.user.service.SocialLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig { // 스프링 필터 역할
 
-    private final NaverAndGoogleService naverAndGoogleService;
+    private final SocialLoginService socialLoginService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,14 +31,9 @@ public class SecurityConfig { // 스프링 필터 역할
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/loginForm")
-                        .loginProcessingUrl("/login") // login 주소가 호출되면 시큐리티가 낚아채서 대신 로그인을 진행
-                        .defaultSuccessUrl("/")
-                )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/loginForm") // 구글 로그인이 완료된 뒤의 후처리가 필요. Tip. 코드 X (액세스 토큰 + 사용자 프로필 정보 O)
-                        .userInfoEndpoint(user -> user.userService(naverAndGoogleService))
+                        .loginPage("/loginForm") // 프론트엔드 로그인 페이지로 설정 예정
+                        .userInfoEndpoint(user -> user.userService(socialLoginService))
                 )
                 .build();
     }

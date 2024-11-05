@@ -5,6 +5,7 @@ import article1be.review.dto.ReviewDTO;
 import article1be.review.repository.ReviewRepository;
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,71 +21,77 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository; // UserRepository 추가
 
-    // 모든 리뷰 조회
     public List<ReviewDTO> getAllReviews() {
-        List<Review> reviews = reviewRepository.findAll();
-
-        return reviews.stream().map(review -> new ReviewDTO(
-                review.getReviewSeq(),
-                review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
-                review.getReviewReport()
-        )).collect(Collectors.toList());
+        return reviewRepository.findAll().stream()
+                .map(review -> {
+                    String userNickname = userRepository.findById(review.getUserSeq())
+                            .map(user -> user.getUserNickname())
+                            .orElse("Unknown User"); // User 닉네임 조회 추가
+                    return new ReviewDTO(
+                            review.getReviewSeq(),
+                            review.getUserSeq(),
+                            userNickname,
+                            review.getReviewLocation(),
+                            review.getReviewWeather(),
+                            review.getReviewContent(),
+                            review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                            review.getReviewReport()
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
-    // 자신의 리뷰 조회 -> 임의의 값으로 조회
     public List<ReviewDTO> getReviewsByUser(Long userSeq) {
-        List<Review> reviews = reviewRepository.findByUserSeq(userSeq);
+        String userNickname = userRepository.findById(userSeq)
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
 
-        return reviews.stream().map(review -> new ReviewDTO(
-                review.getReviewSeq(),
-                review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
-                review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
-                review.getReviewReport()
-        )).collect(Collectors.toList());
+        return reviewRepository.findByUserSeq(userSeq).stream()
+                .map(review -> new ReviewDTO(
+                        review.getReviewSeq(),
+                        review.getUserSeq(),
+                        userNickname,
+                        review.getReviewLocation(),
+                        review.getReviewWeather(),
+                        review.getReviewContent(),
+                        review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                        review.getReviewReport()
+                ))
+                .collect(Collectors.toList());
     }
 
-    // 리뷰 생성
     @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDto) {
         Review review = new Review(
                 reviewDto.getUserSeq(),
-                reviewDto.getSelectSeq(),
+                Optional.ofNullable(reviewDto.getReviewSeq()).orElse(0L),
                 reviewDto.getReviewContent(),
-                reviewDto.getReviewWeather(),
-                reviewDto.getReviewLocation(),
-                reviewDto.getReviewBlind(),
-                reviewDto.getReviewLikeYn(),
+                reviewDto.getWeather(),
+                reviewDto.getLocation(),
+                "BLIND".equals(reviewDto.getReviewStatus()),
+                false,
                 Optional.ofNullable(reviewDto.getReviewReport()).orElse(0)
         );
-
         review = reviewRepository.save(review);
+
+        String userNickname = userRepository.findById(review.getUserSeq())
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
 
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
+                userNickname,
                 review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
+                review.getReviewWeather(),
+                review.getReviewContent(),
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
         );
     }
 
-    // 리뷰 수정
     @Transactional
     public ReviewDTO updateReview(Long reviewSeq, ReviewDTO reviewDto) {
         Review review = reviewRepository.findById(reviewSeq)
@@ -92,33 +99,34 @@ public class ReviewService {
 
         review.updateReview(
                 reviewDto.getReviewContent(),
-                reviewDto.getReviewWeather(),
-                reviewDto.getReviewLocation(),
-                reviewDto.getReviewBlind(),
-                reviewDto.getReviewLikeYn()
+                reviewDto.getWeather(),
+                reviewDto.getLocation(),
+                "BLIND".equals(reviewDto.getReviewStatus()),
+                false
         );
-
         reviewRepository.save(review);
+
+        String userNickname = userRepository.findById(review.getUserSeq())
+                .map(user -> user.getUserNickname())
+                .orElse("Unknown User"); // User 닉네임 조회 추가
 
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
-                review.getSelectSeq(),
-                review.getReviewContent(),
-                review.getReviewWeather(),
+                userNickname,
                 review.getReviewLocation(),
-                review.getReviewBlind(),
-                review.getReviewLikeYn(),
+                review.getReviewWeather(),
+                review.getReviewContent(),
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewReport()
         );
     }
 
-    // 리뷰 삭제
     @Transactional
     public void deleteReview(Long reviewSeq) {
         Review review = reviewRepository.findById(reviewSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
-
         reviewRepository.delete(review);
     }
+
 }

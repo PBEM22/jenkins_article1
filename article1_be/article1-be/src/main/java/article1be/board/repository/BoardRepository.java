@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
     // 블라인드인드 되지 않은 값을 조회
-    List<Board> findByIsBlindFalse();
+    List<Board> findByBoardIsBlindFalse();
 }
