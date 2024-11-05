@@ -42,8 +42,7 @@ public class Review extends BaseTimeEntity {
 
 
     public Review(Long userSeq, Long selectSeq, String reviewContent, Double reviewWeather,
-                  Double reviewLocation, Boolean reviewBlind, Boolean reviewLikeYn,
-                  Integer reviewReport) {
+                  Double reviewLocation, Boolean reviewBlind, Boolean reviewLikeYn) {
         this.userSeq = userSeq;
         this.selectSeq = selectSeq;
         this.reviewContent = reviewContent;
@@ -52,6 +51,7 @@ public class Review extends BaseTimeEntity {
         this.reviewBlind = reviewBlind;
         this.reviewLikeYn = reviewLikeYn;
     }
+
 
     // 리뷰 내용 업데이트
     public void updateReview(String reviewContent, Double reviewWeather, Double reviewLocation,
