@@ -69,6 +69,9 @@ springdoc:
     path: /
     groups-order: DESC # path, query, body, response 순으로 출력
 
+token:
+  expiration_time: 7200000
+  secret: ${SECRET_KEY}
 
 
 
