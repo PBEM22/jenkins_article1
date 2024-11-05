@@ -67,6 +67,10 @@ public class Review extends BaseTimeEntity {
         this.reviewLikeYn = reviewLikeYn;
     }
 
+    // 블라인드 처리
+    public void setBlind() {
+        this.reviewBlind = true;
+    }
 }
 
 
