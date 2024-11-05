@@ -129,26 +129,4 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
-    @Transactional
-    public ReviewDTO addReportToReview(Long reviewSeq) {
-        Review review = reviewRepository.findById(reviewSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
-        review.addReport();
-        reviewRepository.save(review);
-
-        String userNickname = userRepository.findById(review.getUserSeq())
-                .map(user -> user.getUserNickname())
-                .orElse("Unknown User"); // User 닉네임 조회 추가
-
-        return new ReviewDTO(
-                review.getReviewSeq(),
-                review.getUserSeq(),
-                userNickname,
-                review.getReviewLocation(),
-                review.getReviewWeather(),
-                review.getReviewContent(),
-                review.getReviewBlind() ? "BLIND" : "ACTIVE",
-                review.getReviewReport()
-        );
-    }
 }
