@@ -11,10 +11,9 @@ public class ReviewDTO {
     private Long reviewSeq;         // 리뷰 번호
     private Long userSeq;           // 유저 번호
     private Long selectSeq;         // 선택 번호
+    private String userNickname;    // 유저 닉네임
+    private Double location;        // 위치 정보
+    private Double weather;         // 날씨 정보
     private String reviewContent;   // 리뷰 내용
-    private Double reviewWeather;   // 날씨 정보
-    private Double reviewLocation;  // 위치 정보
-    private Boolean reviewBlind;    // 블라인드 여부
-    private Boolean reviewLikeYn;   // 좋아요 여부
-    private Integer reviewReport;   // 신고 개수
+    private String reviewStatus;    // 리뷰 상태 (ACTIVE 또는 BLIND)
 }

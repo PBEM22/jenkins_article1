@@ -2,11 +2,18 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:${db.port}/${db.dbname}
+#    url: jdbc:mariadb://localhost:3306/article1db
     username: ${db.username}
+#    username: root
     password: ${db.password}
+#    password: mariadb
+
+  profiles:
+    include: aws
 
   jpa:
     hibernate:
+      dialect: org.hibernate.dialect.MariaDBDialect
       ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
@@ -39,20 +46,6 @@ spring:
             client-name: Naver
             authorization-grant-type: authorization_code
             redirect-uri: ${naver.api.redirect_uri}
-          kakao:
-            client-authentication-method: client_secret_post
-            client-name: kakao
-            client-id: ${kakao.api.client_id} # 카카오 REST API 키
-            client-secret: ${kakao.api.client_secret}
-            redirect-uri: ${kakao.api.redirect_uri}
-            authorization-grant-type: authorization_code
-            scope:
-              - account_email
-              - name
-              - phone_number
-              - birthyear
-              - birthday
-              - gender
 
         provider:
           naver:

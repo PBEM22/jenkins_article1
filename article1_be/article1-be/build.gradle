@@ -44,6 +44,7 @@ dependencies {
     // Swagger 설정을 위함
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
+
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
@@ -52,6 +53,11 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     implementation 'org.modelmapper:modelmapper:3.2.0'  // ModelMapper Library 추가
+
+    // AWS S3 의존성
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 }
 
 tasks.named('test') {
