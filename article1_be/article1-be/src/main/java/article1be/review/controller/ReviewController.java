@@ -45,9 +45,4 @@ public class ReviewController {
         reviewService.deleteReview(reviewSeq);
     }
 
-    // 리뷰 신고
-    @PostMapping("/{reviewSeq}/report")
-    public ReviewDTO addReportToReview(@PathVariable Long reviewSeq) {
-        return reviewService.addReportToReview(reviewSeq);
-    }
 }
