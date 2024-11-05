@@ -1,11 +1,11 @@
 package article1be.blame.service;
 
-import article1be.blame.BlameRepository;
+import article1be.blame.repository.BlameRepository;
 import article1be.blame.entity.Blame;
 import article1be.board.entity.Board;
 import article1be.board.repository.BoardRepository;
-import article1be.reply.controller.ReplyRepository;
 import article1be.reply.entity.Reply;
+import article1be.reply.repository.ReplyRepository;
 import article1be.review.entity.Review;
 import article1be.review.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
