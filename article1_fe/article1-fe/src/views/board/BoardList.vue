@@ -197,6 +197,10 @@ const boardList = ref([
   }
 ]);
 
+// 페이지 관련 상태
+const currentPage = ref(1); // 현재 페이지
+const itemsPerPage = 10; // 페이지당 게시물 수
+
 // 정렬된 게시물 목록 생성
 const sortedBoardList = computed(() => {
   return boardList.value.sort((a, b) => {
@@ -214,6 +218,24 @@ const noticeList = computed(() => {
 const regularPosts = computed(() => {
   return sortedBoardList.value.filter(item => !item.boardIsNotice);
 });
+
+// 전체 게시물 수 계산
+const totalPosts = computed(() => {
+  return noticeList.value.length + regularPosts.value.length;
+});
+
+// 총 페이지 수 계산
+const totalPages = computed(() => {
+  console.log(currentPage);
+  console.log(totalPosts);
+
+  return Math.ceil(totalPosts.value / itemsPerPage); // 전체 게시물 수를 페이지당 게시물 수로 나누어 올림
+});
+
+// 페이지 변경 핸들러
+const handlePageChange = (newPage) => {
+  currentPage.value = newPage; // 페이지 변경
+};
 
 // 날짜 형식 변환 함수
 const formatDate = (dateString) => {
@@ -237,6 +259,7 @@ const formatDate = (dateString) => {
     return `${year}-${month}-${day}`;
   }
 };
+
 </script>
 
 <template>
@@ -267,7 +290,14 @@ const formatDate = (dateString) => {
         </tr>
         </tbody>
       </table>
-      <Pagination/>
+      <!-- 페이지네이션 컴포넌트 -->
+      <div class="pagination-container">
+        <Pagination
+            :currentPage="currentPage.value"
+            :totalPages="totalPages"
+            @onPageChange="handlePageChange"
+        />
+      </div>
     </Container>
   </div>
 </template>

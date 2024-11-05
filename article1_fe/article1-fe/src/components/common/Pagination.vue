@@ -28,10 +28,20 @@
 <script setup>
 import { computed, defineProps } from 'vue';
 
+// Props 정의
 const props = defineProps({
-  currentPage: Number,
-  totalPages: Number,
-  onPageChange: Function // props에 onPageChange 정의
+  currentPage: {
+    type: Number,
+    required: true,
+  },
+  totalPages: {
+    type: Number,
+    required: true,
+  },
+  onPageChange: {
+    type: Function,
+    required: true,
+  },
 });
 
 // 페이지 변경 핸들러
