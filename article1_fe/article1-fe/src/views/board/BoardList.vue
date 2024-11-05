@@ -8,6 +8,7 @@ import BoardLi from "@/components/board/BoardLi.vue";
 // Vue
 import {computed, ref} from "vue";
 
+// 테스트 데이터
 const boardList = ref([
   {
     boardSeq: 1,
