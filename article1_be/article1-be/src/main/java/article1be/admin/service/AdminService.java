@@ -59,6 +59,7 @@ public class AdminService {
 
         user.setUserNickname(updateRequest.getUserNickname());
         user.setUserState(updateRequest.getUserState());
+        user.setUserAuth(updateRequest.getUserAuth());
 
         adminRepository.save(user);
     }
