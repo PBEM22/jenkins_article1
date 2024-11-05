@@ -3,7 +3,6 @@ package article1be.review.entity;
 import article1be.common.aggregate.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -67,7 +66,12 @@ public class Review extends BaseTimeEntity {
         this.reviewLikeYn = reviewLikeYn;
     }
 
+    // 신고 횟수 증가 및 블라인드 처리
+    public void addReport() {
+        this.reviewReport += 1;
+        if (this.reviewReport >= 10) {
+            this.reviewBlind = true;
+        }
+
+    }
 }
-
-
-
