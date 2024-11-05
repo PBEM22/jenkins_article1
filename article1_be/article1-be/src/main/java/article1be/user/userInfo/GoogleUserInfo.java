@@ -1,4 +1,4 @@
-package article1be.config;
+package article1be.user.userInfo;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getProviderId() {
-        return (String)attributes.get("email");
+        return (String) attributes.get("sub");
     }
 
     @Override
@@ -21,12 +21,27 @@ public class GoogleUserInfo implements OAuth2UserInfo {
     }
 
     @Override
-    public String getName() {
-        return (String)attributes.get("name");
+    public String getEmail() {
+        return (String) attributes.get("email");
     }
 
     @Override
-    public String getEmail() {
+    public String getName() {
+        return (String) attributes.get("name");
+    }
+
+    @Override
+    public String getGender() {
+        return null;
+    }
+
+    @Override
+    public String getBirthday() {
+        return null;
+    }
+
+    @Override
+    public String getBirthyear() {
         return null;
     }
 
@@ -37,21 +52,6 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getPhoneNumber() {
-        return null;
-    }
-
-    @Override
-    public String getBirthyear() {
-        return null;
-    }
-
-    @Override
-    public String getBirthday() {
-        return null;
-    }
-
-    @Override
-    public String getGender() {
         return null;
     }
 

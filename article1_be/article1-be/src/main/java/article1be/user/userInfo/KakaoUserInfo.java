@@ -1,4 +1,4 @@
-package article1be.config;
+package article1be.user.userInfo;
 
 import java.util.Map;
 
@@ -33,6 +33,21 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     }
 
     @Override
+    public String getGender() {
+        return (String) kakaoAccount.get("gender");
+    }
+
+    @Override
+    public String getBirthday() {
+        return (String) kakaoAccount.get("birthday");
+    }
+
+    @Override
+    public String getBirthyear() {
+        return (String) kakaoAccount.get("birthyear");
+    }
+
+    @Override
     public String getMobile() {
         return null; // Kakao에서는 phone_number로 제공
     }
@@ -42,18 +57,4 @@ public class KakaoUserInfo implements OAuth2UserInfo {
         return (String) kakaoAccount.get("phone_number");
     }
 
-    @Override
-    public String getBirthyear() {
-        return (String) kakaoAccount.get("birthyear");
-    }
-
-    @Override
-    public String getBirthday() {
-        return (String) kakaoAccount.get("birthday");
-    }
-
-    @Override
-    public String getGender() {
-        return (String) kakaoAccount.get("gender");
-    }
 }
