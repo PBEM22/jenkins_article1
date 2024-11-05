@@ -90,14 +90,19 @@ public class BlameService {
                 .build()
         );
 
+        // 신고된 리뷰 번호로 신고 내역을 가져옴
         Optional<Review> blamedReviewList = reviewRepository.findById(reviewSeq);
 
+        // 존재함
         if (blamedReviewList.isPresent()) {
             Review blamedReview = blamedReviewList.get();
             long blameCount = blamedReviewList.stream().toArray().length;
 
+            // 내역이 10건 이상이면
             if (blameCount >= 10) {
+                // 블라인드 처리
                 blamedReview.setBlind();
+                // 저장
                 reviewRepository.save(blamedReview);
             }
         }
