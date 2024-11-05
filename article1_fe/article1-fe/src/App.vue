@@ -1,28 +1,26 @@
-<script setup></script>
+<script setup>
+import Header from "@/components/Header.vue";
+</script>
 
 <template>
+  <Header />
   <div id="app">
-    <RouterView />
+    <RouterView key="$route.fullPath"/>
   </div>
 </template>
 
-<script>
-export default {
-  name: "App",
-};
-</script>
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 0;
-}
-body{
-  margin: 0;
-  padding: 0;
-}
+  body{
+    margin: 0;
+    padding: 0;
+    background-image: url('@/assets/images/back-main.png');
+  }
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 0;
+  }
 </style>
