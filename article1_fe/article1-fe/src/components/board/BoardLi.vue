@@ -31,7 +31,7 @@ const props = defineProps({
   title: String,
   content: String,
   date: String,
-  writer: String,
+  writer: Number,
   imageUrl: String
 });
 </script>

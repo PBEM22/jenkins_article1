@@ -4,6 +4,7 @@
 import Container from "@/components/board/Container.vue";
 import BoardNoticeLi from "@/components/board/BoardNoticeLi.vue";
 import BoardLi from "@/components/board/BoardLi.vue";
+import Pagination from "@/components/common/Pagination.vue";
 
 // Vue
 import {computed, ref} from "vue";
@@ -177,6 +178,22 @@ const boardList = ref([
     upDate: null,
     delDate: null,
     boardIsNotice: true
+  },
+  {
+    boardSeq: 11,
+    userSeq: 1311,
+    boardTitle: "제목 11",
+    boardContent: "내용 11",
+    boardPictureList: [
+      {
+        pictureUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUPTGaKZ5ppYrFn0Lcg2w33ozjP3CoLydPA&s",
+        description: "이미지 설명 11"
+      }
+    ],
+    regDate: "2024-11-05T18:00:00",
+    upDate: null,
+    delDate: null,
+    boardIsNotice: false
   }
 ]);
 
@@ -250,6 +267,7 @@ const formatDate = (dateString) => {
         </tr>
         </tbody>
       </table>
+      <Pagination/>
     </Container>
   </div>
 </template>
@@ -270,5 +288,40 @@ table {
 
 tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+  margin-top: 20px; /* 페이지네이션과 테이블 사이의 여백 */
+}
+
+.pagination button {
+  padding: 10px 15px; /* 버튼 패딩 */
+  margin: 0 5px; /* 버튼 간격 */
+  border: 1px solid #007bff; /* 버튼 테두리 색상 */
+  background-color: white; /* 버튼 배경색 */
+  color: #007bff; /* 버튼 글자 색상 */
+  cursor: pointer; /* 커서 스타일 */
+  border-radius: 5px; /* 버튼 테두리 둥글기 */
+  transition: background-color 0.3s, color 0.3s; /* 부드러운 전환 효과 */
+}
+
+.pagination button:hover {
+  background-color: #007bff; /* 마우스 오버 시 배경색 */
+  color: white; /* 마우스 오버 시 글자색 */
+}
+
+.pagination button:disabled {
+  color: gray; /* 비활성화된 버튼 색상 */
+  cursor: not-allowed; /* 비활성화된 버튼 커서 스타일 */
+  border: 1px solid gray; /* 비활성화된 버튼 테두리 색상 */
+}
+
+.pagination button.active {
+  font-weight: bold; /* 활성화된 페이지 버튼 강조 */
+  background-color: #007bff; /* 활성화된 버튼 배경색 */
+  color: white; /* 활성화된 버튼 글자색 */
 }
 </style>
