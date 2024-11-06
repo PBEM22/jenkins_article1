@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/admin/review")
+@RequestMapping("/admin/review")
 @RequiredArgsConstructor
 @Tag(name = "관리자 리뷰 관리", description = "관리자의 리뷰 조회 및 상태 변경")
 public class AdminReviewController {
