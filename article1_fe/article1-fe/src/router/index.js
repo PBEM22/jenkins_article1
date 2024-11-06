@@ -1,7 +1,7 @@
 import mainRouter from "@/router/mainRouter.js";
 import boardRouter from "@/router/boardRouter.js";
-import MapWithDateView from "@/views/location/MapWithDateView.vue";
-import SelectSituation from "@/views/SituationView.vue";
+import MapWithDateView from "@/views/outfit/setting/MapWithDateView.vue";
+import SelectSituation from "@/views/outfit/setting/SituationView.vue";
 import {createRouter, createWebHistory} from "vue-router";
 
 const routes = [

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { useSelectedInfoStore } from '@/store/selectedInfoStore';
+import { useSelectedInfoStore } from '@/store/selectedInfoStore.js';
 
 export default {
   name: "KakaoMap",
