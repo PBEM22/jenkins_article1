@@ -1,5 +1,6 @@
 package article1be.user.entity;
 
+import article1be.outfit.entity.Style;
 import article1be.user.dto.UserDataDTO;
 import jakarta.persistence.*;
 import lombok.*;
