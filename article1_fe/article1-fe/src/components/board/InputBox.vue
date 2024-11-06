@@ -36,6 +36,6 @@ input {
   padding: 10px; /* 패딩 추가 */
   border: 1px solid #ccc; /* 테두리 스타일 */
   border-radius: 4px; /* 테두리 둥글게 */
-  font-size: 16px; /* 글자 크기 설정 */
+  font-size: 11px; /* 글자 크기 설정 */
 }
 </style>
