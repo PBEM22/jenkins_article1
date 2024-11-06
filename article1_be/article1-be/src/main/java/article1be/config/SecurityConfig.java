@@ -41,6 +41,7 @@ public class SecurityConfig { // 스프링 필터 역할
                         // .loginPage("/loginForm") // 프론트엔드 로그인 페이지로 설정 예정
                         .userInfoEndpoint(user -> user.userService(socialLoginService))
                         .successHandler(new OAuth2LoginSuccessHandler(env)) // JWT 발행 로직이 포함된 핸들러
+                        .defaultSuccessUrl("/")
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
@@ -60,7 +61,7 @@ public class SecurityConfig { // 스프링 필터 역할
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:8080"); // 허용할 도메인
+        config.addAllowedOrigin("http://localhost:5173"); // 허용할 도메인
         config.addAllowedHeader("*"); // 모든 헤더 허용
         config.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
         config.addExposedHeader("token"); // 서버측에서 보내는 헤더에 대한 허용 설정
