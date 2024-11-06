@@ -38,7 +38,8 @@ public class ReviewService {
                             review.getReviewContent(),
                             review.getReviewBlind() ? "BLIND" : "ACTIVE",
                             review.getReviewLikeYn(),
-                            review.getReviewBlind()
+                            review.getReviewBlind(),
+                            review.getRegDate()
                     );
                 })
                 .collect(Collectors.toList());
@@ -60,7 +61,8 @@ public class ReviewService {
                         review.getReviewContent(),
                         review.getReviewBlind() ? "BLIND" : "ACTIVE",
                         review.getReviewLikeYn(),
-                        review.getReviewBlind()
+                        review.getReviewBlind(),
+                        review.getRegDate()
                 ))
                 .collect(Collectors.toList());
     }
@@ -92,7 +94,8 @@ public class ReviewService {
                 review.getReviewContent(),
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewLikeYn(),
-                review.getReviewBlind()
+                review.getReviewBlind(),
+                review.getRegDate()
         );
     }
 
@@ -111,7 +114,7 @@ public class ReviewService {
 
         String userNickname = userRepository.findById(review.getUserSeq())
                 .map(user -> user.getUserNickname())
-                .orElse("닉네임 없음");
+                .orElse("Unknown User");
 
         return new ReviewDTO(
                 review.getReviewSeq(),
@@ -123,7 +126,8 @@ public class ReviewService {
                 review.getReviewContent(),
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewLikeYn(),
-                review.getReviewBlind()
+                review.getReviewBlind(),
+                review.getRegDate()
         );
     }
 
