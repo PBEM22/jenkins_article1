@@ -1,5 +1,6 @@
 package article1be.user.entity;
 
+import article1be.admin.dto.AdminDTO;
 import article1be.outfit.entity.Style;
 import article1be.user.dto.UserDataDTO;
 import jakarta.persistence.*;
@@ -101,4 +102,9 @@ public class User {
         this.condition = condition;
     }
 
+    public void AdminUserInfo(String userNickname, UserState userState, UserAuth userAuth) {
+        this.userNickname = userNickname;
+        this.userState = userState;
+        this.userAuth = userAuth;
+    }
 }
