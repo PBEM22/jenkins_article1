@@ -5,9 +5,9 @@ import article1be.security.handler.OAuth2LoginSuccessHandler;
 import article1be.security.util.JwtUtil;
 import article1be.user.service.SocialLoginService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,7 +41,6 @@ public class SecurityConfig { // 스프링 필터 역할
                         // .loginPage("/loginForm") // 프론트엔드 로그인 페이지로 설정 예정
                         .userInfoEndpoint(user -> user.userService(socialLoginService))
                         .successHandler(new OAuth2LoginSuccessHandler(env)) // JWT 발행 로직이 포함된 핸들러
-                        .defaultSuccessUrl("/")
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );

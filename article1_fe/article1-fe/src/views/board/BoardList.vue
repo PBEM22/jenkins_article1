@@ -6,7 +6,9 @@ import BoardNoticeLi from "@/components/board/BoardNoticeLi.vue";
 import BoardLi from "@/components/board/BoardLi.vue";
 
 // Vue
-import {computed, ref} from "vue";
+import {computed, ref, onMounted} from "vue";
+
+// Axios
 
 // 테스트 데이터
 const boardList = ref([

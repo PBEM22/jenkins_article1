@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import Container from "@/components/board/Container.vue";
 import TitleBar from "@/components/board/TitleBar.vue";
 import ContentArea from "@/components/board/ContentArea.vue";
 import SmallButton from "@/components/board/NormalButton.vue";
 import ReplyLi from "@/components/reply/ReplyLi.vue";
 import ReplyInput from "@/components/reply/ReplyInput.vue";
+import Modal from "@/components/board/DeleteModal.vue"; // 모달 컴포넌트 가져오기
 
 const boardData = ref({
   boardSeq: 2,
@@ -57,6 +58,22 @@ const replyList = ref([
     replyIsBlind: false
   }
 ]);
+
+const showModal = ref(false); // 모달 가시성 상태
+
+function openModal() {
+  showModal.value = true; // 모달 열기
+}
+
+function confirmDelete() {
+  // 삭제 로직 추가
+  console.log("삭제되었습니다.");
+  showModal.value = false; // 모달 닫기
+}
+
+function cancelDelete() {
+  showModal.value = false; // 모달 닫기
+}
 </script>
 
 <template>
@@ -70,6 +87,7 @@ const replyList = ref([
           :board-title="boardData.boardTitle"
           :board-content="boardData.boardContent"
           :board-picture-list="boardData.boardPictureList"
+          @delete="openModal"
       />
       <div class="buttons">
         <SmallButton
@@ -101,6 +119,13 @@ const replyList = ref([
       <div class="reply-input-container">
         <ReplyInput/>
       </div>
+
+      <!-- 모달 추가 -->
+      <Modal
+          v-if="showModal"
+          :on-confirm="confirmDelete"
+          :on-cancel="cancelDelete"
+      />
     </Container>
   </div>
 </template>
@@ -144,3 +169,4 @@ tbody tr:hover {
   margin-top: 20px; /* 위쪽 여백 추가 */
 }
 </style>
+
