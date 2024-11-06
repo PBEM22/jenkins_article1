@@ -36,7 +36,9 @@ public class ReviewService {
                             review.getReviewLocation(),
                             review.getReviewWeather(),
                             review.getReviewContent(),
-                            review.getReviewBlind() ? "BLIND" : "ACTIVE"
+                            review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                            review.getReviewLikeYn(),
+                            review.getReviewBlind()
                     );
                 })
                 .collect(Collectors.toList());
@@ -56,7 +58,9 @@ public class ReviewService {
                         review.getReviewLocation(),
                         review.getReviewWeather(),
                         review.getReviewContent(),
-                        review.getReviewBlind() ? "BLIND" : "ACTIVE"
+                        review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                        review.getReviewLikeYn(),
+                        review.getReviewBlind()
                 ))
                 .collect(Collectors.toList());
     }
@@ -86,7 +90,9 @@ public class ReviewService {
                 review.getReviewLocation(),
                 review.getReviewWeather(),
                 review.getReviewContent(),
-                review.getReviewBlind() ? "BLIND" : "ACTIVE"
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                review.getReviewLikeYn(),
+                review.getReviewBlind()
         );
     }
 
@@ -102,11 +108,10 @@ public class ReviewService {
                 "BLIND".equals(reviewDto.getReviewStatus()),
                 review.getReviewLikeYn()
         );
-        reviewRepository.save(review);
 
         String userNickname = userRepository.findById(review.getUserSeq())
                 .map(user -> user.getUserNickname())
-                .orElse("Unknown User");
+                .orElse("닉네임 없음");
 
         return new ReviewDTO(
                 review.getReviewSeq(),
@@ -116,7 +121,9 @@ public class ReviewService {
                 review.getReviewLocation(),
                 review.getReviewWeather(),
                 review.getReviewContent(),
-                review.getReviewBlind() ? "BLIND" : "ACTIVE"
+                review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                review.getReviewLikeYn(),
+                review.getReviewBlind()
         );
     }
 
