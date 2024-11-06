@@ -1,8 +1,8 @@
 package article1be.user.entity;
 
+import article1be.outfit.entity.Style;
 import article1be.user.dto.UserDataDTO;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,11 +24,13 @@ public class User {
     @Column(name = "user_seq")
     private Long userSeq;                       // 회원번호
 
-    @Column(name = "style_seq")
-    private UserStyle styleSeq;                      // 스타일 번호
+    @ManyToOne
+    @JoinColumn(name = "style_seq", nullable = true)
+    private Style style;                        // 스타일 (선택적)
 
-    @Column(name = "condition_seq")
-    private UserCondition conditionSeq;                  // 체질 번호
+    @ManyToOne
+    @JoinColumn(name = "condition_seq", nullable = true)
+    private Condition condition;               // 체질 (선택적)
 
     @Column(name = "user_social_site")
     @Enumerated(EnumType.STRING)
@@ -83,10 +85,10 @@ public class User {
     }
 
     // 회원가입 시 닉네임, 선호도 등록
-    public void createUserData(@Valid UserDataDTO userData) {
+    public void createUserData(UserDataDTO userData, Style style, Condition condition) {
         this.userNickname = userData.getUserNickname();
-        this.styleSeq = userData.getStyleSeq();
-        this.conditionSeq = userData.getConditionSeq();
+        this.style = style;             // style 객체 직접 설정
+        this.condition = condition;     // condition 객체 직접 설정
     }
 
     // 회원정보(닉네임) 수정
@@ -94,4 +96,9 @@ public class User {
         this.userNickname = newNickname;
     }
 
+    // 선호도(체질, 스타일) 수정
+    public void updateUserPrefer(Style style, Condition condition) {
+        this.style = style;
+        this.condition = condition;
+    }
 }
