@@ -14,7 +14,7 @@ import java.util.List;
         description = "리뷰 관련 API"
 )
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewController {
 

@@ -2,10 +2,16 @@ package article1be.user.service;
 
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.outfit.entity.Style;
 import article1be.security.util.SecurityUtil;
+import article1be.user.dto.PreferenceResponseDTO;
 import article1be.user.dto.UserDataDTO;
+import article1be.user.dto.UserPreferDTO;
 import article1be.user.dto.UserResponseDTO;
+import article1be.user.entity.Condition;
 import article1be.user.entity.User;
+import article1be.user.repository.ConditionRepository;
+import article1be.user.repository.StyleRepository;
 import article1be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -29,6 +35,8 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final StyleRepository styleRepository;
+    private final ConditionRepository conditionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userSeq) throws UsernameNotFoundException {
@@ -59,7 +67,13 @@ public class UserService implements UserDetailsService {
             User findUser = userRepository.findByUserSeq(userSeq)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-            findUser.createUserData(userData);
+            // styleSeq와 conditionSeq에 따라 해당 Style과 Condition을 찾는다
+            Style style = styleRepository.findStyleByStyleSeq(userData.getStyleSeq());
+            Condition condition = conditionRepository.findConditionByConditionSeq(userData.getConditionSeq());
+
+            // User 엔티티에 style, condition 설정
+            findUser.createUserData(userData, style, condition);
+
         }
     }
 
@@ -100,6 +114,38 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void deleteUser(Long userSeq) {
         userRepository.deleteById(userSeq);
+    }
+
+    /* 선호도 조회 */
+    @Transactional
+    public PreferenceResponseDTO getUserPreference(Long userSeq) {
+
+        // User 엔티티와 관련된 Style, Condition을 한 번에 조회
+        User user = userRepository.findByUserSeqWithStyleAndCondition(userSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        // PreferenceResponseDTO에 User의 스타일과 체질 정보를 담아서 반환
+        return new PreferenceResponseDTO(
+                user.getStyle() != null ? user.getStyle().getStyleName() : null,
+                user.getCondition() != null ? user.getCondition().getConditionName() : null
+        );
+
+    }
+
+    /* 선호도 수정 */
+    @Transactional
+    public void updatePreference(Long userSeq, UserPreferDTO preferData) {
+
+        User findUser = userRepository.findByUserSeq(userSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        // styleSeq와 conditionSeq에 따라 해당 Style과 Condition을 찾는다
+        Style style = styleRepository.findStyleByStyleSeq(preferData.getStyleSeq());
+        Condition condition = conditionRepository.findConditionByConditionSeq(preferData.getConditionSeq());
+
+        // User 엔티티에 style, condition 설정
+        findUser.updateUserPrefer(style, condition);
+
     }
 
     // 닉네임 중복 검증
