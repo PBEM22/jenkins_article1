@@ -2,6 +2,8 @@ package article1be.review.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,4 +20,5 @@ public class ReviewDTO {
     private String reviewStatus;    // 리뷰 상태 (ACTIVE 또는 BLIND)
     private boolean reviewLikeYn;    // 좋아요 유무
     private boolean reviewBlind;
+    private LocalDateTime regDate;
 }
