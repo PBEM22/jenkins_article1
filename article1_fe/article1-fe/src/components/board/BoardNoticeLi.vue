@@ -2,7 +2,7 @@
   <div>
     <!-- 헤더(제목) -->
     <div>
-      <span class="title">{{ title }}</span>
+      <span class="list-title">{{ title }}</span>
     </div>
     <!-- 바디 -->
     <div class="body">
@@ -78,7 +78,8 @@ const props = defineProps({
   min-height: 0;
 }
 
-.title {
+.list-title {
+  font-weight: bold;
   border-left: 3px solid red;
   font-size: 24px;
   color: red;

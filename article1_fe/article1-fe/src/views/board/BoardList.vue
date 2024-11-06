@@ -4,7 +4,6 @@
 import Container from "@/components/board/Container.vue";
 import BoardNoticeLi from "@/components/board/BoardNoticeLi.vue";
 import BoardLi from "@/components/board/BoardLi.vue";
-import Pagination from "@/components/common/Pagination.vue";
 
 // Vue
 import {computed, ref} from "vue";
@@ -167,7 +166,7 @@ const boardList = ref([
     boardSeq: 10,
     userSeq: 132,
     boardTitle: "제목 10",
-    boardContent: "이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵 이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵 이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵 이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵",
+    boardContent: "이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵이러쿵 저러쿵",
     boardPictureList: [
       {
         pictureUrl: null,
@@ -194,12 +193,88 @@ const boardList = ref([
     upDate: null,
     delDate: null,
     boardIsNotice: false
+  },
+  {
+    boardSeq: 11,
+    userSeq: 1311,
+    boardTitle: "제목 11",
+    boardContent: "내용 11",
+    boardPictureList: [
+      {
+        pictureUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUPTGaKZ5ppYrFn0Lcg2w33ozjP3CoLydPA&s",
+        description: "이미지 설명 11"
+      }
+    ],
+    regDate: "2024-11-05T18:00:00",
+    upDate: null,
+    delDate: null,
+    boardIsNotice: false
+  },
+  {
+    boardSeq: 11,
+    userSeq: 1311,
+    boardTitle: "제목 11",
+    boardContent: "내용 11",
+    boardPictureList: [
+      {
+        pictureUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUPTGaKZ5ppYrFn0Lcg2w33ozjP3CoLydPA&s",
+        description: "이미지 설명 11"
+      }
+    ],
+    regDate: "2024-11-05T18:00:00",
+    upDate: null,
+    delDate: null,
+    boardIsNotice: false
+  },
+  {
+    boardSeq: 11,
+    userSeq: 1311,
+    boardTitle: "제목 11",
+    boardContent: "내용 11",
+    boardPictureList: [
+      {
+        pictureUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUPTGaKZ5ppYrFn0Lcg2w33ozjP3CoLydPA&s",
+        description: "이미지 설명 11"
+      }
+    ],
+    regDate: "2024-11-05T18:00:00",
+    upDate: null,
+    delDate: null,
+    boardIsNotice: false
+  },
+  {
+    boardSeq: 11,
+    userSeq: 1311,
+    boardTitle: "제목 11",
+    boardContent: "내용 11",
+    boardPictureList: [
+      {
+        pictureUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUPTGaKZ5ppYrFn0Lcg2w33ozjP3CoLydPA&s",
+        description: "이미지 설명 11"
+      }
+    ],
+    regDate: "2024-11-05T18:00:00",
+    upDate: null,
+    delDate: null,
+    boardIsNotice: false
+  },
+  {
+    boardSeq: 11,
+    userSeq: 1311,
+    boardTitle: "제목 11",
+    boardContent: "내용 11",
+    boardPictureList: [
+      {
+        pictureUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUPTGaKZ5ppYrFn0Lcg2w33ozjP3CoLydPA&s",
+        description: "이미지 설명 11"
+      }
+    ],
+    regDate: "2024-11-05T18:00:00",
+    upDate: null,
+    delDate: null,
+    boardIsNotice: false
   }
 ]);
-
-// 페이지 관련 상태
-const currentPage = ref(1); // 현재 페이지
-const itemsPerPage = 10; // 페이지당 게시물 수
 
 // 정렬된 게시물 목록 생성
 const sortedBoardList = computed(() => {
@@ -210,32 +285,13 @@ const sortedBoardList = computed(() => {
 
 // 공지사항 목록 생성
 const noticeList = computed(() => {
-  const notices = sortedBoardList.value.filter(item => item.boardIsNotice);
-  return notices.slice(0, 2); // 최신 2개만 반환
+  return sortedBoardList.value.filter(item => item.boardIsNotice); // 모든 공지사항 반환
 });
 
 // 일반 게시물 목록 생성 (공지사항 제외)
 const regularPosts = computed(() => {
   return sortedBoardList.value.filter(item => !item.boardIsNotice);
 });
-
-// 전체 게시물 수 계산
-const totalPosts = computed(() => {
-  return noticeList.value.length + regularPosts.value.length;
-});
-
-// 총 페이지 수 계산
-const totalPages = computed(() => {
-  console.log(currentPage);
-  console.log(totalPosts);
-
-  return Math.ceil(totalPosts.value / itemsPerPage); // 전체 게시물 수를 페이지당 게시물 수로 나누어 올림
-});
-
-// 페이지 변경 핸들러
-const handlePageChange = (newPage) => {
-  currentPage.value = newPage; // 페이지 변경
-};
 
 // 날짜 형식 변환 함수
 const formatDate = (dateString) => {
@@ -267,8 +323,8 @@ const formatDate = (dateString) => {
     <Container>
       <table>
         <tbody>
-        <!-- 공지사항 표시 -->
-        <tr v-for="item in noticeList" :key="item.boardSeq">
+        <!-- 공지사항 표시 (최대 2개) -->
+        <tr v-for="(item, index) in noticeList.slice(0, 2)" :key="item.boardSeq">
           <BoardNoticeLi
               :title="item.boardTitle"
               :content="item.boardContent"
@@ -278,7 +334,7 @@ const formatDate = (dateString) => {
           />
         </tr>
 
-        <!-- 일반 게시물 표시 -->
+        <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
         <tr v-for="item in regularPosts" :key="item.boardSeq">
           <BoardLi
               :title="item.boardTitle"
@@ -290,14 +346,6 @@ const formatDate = (dateString) => {
         </tr>
         </tbody>
       </table>
-      <!-- 페이지네이션 컴포넌트 -->
-      <div class="pagination-container">
-        <Pagination
-            :currentPage="currentPage.value"
-            :totalPages="totalPages"
-            @onPageChange="handlePageChange"
-        />
-      </div>
     </Container>
   </div>
 </template>
@@ -305,53 +353,17 @@ const formatDate = (dateString) => {
 <style scoped>
 #background {
   background: #E7F4FF;
-  height: 2000vh;
-  overflow: hidden;
+  height: auto; /* 높이를 자동으로 설정 */
+  overflow: auto; /* 스크롤이 가능하도록 설정 */
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
-  overflow: hidden;
 }
 
 tbody tr:hover {
   background-color: #f1f1f1;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* 가로 중앙 정렬 */
-  margin-top: 20px; /* 페이지네이션과 테이블 사이의 여백 */
-}
-
-.pagination button {
-  padding: 10px 15px; /* 버튼 패딩 */
-  margin: 0 5px; /* 버튼 간격 */
-  border: 1px solid #007bff; /* 버튼 테두리 색상 */
-  background-color: white; /* 버튼 배경색 */
-  color: #007bff; /* 버튼 글자 색상 */
-  cursor: pointer; /* 커서 스타일 */
-  border-radius: 5px; /* 버튼 테두리 둥글기 */
-  transition: background-color 0.3s, color 0.3s; /* 부드러운 전환 효과 */
-}
-
-.pagination button:hover {
-  background-color: #007bff; /* 마우스 오버 시 배경색 */
-  color: white; /* 마우스 오버 시 글자색 */
-}
-
-.pagination button:disabled {
-  color: gray; /* 비활성화된 버튼 색상 */
-  cursor: not-allowed; /* 비활성화된 버튼 커서 스타일 */
-  border: 1px solid gray; /* 비활성화된 버튼 테두리 색상 */
-}
-
-.pagination button.active {
-  font-weight: bold; /* 활성화된 페이지 버튼 강조 */
-  background-color: #007bff; /* 활성화된 버튼 배경색 */
-  color: white; /* 활성화된 버튼 글자색 */
 }
 </style>
