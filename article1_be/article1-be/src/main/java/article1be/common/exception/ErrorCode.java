@@ -21,6 +21,9 @@ public enum ErrorCode {
     // 사용자 (user)
     USER_STATUS_BANED(HttpStatus.UNAUTHORIZED, "정지된 회원입니다."),
 
+    // 유효하지 않은 토큰 (Token)
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+
     /**
      * == 403 FORBIDDEN ==
      */

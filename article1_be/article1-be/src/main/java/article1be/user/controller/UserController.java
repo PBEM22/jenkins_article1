@@ -2,6 +2,8 @@ package article1be.user.controller;
 
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.security.util.JwtUtil;
+import article1be.security.util.SecurityUtil;
 import article1be.user.dto.UserDataDTO;
 import article1be.user.dto.UserResponseDTO;
 import article1be.user.dto.UserUpdateDTO;
@@ -32,9 +34,8 @@ public class UserController {
     /* 회원정보(닉네임) 수정 */
     @PutMapping("/nickname")
     public ResponseEntity<String> updateUserNickname(@RequestBody UserUpdateDTO updateData) {
-        // 시큐리티 완성 후 적용
-        //Long userSeq = SecurityUtil.getCurrentUserSeq();
-        Long userSeq = 2L;  // 시큐리티 완성 전 테스트용 하드코딩
+
+        Long userSeq = SecurityUtil.getCurrentUserSeq();
 
         if(userSeq != null) {
             userService.updateUser(userSeq, updateData.getUserNickname());
@@ -48,9 +49,7 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<String> deleteUser() {
 
-        // 시큐리티 완성 후 적용
-        //Long userSeq = SecurityUtil.getCurrentUserSeq();
-        Long userSeq = 2L;  // 시큐리티 완성 전 테스트용 하드코딩
+        Long userSeq = SecurityUtil.getCurrentUserSeq();
 
         if(userSeq != null) {
             userService.deleteUser(userSeq);
@@ -64,9 +63,7 @@ public class UserController {
     @GetMapping("/detail")
     public ResponseEntity<UserResponseDTO> getUserDetails() {
 
-        // 시큐리티 완성 후 적용
-        //Long userSeq = SecurityUtil.getCurrentUserSeq();
-        Long userSeq = 2L;  // 시큐리티 완성 전 테스트용 하드코딩
+        Long userSeq = SecurityUtil.getCurrentUserSeq();
 
         log.info("로그인 되어 있는 userSeq: {}", userSeq);
         UserResponseDTO userDetail = userService.getUserDetail(userSeq);

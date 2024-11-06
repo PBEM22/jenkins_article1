@@ -1,9 +1,9 @@
 package article1be.user.service;
 
-import article1be.config.GoogleUserInfo;
-import article1be.config.NaverUserInfo;
-import article1be.config.KakaoUserInfo;
-import article1be.config.OAuth2UserInfo;
+import article1be.user.userInfo.GoogleUserInfo;
+import article1be.user.userInfo.NaverUserInfo;
+import article1be.user.userInfo.KakaoUserInfo;
+import article1be.user.userInfo.OAuth2UserInfo;
 import article1be.config.PrincipalDetails;
 import article1be.user.entity.*;
 import article1be.user.repository.UserRepository;

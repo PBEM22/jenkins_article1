@@ -1,9 +1,19 @@
 import mainRouter from "@/router/mainRouter.js";
-import boardRouter from "@/router/boardRouter.js";
+import MapWithDateView from "@/views/location/MapWithDateView.vue";
+import SelectSituation from "@/views/SituationView.vue";
 import {createRouter, createWebHistory} from "vue-router";
 
 const routes = [
-
+    {
+        path: "/map",
+        name: "MapWithDateView",
+        component: MapWithDateView,
+    },
+    {
+        path: "/map/select-situation",
+        name: "SelectSituation",
+        component: SelectSituation,
+    },
     // 메인 라우터
     ...mainRouter,
     // 게시판 라우터
