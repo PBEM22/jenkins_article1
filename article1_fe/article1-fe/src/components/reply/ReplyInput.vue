@@ -31,7 +31,7 @@ function submitComment() {
 }
 
 textarea {
-  width: 100%; /* 너비를 100%로 설정 */
+  width: 95%; /* 너비를 100%로 설정 */
   padding: 10px;
   margin-bottom: 10px; /* 버튼과의 간격 */
   border: 1px solid #ccc;
