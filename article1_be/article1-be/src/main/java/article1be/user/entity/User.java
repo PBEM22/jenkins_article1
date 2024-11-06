@@ -1,5 +1,6 @@
 package article1be.user.entity;
 
+import article1be.admin.dto.AdminDTO;
 import article1be.outfit.entity.Style;
 import article1be.user.dto.UserDataDTO;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "USER")
-@Data
+@Getter
 @EntityListeners(AuditingEntityListener.class)
 @SQLDelete(sql = "UPDATE user SET user_state = 'DELETE', del_date = LOCALTIME WHERE user_seq = ?")
 public class User {
@@ -100,5 +101,11 @@ public class User {
     public void updateUserPrefer(Style style, Condition condition) {
         this.style = style;
         this.condition = condition;
+    }
+
+    public void AdminUserInfo(String userNickname, UserState userState, UserAuth userAuth) {
+        this.userNickname = userNickname;
+        this.userState = userState;
+        this.userAuth = userAuth;
     }
 }
