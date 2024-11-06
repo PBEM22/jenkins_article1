@@ -16,4 +16,6 @@ public class ReviewDTO {
     private Double weather;         // 날씨 정보
     private String reviewContent;   // 리뷰 내용
     private String reviewStatus;    // 리뷰 상태 (ACTIVE 또는 BLIND)
+    private boolean reviewLikeYn;    // 좋아요 유무
+    private boolean reviewBlind;
 }
