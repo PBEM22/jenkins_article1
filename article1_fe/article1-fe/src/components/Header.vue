@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import router from "@/router/index.js";
 
 // 로그인 상태를 나타내는 변수
@@ -29,8 +29,8 @@ const isLogIn = ref(false);
       </template>
       <template v-else>
         <!-- 회원가입과 로그인 버튼 -->
-        <button @click="toggleLogin" class="signup-btn">SIGN UP</button>
-        <button @click="toggleLogin" class="login-btn">LOGIN</button>
+        <button @click="router.push('/login')" class="signup-btn">SIGN UP</button>
+        <button @click="router.push('/login')" class="login-btn">LOGIN</button>
       </template>
     </div>
   </div>

@@ -1,6 +1,5 @@
 package article1be.user.entity;
 
-import article1be.admin.dto.AdminDTO;
 import article1be.outfit.entity.Style;
 import article1be.user.dto.UserDataDTO;
 import jakarta.persistence.*;
@@ -84,7 +83,7 @@ public class User {
         this.userAuth = userAuth;
     }
 
-    // 회원가입 시, 닉네임, 선호도 등록
+    // 회원 가입 시, 닉네임, 선호도 등록
     public void createUserData(UserDataDTO userData, Style style, Condition condition) {
         this.userNickname = userData.getUserNickname();
         this.style = style;             // style 객체 직접 설정
@@ -96,7 +95,7 @@ public class User {
         this.userNickname = newNickname;
     }
 
-    // 선호도(체질, 스타일) 수정
+    // 선호도 (스타일, 체질) 수정
     public void updateUserPrefer(Style style, Condition condition) {
         this.style = style;
         this.condition = condition;
@@ -107,4 +106,5 @@ public class User {
         this.userState = userState;
         this.userAuth = userAuth;
     }
+
 }

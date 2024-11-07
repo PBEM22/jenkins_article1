@@ -59,7 +59,7 @@ public class JwtUtil {
         return new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
-                Collections.singletonList(new SimpleGrantedAuthority(userDetails.getAuthorities().toString()))
+                Collections.singletonList(new SimpleGrantedAuthority(userDetails.getAuthorities().toString().replaceAll("[^a-zA-Z]", "")))
         );
     }
 

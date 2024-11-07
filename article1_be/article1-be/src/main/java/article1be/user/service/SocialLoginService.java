@@ -121,7 +121,6 @@ public class SocialLoginService extends DefaultOAuth2UserService {
                     .build();
 
             userRepository.save(user);
-
         } else System.out.println("로그인을 이미 한 적이 있습니다. 당신은 회원 가입이 되어 있습니다.");
 
         return new PrincipalDetails(user, oAuth2User.getAttributes()); // 생성되면 Authentication 객체 안으로 삽입
