@@ -1,5 +1,10 @@
 <script setup>
+
+// vue
 import {defineEmits} from "vue";
+
+// route
+import {useRoute} from "vue-router";
 
 const props = defineProps({
   boardTitle: String,
@@ -10,11 +15,11 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(["delete"], ["blame"]);
+const emit = defineEmits(["delete"]);
 
 // 신고 버튼 클릭 이벤트
 function blameBoard() {
-  emit("blame");
+
 }
 
 // 삭제 버튼 클릭 이벤트

@@ -1,7 +1,7 @@
 package article1be.blame.service;
 
-import article1be.blame.repository.BlameRepository;
 import article1be.blame.entity.Blame;
+import article1be.blame.repository.BlameRepository;
 import article1be.board.entity.Board;
 import article1be.board.repository.BoardRepository;
 import article1be.reply.entity.Reply;
@@ -28,6 +28,7 @@ public class BlameService {
     public void createBoardBlame(long boardSeq, long userSeq) {
 
         Blame blame = blameRepository.save(Blame.builder()
+                .blameSeq(1L)
                 .blameUserSeq(userSeq)
                 .blameBoardSeq(boardSeq)
                 .blameReplySeq(null)
@@ -56,6 +57,7 @@ public class BlameService {
     @Transactional
     public void createReplyBlame(long replySeq, long userSeq) {
         Blame blame = blameRepository.save(Blame.builder()
+                .blameSeq(1L)
                 .blameUserSeq(userSeq)
                 .blameBoardSeq(null)
                 .blameReplySeq(replySeq)
@@ -83,6 +85,7 @@ public class BlameService {
     @Transactional
     public void createReviewBlame(long reviewSeq, long userSeq) {
         Blame blame = blameRepository.save(Blame.builder()
+                .blameSeq(1L)
                 .blameUserSeq(userSeq)
                 .blameBoardSeq(null)
                 .blameReplySeq(null)

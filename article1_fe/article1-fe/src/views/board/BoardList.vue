@@ -113,7 +113,7 @@ onMounted(() => {
         <!-- 공지사항 표시 (최대 2개) -->
         <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
           <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                         v-on:click="goToDetailPage(item.boardSeq)"
+                         ≠v-on:click="goToDetailPage(item.boardSeq)"
                          :title="item.boardTitle"
                          :content="item.boardContent"
                          :date="formatDate(item.regDate)"
