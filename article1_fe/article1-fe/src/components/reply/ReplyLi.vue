@@ -1,11 +1,33 @@
 <script setup>
+
+// component
 import SmallButton from "@/components/board/SmallButton.vue";
 
+// axios
+import axios from "axios";
+
+// router
+import {useRoute, useRouter} from "vue-router";
+
+// pinia
+import {useAuthStore} from "@/store/authStore.js";
+
+// Jwt 토큰 정보 확인
+const authStore = useAuthStore();
+
+// 라우터
+const router = useRouter();
+const route = useRoute();
+
+// props
 const props = defineProps({
   userSeq: Number,
   replyContent: String,
   regDate: String
 });
+
+// 신고 이벤트
+function
 
 // 날짜 형식을 변환하는 함수 (시간 제거)
 function formatDate(dateString) {
