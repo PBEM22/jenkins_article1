@@ -16,6 +16,7 @@ import {useRouter} from "vue-router";
 
 // Pinia
 import {useAuthStore} from "@/store/authStore.js";
+import NormalButton from "@/components/board/NormalButton.vue";
 
 // Jwt 토근 정보 확인
 const authStore = useAuthStore();
@@ -95,7 +96,7 @@ function goToDetailPage(boardSeq) {
 
 // 게시들 등록 페이지 이동
 function goToRegister() {
-  router.push(`/board/BoardRegister`);
+  router.push(`/board/register`);
 }
 
 onMounted(() => {
@@ -150,6 +151,12 @@ onMounted(() => {
         </tr>
         </tbody>
       </table>
+      <div class="button-container"> <!-- 버튼을 감싸는 div 추가 -->
+        <NormalButton
+            v-on:click="goToRegister"
+            text="글쓰기"
+        />
+      </div>
     </Container>
   </div>
 </template>
@@ -169,5 +176,11 @@ table {
 
 tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+.button-container {
+  display: flex; /* Flexbox 사용 */
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin-top: 10px; /* 버튼 위쪽 여백 추가 */
 }
 </style>
