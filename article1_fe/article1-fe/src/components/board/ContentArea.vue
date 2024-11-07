@@ -6,6 +6,11 @@ import {defineEmits} from "vue";
 // route
 import {useRoute} from "vue-router";
 
+// store
+import {useAuthStore} from "@/store/authStore.js";
+
+import axios from "axios";
+
 const props = defineProps({
   boardTitle: String,
   boardContent: String,
@@ -15,11 +20,33 @@ const props = defineProps({
   }
 });
 
+const authStore = useAuthStore();
+
+const route = useRoute();
+
 const emit = defineEmits(["delete"]);
 
 // 신고 버튼 클릭 이벤트
-function blameBoard() {
+async function blameBoard() {
+  try {
+    const boardSeq = route.params.boardSeq;
+    const response = await axios.post(`http://localhost:8080/blame/board/${boardSeq}`, {}, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      }
+    });
 
+    if (response.status === 200) {
+      alert(`신고가 완료되었습니다.`);
+      console.log("코드 = " + response.status)
+    } else {
+      alert(`신고에 실패했습니다.`);
+      console.log("코드 = " + response.status)
+    }
+  } catch (error) {
+    console.log("게시글 신고 중 오류가 발생했습니다.");
+    console.log(error);
+  }
 }
 
 // 삭제 버튼 클릭 이벤트
