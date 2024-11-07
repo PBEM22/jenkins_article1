@@ -20,7 +20,7 @@ import {useAuthStore} from "@/store/authStore.js";
 // Jwt 토근 정보 확인
 const authStore = useAuthStore();
 
-// 게시글 목록 변수
+// 호출 데이터
 const boardList = ref([]);
 
 // 데이터 호출
@@ -34,6 +34,7 @@ const fetchData = async () => {
 
     if (response.status === 200) {
       boardList.value = response.data;
+      // console.log(boardList.value);
     } else {
       console.log("게시글 목록 조회 실패");
       console.log(`코드: ` + response.status);
@@ -98,9 +99,6 @@ function goToRegister() {
 }
 
 onMounted(() => {
-  console.log("access token");
-  console.log(authStore.accessToken);
-
   fetchData();
 })
 

@@ -65,7 +65,6 @@ public class BoardController {
         }
         // 조회 성공
         else {
-
             return ResponseEntity.ok(this.service.getBoard(boardSeq));
         }
     }
@@ -79,14 +78,19 @@ public class BoardController {
     public ResponseEntity<Long> createBoard(
             @RequestParam("boardTitle") String boardTitle,
             @RequestParam("boardContent") String boardContent,
-            @RequestParam("imageList") List<MultipartFile> imageList
+            @RequestParam(value = "imageList", required = false) List<MultipartFile> imageList
     ) {
         try {
             // RequestBoard 객체 생성
             RequestBoard newBoard = new RequestBoard();
             newBoard.setBoardTitle(boardTitle);
             newBoard.setBoardContent(boardContent);
-            newBoard.setImageList(imageList);
+            if (imageList != null && !imageList.isEmpty()) {
+                newBoard.setImageList(imageList);
+            }
+
+            log.info("boardTitle = " + newBoard.getBoardTitle());
+            log.info("boardContent = " + newBoard.getBoardContent());
 
             // 게시글 생성
             Board createdBoard = service.createBoard(newBoard);

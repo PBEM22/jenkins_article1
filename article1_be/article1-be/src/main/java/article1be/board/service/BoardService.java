@@ -16,6 +16,8 @@ import article1be.user.entity.UserAuth;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
 
+    private static final Logger log = LoggerFactory.getLogger(BoardService.class);
     private final BoardRepository boardRepository;
     private final PictureRepository pictureRepository;
     private final ReplyRepository replyRepository;
@@ -36,20 +39,45 @@ public class BoardService {
 
     // 게시글 목록 조회
     public List<BoardDTO> getBoardList() {
+        // 모든 이미지 목록을 가져옵니다.
+        List<PictureDTO> pictureList = pictureRepository.findAll()
+                .stream()
+                .map(picture -> PictureDTO.builder()
+                        .pictureSeq(picture.getPictureSeq())
+                        .pictureBoardSeq(picture.getPictureBoardSeq())
+                        .pictureOriginName(picture.getPictureOriginName())
+                        .pictureChangedName(picture.getPictureChangedName())
+                        .pictureUrl(picture.getPictureUrl())
+                        .pictureType(picture.getPictureType())
+                        .regDate(picture.getRegDate())
+                        .delDate(picture.getDelDate())
+                        .pictureIsDelete(picture.isPictureIsDelete())
+                        .build())
+                .collect(Collectors.toList());
 
+        // 게시글 목록을 가져옵니다.
         List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindFalse()
                 .stream()
-                .map(board -> BoardDTO.builder()
-                        .boardSeq(board.getBoardSeq())
-                        .userSeq(board.getUserSeq())
-                        .boardTitle(board.getBoardTitle())
-                        .boardContent(board.getBoardContent())
-                        .regDate(board.getRegDate())
-                        .upDate(board.getUpDate())
-                        .delDate(board.getDelDate())
-                        .boardIsBlind(board.getBoardIsBlind())
-                        .boardIsNotice(board.getBoardIsNotice())
-                        .build())
+                .map(board -> {
+                    // 현재 게시글의 ID와 일치하는 이미지 목록을 필터링합니다.
+                    List<PictureDTO> imagesForBoard = pictureList.stream()
+                            .filter(picture -> picture.getPictureBoardSeq() == board.getBoardSeq()) // == 연산자로 비교
+                            .collect(Collectors.toList());
+
+                    // 게시글 DTO를 생성하고 이미지 목록을 추가합니다.
+                    return BoardDTO.builder()
+                            .boardSeq(board.getBoardSeq())
+                            .userSeq(board.getUserSeq())
+                            .boardTitle(board.getBoardTitle())
+                            .boardContent(board.getBoardContent())
+                            .regDate(board.getRegDate())
+                            .upDate(board.getUpDate())
+                            .delDate(board.getDelDate())
+                            .boardIsBlind(board.getBoardIsBlind())
+                            .boardIsNotice(board.getBoardIsNotice())
+                            .boardPictureList(imagesForBoard) // 이미지 목록 추가
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return boardDTOList;
@@ -108,22 +136,24 @@ public class BoardService {
         // 1. DB(Board)에 데이터 저장
         Board result = boardRepository.save(board);
 
-        for (MultipartFile image : newBoard.getImageList()) {
-            // 2. Amazon S3 버킷에 이미지 저장
-            AmazonS3Service.MetaData metaData = amazonS3Service.upload(image);
+        if (newBoard.getImageList() != null && !newBoard.getImageList().isEmpty()) {
+            for (MultipartFile image : newBoard.getImageList()) {
+                // 2. Amazon S3 버킷에 이미지 저장
+                AmazonS3Service.MetaData metaData = amazonS3Service.upload(image);
 
-            // 3. DB(Picture)에 데이터 저장
-            RequestPicture requestPicture = new RequestPicture();
-            requestPicture.setPictureBoardSeq(board.getBoardSeq());
-            requestPicture.setPictureOriginName(metaData.getOriginalFileName());
-            requestPicture.setPictureChangedName(metaData.getChangeFileName());
-            requestPicture.setPictureUrl(metaData.getUrl());
-            requestPicture.setPictureType(metaData.getType());
+                // 3. DB(Picture)에 데이터 저장
+                RequestPicture requestPicture = new RequestPicture();
+                requestPicture.setPictureBoardSeq(board.getBoardSeq());
+                requestPicture.setPictureOriginName(metaData.getOriginalFileName());
+                requestPicture.setPictureChangedName(metaData.getChangeFileName());
+                requestPicture.setPictureUrl(metaData.getUrl());
+                requestPicture.setPictureType(metaData.getType());
 
-            Picture picture = new Picture();
-            picture.create(requestPicture);
+                Picture picture = new Picture();
+                picture.create(requestPicture);
 
-            pictureRepository.save(picture);
+                pictureRepository.save(picture);
+            }
         }
 
         return result;

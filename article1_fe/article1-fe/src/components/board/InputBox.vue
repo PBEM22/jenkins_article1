@@ -1,24 +1,34 @@
 <template>
   <div class="hint-input">
-    <input :id="inputId" type="text" :placeholder="hint" v-model="inputValue"/>
+    <input :id="inputId" type="text" :placeholder="hint" :value="value" @input="onInput" />
   </div>
 </template>
 
 <script setup>
-import {defineProps, ref} from 'vue';
+import {defineProps, defineEmits} from 'vue';
 
 const props = defineProps({
   label: {
     type: String,
     required: true
+  },
+  value: { // modelValue 대신 value로 변경
+    type: String,
+    default: ''
   }
 });
 
+const emit = defineEmits(['update:value']); // update:modelValue 대신 update:value로 변경
+
 const inputId = `input-${Math.random().toString(36).substr(2, 9)}`; // 고유 ID 생성
-const inputValue = ref(''); // 입력 값 저장
 
 // 힌트 메시지 생성
 const hint = `${props.label}을(를) 입력해주세요.`;
+
+// 입력값이 변경될 때 emit
+function onInput(event) {
+  emit('update:value', event.target.value); // 입력값을 부모로 emit
+}
 </script>
 
 <style scoped>

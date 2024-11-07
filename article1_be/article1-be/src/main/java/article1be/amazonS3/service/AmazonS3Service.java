@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-@Slf4j
 public class AmazonS3Service {
 
     private static final Logger log = LoggerFactory.getLogger(AmazonS3Service.class);
@@ -47,6 +43,7 @@ public class AmazonS3Service {
         metadata.setContentType(image.getContentType());
         metaData.setType(image.getContentType());
         metadata.setContentLength(image.getSize());
+        metaData.setUrl(client.getUrl(amazonS3Bucket, fileName).toString());
 
         // S3에 파일 업로드
         client.putObject(amazonS3Bucket, fileName, image.getInputStream(), metadata);
@@ -54,6 +51,7 @@ public class AmazonS3Service {
         // 로그 출력 (원래 파일 이름과 변경된 파일 이름)
         log.info("origin name = " + metaData.getOriginalFileName());
         log.info("changed name = " + metaData.getChangeFileName());
+        log.info("url = " + metaData.getUrl());
 
         // 업로드한 파일의 S3 URL 주소 반환
         return metaData;
@@ -65,7 +63,7 @@ public class AmazonS3Service {
 
         return newFileName;
     }
-    
+
     @Getter
     @Setter
     public static class MetaData {
