@@ -54,6 +54,8 @@ import { useRouter } from 'vue-router';
 
 export default {
   setup() {
+    const accessToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMSIsImF1dGgiOlsiQURNSU4iXSwiZXhwIjoxNzMwOTg1MzYxfQ.vZ8kQjwWEWrDzKIOeglLjiYcObulEd5v9WfUejgHx-ZLeJc1Kx3j9LxKKt4JmWkeLJz9a4pK49P_l6dgKNBf3w";
+
     const userList = ref([]);
     const searchField = ref('전체');
     const searchTerm = ref('');
@@ -61,9 +63,9 @@ export default {
     const router = useRouter();
 
     const fetchUsers = async () => {
-      const token = authStore.accessToken;
+      const token = accessToken;
 
-      if (!token) {
+      if (!accessToken) {
         console.error("토큰이 없습니다. 로그인 후 다시 시도해 주세요.");
         alert("로그인이 필요합니다.");
         router.push('/login');
