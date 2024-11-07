@@ -15,7 +15,6 @@ public class SecurityUtil {
 
     // 현재 인증된 사용자의 UserDetails 반환
     public static Optional<UserDetails> getCurrentUserDetails() {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -31,7 +30,7 @@ public class SecurityUtil {
                 .map(userDetails -> userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority) // 권한을 String으로 변환
                         .collect(Collectors.joining(",")))  // 권한들을 ','로 구분하여 반환
-                .orElse("");  // 권한이 없을 경우 빈 문자열 반환
+                .orElse("");  // 권한이 없을 경우, 빈 문자열 반환
     }
 
 
@@ -45,10 +44,10 @@ public class SecurityUtil {
                     } catch (NumberFormatException e) {
                         log.error("Invalid userSeq format: {}", userDetails.getUsername(), e);
 
-                        return null;  // 숫자 형식이 아닌 경우 null 반환
+                        return null; // 숫자 형식이 아닌 경우, null 반환
                     }
                 })
-                .orElse(null);  // 인증된 사용자 없을 경우 null 반환
+                .orElse(null); // 인증된 사용자가 없을 경우, null 반환
     }
 
 }

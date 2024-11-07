@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final Environment env;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         log.info("로그인 성공 후, security가 관리하는 principal 객체 : {}", authentication);
 
         // PrincipalDetails 객체로 캐스팅
@@ -56,6 +57,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("토큰 생성 확인 : {}", token);
 
         response.setHeader("token", token);
+        response.sendRedirect("http://localhost:5173");
+
     }
 
 }
