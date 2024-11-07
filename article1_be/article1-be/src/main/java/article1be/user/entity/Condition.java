@@ -10,12 +10,12 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "`CONDITION`")
+@Table(name = "condition")
 public class Condition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conditionSeq;
-
     private String conditionName;
+
 }

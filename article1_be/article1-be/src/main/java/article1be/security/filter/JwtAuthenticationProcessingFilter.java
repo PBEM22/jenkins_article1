@@ -35,7 +35,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter{
                 if(jwtUtil.isTokenValid(token)) {
                     // 유효한 문자열을 기반으로 spring security에서 사용하는 authentication(인증 객체) 생성
                     Authentication authentication = jwtUtil.getAuthentication(token);
-                    // JWT 토큰을 확인하는 필터가 인증 필터보다 앞에 존재. 인증 객체를 설정해 두게 되면 인증 필터 생략 (인증이 완료되었고, 이후 인증 필터는 건너 뛰게 된다.)
+                    // JWT 토큰을 확인하는 필터가 인증 필터보다 앞에 존재. 인증 객체를 설정해 두게 되면 인증 필터 생략 (인증이 완료되었고, 이후 인증 필터는 건너 뛰고 진행)
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
                     log.info("SecurityContextHolder 저장 완료");
