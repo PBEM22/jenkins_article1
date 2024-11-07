@@ -50,7 +50,7 @@ public class SecurityConfig {
 //                        .loginPage("/loginForm") // 프론트엔드 로그인 페이지로 설정 예정
                         .userInfoEndpoint(user -> user.userService(socialLoginService))
                         .successHandler(new OAuth2LoginSuccessHandler(env)) // JWT 발행 로직이 포함된 핸들러
-                        .failureHandler(new OAuth2LoginFailureHandler()) // JWT 발행 로직이 포함된 핸들러
+                        .failureHandler(new OAuth2LoginFailureHandler())
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
