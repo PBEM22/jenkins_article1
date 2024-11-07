@@ -42,11 +42,10 @@ public class BlameService {
         // 신고 개수가 10개 이상이면 boardIsBlind 값을 true로 업데이트
         if (blameCount >= 10) {
             Optional<Board> blamedBoardList = boardRepository.findById(boardSeq);
-            if (blamedBoardList.isPresent()) {
-                Board blamedBoard = blamedBoardList.get();
+            blamedBoardList.ifPresent(blamedBoard -> {
                 blamedBoard.setBlind(); // 블라인드 처리
                 boardRepository.save(blamedBoard); // 변경사항 저장
-            }
+            });
         }
     }
 
@@ -68,11 +67,11 @@ public class BlameService {
         // 신고 개수가 10개 이상이면 boardIsBlind 값을 true로 업데이트
         if (blameCount >= 10) {
             Optional<Board> blamedBoardList = boardRepository.findById(replySeq);
-            if (blamedBoardList.isPresent()) {
-                Board blamedBoard = blamedBoardList.get();
+            blamedBoardList.ifPresent(blamedBoard -> {
                 blamedBoard.setBlind(); // 블라인드 처리
                 boardRepository.save(blamedBoard); // 변경사항 저장
-            }
+            });
+
         }
     }
 
@@ -94,11 +93,10 @@ public class BlameService {
         // 신고 개수가 10개 이상이면 boardIsBlind 값을 true로 업데이트
         if (blameCount >= 10) {
             Optional<Board> blamedBoardList = boardRepository.findById(reviewSeq);
-            if (blamedBoardList.isPresent()) {
-                Board blamedBoard = blamedBoardList.get();
+            blamedBoardList.ifPresent(blamedBoard -> {
                 blamedBoard.setBlind(); // 블라인드 처리
                 boardRepository.save(blamedBoard); // 변경사항 저장
-            }
+            });
         }
     }
 }
