@@ -1,5 +1,7 @@
 import mainRouter from "@/router/mainRouter.js";
 import boardRouter from "@/router/boardRouter.js";
+import userRouter from "@/router/userRouter.js"
+import mypageRouter from "@/router/mypageRouter.js"
 import MapWithDateView from "@/views/location/MapWithDateView.vue";
 import SelectSituation from "@/views/SituationView.vue";
 import {createRouter, createWebHistory} from "vue-router";
@@ -18,7 +20,11 @@ const routes = [
     // 메인 라우터
     ...mainRouter,
     // 게시판 라우터
-    ...boardRouter
+    ...boardRouter,
+    // 회원 라우터
+    ...userRouter,
+    // 마이페이지 라우터
+    ...mypageRouter
 ]
 
 const router = createRouter({
@@ -33,7 +39,7 @@ const router = createRouter({
             // 새로운 페이지 이동 시 맨 위로 스크롤
             return {top: 0};
         }
-    }
+    },
 });
 
 export default router;
