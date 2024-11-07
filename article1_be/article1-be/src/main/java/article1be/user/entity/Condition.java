@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "condition")
+@Table(name = "`condition`")
 public class Condition {
 
     @Id
