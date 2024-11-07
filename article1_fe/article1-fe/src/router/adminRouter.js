@@ -3,7 +3,7 @@ import AdminDetail from "@/views/admin/AdminDetail.vue";
 
 export default [
     {
-        path: '/admin/users',
+        path: '/admin/user',
         component: Admin, // 관리자 회원 목록 조회
     },
     {

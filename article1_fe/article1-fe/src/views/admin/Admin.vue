@@ -48,50 +48,76 @@
 
 <script>
 import axios from 'axios';
+import { ref, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/store/authStore';
+import { useRouter } from 'vue-router';
 
 export default {
-  data() {
-    return {
-      userList: [],
-      searchField: '전체',
-      searchTerm: ''
-    };
-  },
-  computed: {
-    filteredUsers() {
-      return this.userList.filter(user => {
-        if (this.searchField === '전체') {
-          return Object.values(user).some(value =>
-              String(value).toLowerCase().includes(this.searchTerm.toLowerCase())
-          );
-        }
-        return String(user[this.searchField])?.toLowerCase().includes(this.searchTerm.toLowerCase());
-      });
-    }
-  },
-  methods: {
-    async fetchUsers() {
+  setup() {
+    const userList = ref([]);
+    const searchField = ref('전체');
+    const searchTerm = ref('');
+    const authStore = useAuthStore();
+    const router = useRouter();
+
+    const fetchUsers = async () => {
+      const token = authStore.accessToken;
+
+      if (!token) {
+        console.error("토큰이 없습니다. 로그인 후 다시 시도해 주세요.");
+        alert("로그인이 필요합니다.");
+        router.push('/login');
+        return;
+      }
+
       try {
-        const response = await axios.get('/admin/user');
-        this.userList = Array.isArray(response.data) ? response.data : [];
+        const response = await axios.get('/admin/user', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        userList.value = Array.isArray(response.data) ? response.data : [];
       } catch (error) {
         console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
-        this.userList = [];
+        userList.value = [];
       }
-    },
-    statusClass(status) {
+    };
+
+    const filteredUsers = computed(() => {
+      return userList.value.filter(user => {
+        if (searchField.value === '전체') {
+          return Object.values(user).some(value =>
+              String(value).toLowerCase().includes(searchTerm.value.toLowerCase())
+          );
+        }
+        return String(user[searchField.value])?.toLowerCase().includes(searchTerm.value.toLowerCase());
+      });
+    });
+
+    const statusClass = (status) => {
       return {
         ACTIVE: 'status-active',
         BAN: 'status-ban',
         DELETE: 'status-delete'
       }[status];
-    },
-    authClass(auth) {
+    };
+
+    const authClass = (auth) => {
       return auth === '관리자' ? 'auth-admin' : '';
-    }
-  },
-  created() {
-    this.fetchUsers();
+    };
+
+    onMounted(() => {
+      fetchUsers();
+    });
+
+    return {
+      userList,
+      searchField,
+      searchTerm,
+      filteredUsers,
+      statusClass,
+      authClass
+    };
   }
 };
 </script>
