@@ -9,8 +9,8 @@ export const useAuthStore = defineStore('auth', () => {
         const token = localStorage.getItem('accessToken');
         console.log(token);
         if (token) {
-            // accessToken.value = token;
-            accessToken.value = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjQiLCJhdXRoIjpbIlVTRVIiXSwiZXhwIjoxNzMwOTY3NTc5fQ.WM-J5dn4JxLlq4-POsbWEDNut6XAZeK50y9U2pxkIM5_oATWiqL2NaeFQwr7kh3B2kVbSw_-mcDWJJ17hIqGUQ";
+            accessToken.value = token;
+            // accessToken.value = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjQiLCJhdXRoIjpbIlVTRVIiXSwiZXhwIjoxNzMwOTY3NTc5fQ.WM-J5dn4JxLlq4-POsbWEDNut6XAZeK50y9U2pxkIM5_oATWiqL2NaeFQwr7kh3B2kVbSw_-mcDWJJ17hIqGUQ";
             const payload = JSON.parse(atob(token.split('.')[1])); // JWT 토큰의 페이로드 추출
             userRole.value = payload.auth[0].slice(5);
             console.log(userRole.value)
