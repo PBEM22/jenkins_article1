@@ -113,7 +113,7 @@ onMounted(() => {
         <!-- 공지사항 표시 (최대 2개) -->
         <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
           <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                         ≠v-on:click="goToDetailPage(item.boardSeq)"
+                         @click="goToDetailPage(item.boardSeq)"
                          :title="item.boardTitle"
                          :content="item.boardContent"
                          :date="formatDate(item.regDate)"
@@ -121,7 +121,7 @@ onMounted(() => {
                          :imageUrl="item.boardPictureList[0]?.pictureUrl"
           />
           <BoardNoticeLi v-else
-                         v-on:click="goToDetailPage(item.boardSeq)"
+                         @click="goToDetailPage(item.boardSeq)"
                          :title="item.boardTitle"
                          :content="item.boardContent"
                          :date="formatDate(item.regDate)"
@@ -133,7 +133,7 @@ onMounted(() => {
         <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
         <tr v-if="regularPosts && regularPosts.length > 0" v-for="item in regularPosts" :key="item.boardSeq">
           <BoardLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                   v-on:click="goToDetailPage(item.boardSeq)"
+                   @:click="goToDetailPage(item.boardSeq)"
                    :title="item.boardTitle"
                    :content="item.boardContent"
                    :date="formatDate(item.regDate)"
@@ -141,7 +141,7 @@ onMounted(() => {
                    :imageUrl="item.boardPictureList[0]?.pictureUrl"
           />
           <BoardLi v-else
-                   v-on:click="goToDetailPage(item.boardSeq)"
+                   @:click="goToDetailPage(item.boardSeq)"
                    :title="item.boardTitle"
                    :content="item.boardContent"
                    :date="formatDate(item.regDate)"
@@ -151,9 +151,9 @@ onMounted(() => {
         </tr>
         </tbody>
       </table>
-      <div class="button-container"> <!-- 버튼을 감싸는 div 추가 -->
+      <div class="button-container">
         <NormalButton
-            v-on:click="goToRegister"
+            @:click="goToRegister"
             text="글쓰기"
         />
       </div>
