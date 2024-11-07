@@ -1,5 +1,6 @@
 package article1be.review.service;
 
+import article1be.outfit.repository.SelectRecordRepository;
 import article1be.review.entity.Review;
 import article1be.review.dto.ReviewDTO;
 import article1be.review.repository.ReviewRepository;
@@ -21,6 +22,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final SelectRecordRepository selectRecordRepository;
 
     public List<ReviewDTO> getAllReviews() {
         return reviewRepository.findAll().stream()
@@ -69,6 +71,10 @@ public class ReviewService {
 
     @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDto) {
+        if (!selectRecordRepository.existsById(reviewDto.getSelectSeq())) {
+            throw new CustomException(ErrorCode.INVALID_SELECT_SEQ);
+        }
+
         Review review = new Review(
                 reviewDto.getUserSeq(),
                 reviewDto.getSelectSeq(),
