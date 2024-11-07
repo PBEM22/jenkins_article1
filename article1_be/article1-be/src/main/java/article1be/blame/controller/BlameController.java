@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/report")
+@RequestMapping(value = "/blame")
 public class BlameController {
 
     private final BlameService service;
@@ -27,7 +27,7 @@ public class BlameController {
             summary = "게시글 신고",
             description = "게시글 번호를 입력받아 해당 게시글을 신고"
     )
-    @PostMapping(value = "/{boardSeq}")
+    @PostMapping(value = "/board/{boardSeq}")
     public ResponseEntity<String> blameBoard(@PathVariable("boardSeq") long boardSeq) {
         service.createBoardBlame(boardSeq, SecurityUtil.getCurrentUserSeq());
 
@@ -39,7 +39,7 @@ public class BlameController {
             summary = "댓글 신고",
             description = "댓글 번호를 입력받아 해당 댓글을 신고"
     )
-    @PostMapping(value = "/{replySeq}")
+    @PostMapping(value = "/reply/{replySeq}")
     public ResponseEntity<String> blameReply(@PathVariable("replySeq") long replySeq) {
         service.createReplyBlame(replySeq, SecurityUtil.getCurrentUserSeq());
 
@@ -51,7 +51,7 @@ public class BlameController {
             summary = "리뷰 신고",
             description = "리뷰 번호를 입력받아 해당 리뷰를 신고"
     )
-    @PostMapping(value = "/{reviewSeq}")
+    @PostMapping(value = "/review/{reviewSeq}")
     public ResponseEntity<String> blameReview(@PathVariable("reviewSeq") long reviewSeq) {
         service.createReviewBlame(reviewSeq, SecurityUtil.getCurrentUserSeq());
 

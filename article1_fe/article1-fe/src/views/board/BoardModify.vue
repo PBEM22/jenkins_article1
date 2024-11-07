@@ -1,13 +1,13 @@
 <script setup>
 // vue
-import {ref, watch} from "vue";
-import {useRouter} from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 // axios
 import axios from "axios";
 
 // store
-import {useAuthStore} from "@/store/authStore.js";
+import { useAuthStore } from "@/store/authStore.js";
 
 // component
 import Container from "@/components/board/Container.vue";
@@ -20,11 +20,50 @@ const authStore = useAuthStore();
 
 // router
 const router = useRouter();
+const route = useRoute();
 
 // 입력값을 저장할 ref
 const title = ref('');
 const content = ref('');
 const imageList = ref([]);
+
+// 게시글 데이터
+const boardData = ref({});
+
+// 게시글 데이터 조회
+async function fetchData() {
+  try {
+    const boardSeq = route.params.boardSeq;
+    const response = await axios.get(`http://localhost:8080/board/${boardSeq}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`
+      }
+    });
+
+    if (response.status === 200) {
+      boardData.value = response.data;
+      console.log("조회된 게시글 데이터", boardData.value);
+
+      // 데이터 구조 확인 및 입력 필드에 값을 설정
+      title.value = boardData.value.boardTitle; // 게시글 제목
+      content.value = boardData.value.boardContent; // 게시글 내용
+
+      // 이미지 리스트가 존재하면 설정 (예: 서버에서 이미지 URL 리스트 받는 경우)
+      if (boardData.value.imageList) {
+        imageList.value = boardData.value.imageList; // 서버에서 반환된 이미지 리스트
+      }
+    } else {
+      console.log("게시글 조회 실패", `코드: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("어라라...?\n", error);
+  }
+}
+
+// 게시글 데이터 로드
+onMounted(() => {
+  fetchData();
+});
 
 watch(imageList, (newList) => {
   console.log("업로드된 이미지 리스트:", newList);
@@ -32,48 +71,23 @@ watch(imageList, (newList) => {
 
 async function sendData() {
   try {
-    const formData = new FormData();
-
-    // 제목과 내용을 FormData에 추가
-    formData.append('boardTitle', title.value); // 제목
-    formData.append('boardContent', content.value); // 내용
-
-    // 이미지 리스트를 FormData에 추가
-    imageList.value.forEach(({ name, src }, index) => {
-      // src를 Blob으로 변환하는 로직
-      const byteString = atob(src.split(',')[1]);
-      const mimeString = src.split(',')[0].split(':')[1].split(';')[0];
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-      const blob = new Blob([ab], { type: mimeString });
-
-      // Blob을 FormData에 추가 (원래 파일 이름 사용)
-      formData.append('imageList', blob, name); // 원래 파일 이름으로 설정
-    });
-
-    // FormData의 내용을 로그로 출력하여 확인
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
-    // 서버에 POST 요청
-    const response = await axios.post(`http://localhost:8080/board`, formData, {
+    const response = await axios.put(`http://localhost:8080/board/${route.params.boardSeq}`, {
+      boardTitle: title.value,
+      boardContent: content.value,
+      imageList: imageList.value
+    }, {
       headers: {
-        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${authStore.accessToken}`
       }
     });
 
     if (response.status === 200) {
-      console.log("게시글 등록 성공", response.data);
-      router.push(`/board`);
+      console.log("게시글 수정 성공", response.data);
+      router.push(`/board/${route.params.boardSeq}`); // 수정된 게시글 페이지로 이동
     }
 
   } catch (error) {
-    console.error("게시글 등록 중 오류가 발생했습니다.", error);
+    console.error("게시글 수정 중 오류가 발생했습니다.", error);
   }
 }
 </script>
@@ -96,7 +110,7 @@ async function sendData() {
       <FileUpload
           label="이미지 업로드"
           :imageList="imageList"
-          @update:imageList="imageList = $event"
+      @update:imageList="imageList = $event"
       />
     </div>
     <div class="upload-notice">

@@ -15,7 +15,7 @@ import {useAuthStore} from "@/store/authStore.js";
 import Container from "@/components/board/Container.vue";
 import TitleBar from "@/components/board/TitleBar.vue";
 import ContentArea from "@/components/board/ContentArea.vue";
-import SmallButton from "@/components/board/NormalButton.vue";
+import NormalButton from "@/components/board/NormalButton.vue";
 import ReplyLi from "@/components/reply/ReplyLi.vue";
 import ReplyInput from "@/components/reply/ReplyInput.vue";
 import Modal from "@/components/board/DeleteModal.vue"; // 모달 컴포넌트 가져오기
@@ -171,8 +171,8 @@ onMounted(() => {
           @delete="openModal"
       />
       <div class="buttons">
-        <SmallButton @click="goToList" text="목록"/>
-        <SmallButton @click="goToRegister" text="글쓰기"/>
+        <NormalButton @click="goToList" text="목록"/>
+        <NormalButton @click="goToRegister" text="글쓰기"/>
       </div>
       <template v-if="replyList.length > 0">
         <hr class="divider"/>
