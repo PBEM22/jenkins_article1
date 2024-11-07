@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -262,9 +261,7 @@ public class OpenWeatherService {
                 .max(Map.Entry.comparingByValue())          // 가장 많이 나온 값 찾기
                 .map(Map.Entry::getKey)                     // 값의 키 꺼내기
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_AIR_DATA));      // 없을 시에 예외 처리
-
-        log.info("max aqi {}", aqi);
-
+        
         responseAppointDTO.setAqi(aqi);
 
         return responseAppointDTO;
@@ -274,8 +271,9 @@ public class OpenWeatherService {
      * 지정시간 ~ 다음날 00시까지의 데이터 조회 서비스 (날씨코드, 온도, 체감온도, 날씨아이콘, 미세먼지 농도, 초미세먼지 농도, 지정시간 ~ 다음날 00시까지의 (최저기온, 최고기온)
      */
     public ResponseMainWeatherDTO getMainWeatherData(String inputTime, String lat, String lon) throws UnsupportedEncodingException {
+
         // 입력 받은 시간을 LocalDateTime으로 변경
-        LocalDateTime inputLocalDateTime = LocalDateTime.parse(inputTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        LocalDateTime inputLocalDateTime = DateTimeUtil.stringParseToLocalDateTime(inputTime);
 
         // 다음날 00시 계산
         LocalDateTime tomorrowTime = getTomorrowTime(inputLocalDateTime);
@@ -283,12 +281,31 @@ public class OpenWeatherService {
         // 현재 시간
         LocalDateTime nowTime = LocalDateTime.now();
 
-        // 현재시간 ~ 사용자가 입력한 시간까지의 데이터 개수
+        // 현재시간 ~ 사용자가 입력한 시간까지의 데이터 개수 (+1이 추가되어 반환된다 따라서 -1)
         int excludeCnt = getCnt(nowTime, inputLocalDateTime);
+
+        // 현재시간인지, 최근 데이터인지 검증 변수
+        boolean checkDate = false;
+
+        // 지정시간과 요청시간의 차이가 얼마 나지 않으면 현재 시간을 호출 (&& 3시간단위로 있는 다음 데이터시간과 1시간 이상 차이 나야함)
+        int timeDiff = inputLocalDateTime.getHour() / 3;    // 3시간 단위가 아니라면
+        if (timeDiff != 0){
+
+            // 다음 데이터가 있는 시간
+            LocalDateTime dataDate = inputLocalDateTime.withHour((timeDiff + 1) * 3).withMinute(0).withSecond(0).withNano(0);
+
+            // 남은 시간 (3으로 나눠을때 반내림이 되면 excludeCnt -1)
+            float leftTime = (inputLocalDateTime.getHour() + inputLocalDateTime.getMinute() / 60.0f) / 3;
+
+            // 지정시간이 현재시간보다 1시간 이내, 다음 데이터시간보다 1시간 이상일때는 현재시간으로 조회
+            if (Duration.between(nowTime, inputLocalDateTime).toHours() <= 1 && Duration.between(inputLocalDateTime, dataDate).toHours() >= 1){
+                checkDate = true;
+            }
+        }
 
         // 현재시간 ~ 사용자가 입력한 시간의 다음날 00시까지의 데이터 개수
         // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
-        int cnt = getCnt(nowTime, tomorrowTime);
+        int cnt = getCnt(nowTime, tomorrowTime) + 1;
 
         // 미래 데이터 가져오기
         OpenWeather5DayDTO openWeather5DayDTO = get5DayWeatherData(lat, lon, cnt);
@@ -304,15 +321,30 @@ public class OpenWeatherService {
         // 반환할 객체 인스턴스 할당
         ResponseMainWeatherDTO responseMainWeatherDTO = new ResponseMainWeatherDTO();
 
-        // 지정시간에 가장 가까운 (날씨코드, 아이콘, 온도, 체감온도) 기입
-        responseMainWeatherDTO.setNowWeatherCode(weatherListDTOS.get(0).getWeather().get(0).getId());
-        responseMainWeatherDTO.setNowWeatherIcon(weatherListDTOS.get(0).getWeather().get(0).getIcon());
-        responseMainWeatherDTO.setNowTemp(weatherListDTOS.get(0).getMain().getTemp());
-        responseMainWeatherDTO.setNowFeelsLike(weatherListDTOS.get(0).getMain().getFeels_like());
+        if (checkDate){
+            // 지정시간이 현재시간과 비슷하다면 현재시간 기입
+            OpenWeatherDTO currentWeatherData = getCurrentWeatherData(lat, lon);
+            responseMainWeatherDTO.setNowWeatherCode(currentWeatherData.getWeather().get(0).getId());
+            responseMainWeatherDTO.setNowWeatherDescription(currentWeatherData.getWeather().get(0).getDescription());
+            responseMainWeatherDTO.setNowTemp(currentWeatherData.getMain().getTemp());
+            responseMainWeatherDTO.setNowFeelsLike(currentWeatherData.getMain().getFeels_like());
+            responseMainWeatherDTO.setNowWeatherIcon(currentWeatherData.getWeather().get(0).getIcon());
 
-        // 가장가깝게 가져온 시간 기입 dt변환
-        LocalDateTime appointmentTime = DateTimeUtil.dtParseToLocalDateTime(weatherListDTOS.get(0).getDt());
-        responseMainWeatherDTO.setNowTime(appointmentTime);
+            // 현재시간 기반
+            LocalDateTime callTime = DateTimeUtil.dtParseToLocalDateTime(currentWeatherData.getDt());
+            responseMainWeatherDTO.setNowTime(callTime);
+        } else {
+            // 지정시간에 가장 가까운 (날씨코드, 아이콘, 온도, 체감온도) 기입
+            responseMainWeatherDTO.setNowWeatherCode(weatherListDTOS.get(0).getWeather().get(0).getId());
+            responseMainWeatherDTO.setNowWeatherIcon(weatherListDTOS.get(0).getWeather().get(0).getIcon());
+            responseMainWeatherDTO.setNowWeatherDescription(weatherListDTOS.get(0).getWeather().get(0).getDescription());
+            responseMainWeatherDTO.setNowTemp(weatherListDTOS.get(0).getMain().getTemp());
+            responseMainWeatherDTO.setNowFeelsLike(weatherListDTOS.get(0).getMain().getFeels_like());
+
+            // 가장가깝게 가져온 시간 기입 dt변환
+            LocalDateTime appointmentTime = DateTimeUtil.dtParseToLocalDateTime(weatherListDTOS.get(0).getDt());
+            responseMainWeatherDTO.setNowTime(appointmentTime);
+        }
 
         // 이후 시간들의 데이터 기입
         responseMainWeatherDTO.setList(weatherListDTOS);
@@ -364,14 +396,9 @@ public class OpenWeatherService {
      */
     private int getCnt(LocalDateTime inputTime, LocalDateTime tomorrowTime) {
         // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
-        long times = Duration.between(inputTime, tomorrowTime).toHours();
+        int times = (int) Math.floor(Duration.between(inputTime, tomorrowTime).toHours());
 
-        // 21시 이후 조회시 00시의 데이터만 가져옴
-        if (times == 0){
-            return 0;
-        }
-
-        return (int) (times / 3) + 1;
+        return times / 3;
     }
 
 }
