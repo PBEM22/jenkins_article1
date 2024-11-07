@@ -15,7 +15,7 @@
       <p>여기에 이미지를 드래그하거나 클릭하여 선택하세요.</p>
     </div>
     <div class="image-preview">
-      <img v-for="(image, index) in images" :key="index" :src="image" alt="Uploaded image" />
+      <img v-for="(image, index) in images" :key="index" :src="image.src" alt="Uploaded image" />
     </div>
   </div>
 </template>
@@ -60,9 +60,15 @@ function handleFiles(files) {
     Array.from(files).forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        images.value.push(e.target.result);
+        // 원래 파일 이름과 데이터 URL을 함께 저장
+        const imageData = {
+          name: file.name, // 원래 파일 이름
+          src: e.target.result // 데이터 URL
+        };
+        images.value.push(imageData); // 원래 파일 이름과 데이터 URL 객체를 배열에 추가
         emit('update:imageList', images.value); // 부모에게 이미지 리스트 전달
       };
+
       console.log("Uploaded file name:", file.name); // 파일 이름 로그 출력
       reader.readAsDataURL(file); // 파일을 데이터 URL로 읽기
     });

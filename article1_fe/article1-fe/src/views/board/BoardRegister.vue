@@ -39,19 +39,19 @@ async function sendData() {
     formData.append('boardContent', content.value); // 내용
 
     // 이미지 리스트를 FormData에 추가
-    imageList.value.forEach((imageDataUrl, index) => {
-      // 데이터 URL에서 Blob 객체로 변환
-      const byteString = atob(imageDataUrl.split(',')[1]); // Base64 문자열 디코딩
-      const mimeString = imageDataUrl.split(',')[0].split(':')[1].split(';')[0]; // MIME 타입 가져오기
-      const ab = new ArrayBuffer(byteString.length); // ArrayBuffer 생성
-      const ia = new Uint8Array(ab); // Uint8Array 생성
+    imageList.value.forEach(({ name, src }, index) => {
+      // src를 Blob으로 변환하는 로직
+      const byteString = atob(src.split(',')[1]);
+      const mimeString = src.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
       for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i); // 각 바이트를 ArrayBuffer에 채우기
+        ia[i] = byteString.charCodeAt(i);
       }
-      const blob = new Blob([ab], { type: mimeString }); // Blob 객체 생성
+      const blob = new Blob([ab], { type: mimeString });
 
-      // Blob을 FormData에 추가 (이름을 'imageList'로 설정)
-      formData.append('imageList', blob, `image_${index}.jpg`); // 'imageList'로 설정
+      // Blob을 FormData에 추가 (원래 파일 이름 사용)
+      formData.append('imageList', blob, name); // 원래 파일 이름으로 설정
     });
 
     // FormData의 내용을 로그로 출력하여 확인
