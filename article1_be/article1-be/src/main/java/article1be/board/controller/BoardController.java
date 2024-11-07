@@ -6,10 +6,13 @@ import article1be.board.entity.Board;
 import article1be.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
@@ -22,14 +25,20 @@ import java.util.List;
 )
 @RestController
 @RequestMapping(value = "board")
+@RequiredArgsConstructor
+@Slf4j
 public class BoardController {
 
     private final BoardService service;
 
-    @Autowired
-    public BoardController(BoardService service) {
-        this.service = service;
-    }
+    @Value("${s3.credentials.access-key}")
+    private String accessKey;
+
+    @Value("${s3.credentials.secret-key}")
+    private String secretKey;
+
+    @Value("${s3.credentials.region}")
+    private String region;
 
     // 게시글 목록 조회
     @Operation(
@@ -56,35 +65,42 @@ public class BoardController {
         }
         // 조회 성공
         else {
-
             return ResponseEntity.ok(this.service.getBoard(boardSeq));
         }
     }
 
-    // 게시글 작성
+    // 게시글 등록
     @Operation(
             summary = "게시글 등록",
             description = "새로운 게시글의 제목, 내용, 첨부 사진들을 입력받아 새로운 게시글 등록"
     )
-    @PostMapping
-    public ResponseEntity<String> createBoard(@RequestBody RequestBoard newBoard) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<Long> createBoard(
+            @RequestParam("boardTitle") String boardTitle,
+            @RequestParam("boardContent") String boardContent,
+            @RequestParam(value = "imageList", required = false) List<MultipartFile> imageList
+    ) {
         try {
+            // RequestBoard 객체 생성
+            RequestBoard newBoard = new RequestBoard();
+            newBoard.setBoardTitle(boardTitle);
+            newBoard.setBoardContent(boardContent);
+            if (imageList != null && !imageList.isEmpty()) {
+                newBoard.setImageList(imageList);
+            }
+
+            log.info("boardTitle = " + newBoard.getBoardTitle());
+            log.info("boardContent = " + newBoard.getBoardContent());
+
             // 게시글 생성
             Board createdBoard = service.createBoard(newBoard);
 
-            // 생성된 게시글의 URI를 설정
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/board/{boardSeq}")
-                    .buildAndExpand(createdBoard.getBoardSeq())
-                    .toUri();
-
-            return ResponseEntity.created(location).body("게시글이 성공적으로 생성되었습니다.");
+            return ResponseEntity.ok(createdBoard.getBoardSeq());
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 생성 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 
     // 게시글 삭제
     @Operation(

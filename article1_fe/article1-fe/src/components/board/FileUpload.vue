@@ -15,18 +15,22 @@
       <p>여기에 이미지를 드래그하거나 클릭하여 선택하세요.</p>
     </div>
     <div class="image-preview">
-      <img v-for="(image, index) in images" :key="index" :src="image" alt="Uploaded image" />
+      <img v-for="(image, index) in images" :key="index" :src="image.src" alt="Uploaded image" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 
 const props = defineProps({
   label: {
     type: String,
     required: true
+  },
+  imageList: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -34,7 +38,12 @@ const props = defineProps({
 const emit = defineEmits(['update:imageList']);
 
 const inputId = `file-upload-${Math.random().toString(36).substr(2, 9)}`; // 고유 ID 생성
-const images = ref([]); // 업로드된 이미지 URL을 저장할 배열
+const images = ref([...props.imageList]); // 부모로부터 받은 이미지 리스트로 초기화
+
+// 부모의 imageList가 변경될 때마다 images 업데이트
+watch(() => props.imageList, (newList) => {
+  images.value = newList;
+});
 
 function handleFileUpload(event) {
   const files = event.target.files; // 선택된 모든 파일
@@ -51,9 +60,16 @@ function handleFiles(files) {
     Array.from(files).forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        images.value.push(e.target.result); // 이미지 URL 추가
+        // 원래 파일 이름과 데이터 URL을 함께 저장
+        const imageData = {
+          name: file.name, // 원래 파일 이름
+          src: e.target.result // 데이터 URL
+        };
+        images.value.push(imageData); // 원래 파일 이름과 데이터 URL 객체를 배열에 추가
         emit('update:imageList', images.value); // 부모에게 이미지 리스트 전달
       };
+
+      console.log("Uploaded file name:", file.name); // 파일 이름 로그 출력
       reader.readAsDataURL(file); // 파일을 데이터 URL로 읽기
     });
   }
