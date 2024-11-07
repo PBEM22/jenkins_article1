@@ -21,12 +21,16 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 
 const props = defineProps({
   label: {
     type: String,
     required: true
+  },
+  imageList: { // 부모 컴포넌트에서 전달받는 imageList
+    type: Array,
+    default: () => []
   }
 });
 
@@ -34,7 +38,12 @@ const props = defineProps({
 const emit = defineEmits(['update:imageList']);
 
 const inputId = `file-upload-${Math.random().toString(36).substr(2, 9)}`; // 고유 ID 생성
-const images = ref([]); // 업로드된 이미지 URL을 저장할 배열
+const images = ref([...props.imageList]); // 부모로부터 받은 이미지 리스트로 초기화
+
+// 부모의 imageList가 변경될 때마다 images 업데이트
+watch(() => props.imageList, (newList) => {
+  images.value = newList;
+});
 
 function handleFileUpload(event) {
   const files = event.target.files; // 선택된 모든 파일
