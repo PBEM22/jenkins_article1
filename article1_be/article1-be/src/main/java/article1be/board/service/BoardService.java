@@ -108,7 +108,6 @@ public class BoardService {
         // 1. DB(Board)에 데이터 저장
         Board result = boardRepository.save(board);
 
-
         for (MultipartFile image : newBoard.getImageList()) {
             // 2. Amazon S3 버킷에 이미지 저장
             AmazonS3Service.MetaData metaData = amazonS3Service.upload(image);

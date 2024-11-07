@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits } from "vue";
+import {defineEmits} from "vue";
 
 const props = defineProps({
   boardTitle: String,
@@ -10,11 +10,11 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(["delete"]); // 삭제 이벤트 정의
+const emit = defineEmits(["delete"], ["blame"]);
 
 // 신고 버튼 클릭 이벤트
 function blameBoard() {
-  console.log("신고");
+  emit("blame");
 }
 
 // 삭제 버튼 클릭 이벤트

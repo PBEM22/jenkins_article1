@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,10 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Service
+@Slf4j
 public class AmazonS3Service {
 
+    private static final Logger log = LoggerFactory.getLogger(AmazonS3Service.class);
     private final AmazonS3Client client;
     @Value("${s3.bucket}")
     private String amazonS3Bucket;
@@ -28,31 +34,38 @@ public class AmazonS3Service {
     public MetaData upload(MultipartFile image) throws IOException {
         MetaData metaData = new MetaData();
 
-        /* 업로드할 파일의 이름을 변경 */
+        // 업로드할 파일의 원래 이름을 가져옵니다.
         String originalFileName = image.getOriginalFilename();
         metaData.setOriginalFileName(originalFileName);
-        String fileName = changeFileName(originalFileName);
-        metaData.setChangeFileName(changeFileName(originalFileName));
 
-        /* S3에 업로드할 파일의 메타데이터 생성 */
+        // 파일 이름을 변경합니다.
+        String fileName = changeFileName(originalFileName);
+        metaData.setChangeFileName(fileName); // 변경된 파일 이름을 메타데이터에 저장합니다.
+
+        // S3에 업로드할 파일의 메타데이터 생성
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(image.getContentType());
         metaData.setType(image.getContentType());
         metadata.setContentLength(image.getSize());
 
-        /* S3에 파일 업로드 */
+        // S3에 파일 업로드
         client.putObject(amazonS3Bucket, fileName, image.getInputStream(), metadata);
 
-        /* 업로드한 파일의 S3 URL 주소 반환 */
+        // 로그 출력 (원래 파일 이름과 변경된 파일 이름)
+        log.info("origin name = " + metaData.getOriginalFileName());
+        log.info("changed name = " + metaData.getChangeFileName());
+
+        // 업로드한 파일의 S3 URL 주소 반환
         return metaData;
     }
 
     private String changeFileName(String originalFileName) {
-        /* 업로드할 파일의 이름을 변경하는 로직 */
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        return originalFileName + "_" + LocalDateTime.now().format(formatter);
-    }
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        String newFileName = System.currentTimeMillis() + "_" + UUID.randomUUID().toString() + extension; // 타임스탬프와 UUID를 이용한 고유 파일 이름
 
+        return newFileName;
+    }
+    
     @Getter
     @Setter
     public static class MetaData {

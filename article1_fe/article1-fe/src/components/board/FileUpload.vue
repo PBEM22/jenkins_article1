@@ -28,7 +28,7 @@ const props = defineProps({
     type: String,
     required: true
   },
-  imageList: { // 부모 컴포넌트에서 전달받는 imageList
+  imageList: {
     type: Array,
     default: () => []
   }
@@ -60,9 +60,10 @@ function handleFiles(files) {
     Array.from(files).forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        images.value.push(e.target.result); // 이미지 URL 추가
+        images.value.push(e.target.result);
         emit('update:imageList', images.value); // 부모에게 이미지 리스트 전달
       };
+      console.log("Uploaded file name:", file.name); // 파일 이름 로그 출력
       reader.readAsDataURL(file); // 파일을 데이터 URL로 읽기
     });
   }
