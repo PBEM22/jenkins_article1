@@ -11,7 +11,7 @@ import java.util.List;
 public interface BlameRepository extends JpaRepository<Blame, Long> {
     List<Blame> findByBlameBoardSeq(long boardSeq);
 
-    List<Reply> findByBlameReplySeq(long replySeq);
+    List<Blame> findByBlameReplySeq(long replySeq);
 
-    List<Review> findByBlameReviewSeq(long reviewSeq);
+    List<Blame> findByBlameReviewSeq(long reviewSeq);
 }
