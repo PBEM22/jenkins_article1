@@ -16,6 +16,7 @@ import axios from 'axios';
 import OutfitRecommendationList from '@/components/outfit/recommend/OutfitRecommendationList.vue';
 import {useSelectedInfoStore} from '@/store/selectedInfoStore.js';
 import outfitRecommendationResult from "@/views/outfit/recommend/OutfitRecommendationResult.vue";
+import {useAuthStore} from "@/store/authStore.js";
 
 export default {
 
@@ -38,6 +39,7 @@ export default {
   },
   methods: {
     async fetchOutfitRecommendations() {
+      const authStore = useAuthStore();
       const store = useSelectedInfoStore();
       try {
         let date = new Date(store.selectedDate);
@@ -51,7 +53,7 @@ export default {
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMiIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzA5MTUzNDh9.hYUPrRqbHdmVswbBVCmAgWxqrseP1VNFI3oSjAhP9L0wCIKMLZJRr7DzLOKQbFFhrlZibSiIRnP0ouSLBP2Bcg'
+            'Authorization': `Bearer ${authStore.accessToken}`
           }
         });
         this.outfits = response.data;
@@ -93,11 +95,13 @@ export default {
 
     async saveSelection() {
       const store = useSelectedInfoStore();
+      const authStore = useAuthStore();
       try {
-        const formattedDate = store.selectedDate.toISOString().split('.')[0]; // 'Z'와 밀리초 제거
+        let date = new Date(store.selectedDate);
+        date.setHours(date.getHours() + 9);
         const weatherResponse = await axios.get('/weather', {
           params: {
-            time: formattedDate,
+            time: date.toISOString().split('.')[0],
             lat: store.selectedLatitude,
             lon: store.selectedLongitude,
           }
@@ -115,7 +119,7 @@ export default {
 
         await axios.post('/user/outfit/select', {
           situationSeq: store.selectedSituation,
-          customDate: store.selectedDate.toISOString(),
+          customDate: date.toISOString().split('.')[0],
           customLocation: `${store.selectedLatitude}, ${store.selectedLongitude}`,
           weatherCode: weatherCode,
           highTemp: highTemp,
@@ -131,7 +135,7 @@ export default {
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMiIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzA5MTUzNDh9.hYUPrRqbHdmVswbBVCmAgWxqrseP1VNFI3oSjAhP9L0wCIKMLZJRr7DzLOKQbFFhrlZibSiIRnP0ouSLBP2Bcg'
+            'Authorization': `Bearer ${authStore.accessToken}`
           }
         });
         alert("선택한 복장이 저장되었습니다.");
