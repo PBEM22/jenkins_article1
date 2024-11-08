@@ -1,7 +1,9 @@
 package article1be.reply.controller;
 
+import article1be.board.entity.Board;
 import article1be.reply.dto.ReplyDTO;
 import article1be.reply.dto.RequestReply;
+import article1be.reply.entity.Reply;
 import article1be.reply.service.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,5 +81,17 @@ public class ReplyController {
         else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // 댓글 블라이늗 해제
+    @Operation(
+            summary = "댓글 블라인드 해제",
+            description = "관리자가 댓글의 블라인드를 해제"
+    )
+    @PutMapping(value = "/release/{replySeq}")
+    public ResponseEntity<Reply> releaseReply(@PathVariable long replySeq) {
+        Reply reply = service.releaseReply(replySeq);
+
+        return ResponseEntity.ok(reply);
     }
 }

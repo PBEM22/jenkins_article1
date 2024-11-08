@@ -38,4 +38,8 @@ public class Reply {
 
         return reply;
     }
+
+    public void unBlind() {
+        this.replyIsBlind = false;
+    }
 }

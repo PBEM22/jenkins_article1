@@ -53,4 +53,8 @@ public class Board extends BaseTimeEntity {
     public void setBlind() {
         this.boardIsBlind = true;
     }
+
+    public void unBlind() {
+        this.boardIsBlind = false;
+    }
 }

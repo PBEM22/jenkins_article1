@@ -110,7 +110,12 @@ const selectedType = ref('게시글'); // 기본값 설정
               :content="item.boardTitle"
               :writer="item.userSeq"
               :status="item.boardIsBlind.toString()"
-              @update:status="newStatus => item.boardIsBlind = (newStatus === 'true')"
+              @update:status="newStatus => {
+              if (newStatus === 'false' && blameBoardList.value) {
+                blameBoardList.value = blameBoardList.value.filter(b => b.boardSeq !== item.boardSeq);
+              }
+              item.boardIsBlind = (newStatus === 'true');
+            }"
           />
         </tr>
       </template>
@@ -122,7 +127,12 @@ const selectedType = ref('게시글'); // 기본값 설정
               :content="item.replyContent"
               :writer="item.replyUserSeq"
               :status="item.replyIsBlind.toString()"
-              @update:status="newStatus => item.boardIsBlind = (newStatus === 'true')"
+              @update:status="newStatus => {
+              if (newStatus === 'false' && blameReplyList.value) {
+                blameReplyList.value = blameReplyList.value.filter(r => r.replySeq !== item.replySeq);
+              }
+              item.replyIsBlind = (newStatus === 'true');
+            }"
           />
         </tr>
       </template>
@@ -134,7 +144,12 @@ const selectedType = ref('게시글'); // 기본값 설정
               :content="item.reviewContent"
               :writer="item.userSeq"
               :status="item.reviewBlind.toString()"
-              @update:status="newStatus => item.reviewBlind = (newStatus === 'true')"
+              @update:status="newStatus => {
+              if (newStatus === 'false' && blameReviewList.value) {
+                blameReviewList.value = blameReviewList.value.filter(r => r.reviewSeq !== item.reviewSeq);
+              }
+              item.reviewBlind = (newStatus === 'true');
+            }"
           />
         </tr>
       </template>
