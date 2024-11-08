@@ -72,7 +72,7 @@ INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_mi
 -- 악세사리 (ACCESSORY)
 ('핫팩', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
 ('장갑', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
-('귀마개', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
+('손수건', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION'),
 ('목도리', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
 ('플리스_모자', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
 ('귀도리', NULL, 10, -5, 'ACCESSORY', 'N', 'RECOMMENDED'),
@@ -168,7 +168,7 @@ INSERT INTO outfit_style (outfit_seq, style_seq) VALUES
 -- 악세사리 (ACCESSORY)
 (60, 1), (60, 2), (60, 3), (60, 4), -- 핫팩:
 (61, 1), (61, 2), (61, 3), (61, 4), -- 장갑:
-(62, 1), (62, 2), (62, 3), (62, 4), -- 귀마개:
+(62, 2), (62, 3), -- 손수건
 (63, 1), (63, 2),               -- 목도리: ,
 (64, 1),                        -- 플리스_모자:
 (65, 1), (65, 2),               -- 귀도리:
@@ -193,7 +193,6 @@ INSERT INTO situation (situation_name) VALUES
                                            ('exercise'), -- 4: 운동
                                            ('formal'),   -- 5: 격식있는 자리
                                            ('normal');   -- 6: 무관
--- outfit과 situation 연결 (총 75개 아웃핏)
 -- outfit과 situation 연결 (총 75개 아웃핏)
 INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
                                                              (1, 1), (1, 4), (1, 3),                 -- 기모_맨투맨: 일상, 운동, 데이트
@@ -265,7 +264,7 @@ INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
 -- 악세사리 (ACCESSORY)
                                                              (60, 1), (60, 2), (60, 4),              -- 핫팩: 일상, 여행, 운동
                                                              (61, 1), (61, 4),                       -- 장갑: 일상, 운동
-                                                             (62, 1), (62, 2),                       -- 귀마개: 일상, 여행
+                                                             (62, 3), (62, 5),                       -- 손수건: 일상, 여행
                                                              (63, 1), (63, 3), (63, 5),              -- 목도리: 일상, 데이트, 격식있는 자리
                                                              (64, 1),                                -- 플리스_모자: 일상
                                                              (65, 1), (65, 5),                       -- 귀도리: 일상, 격식있는 자리
