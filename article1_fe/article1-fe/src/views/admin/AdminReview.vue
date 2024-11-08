@@ -1,6 +1,6 @@
 <template>
   <div class="review-page">
-    <h2>한 줄 리뷰</h2>
+    <h2>전체 리뷰 조회</h2>
     <div class="search-bar">
       <select v-model="selectedCategory">
         <option value="all">전체</option>
@@ -20,6 +20,7 @@
         <span class="header-cell">날씨</span>
         <span class="header-cell">리뷰 내용</span>
         <span class="header-cell">작성일</span>
+        <span class="header-cell">활동 상태</span>
       </div>
 
       <div v-for="(review, index) in paginatedReviews" :key="review.reviewSeq" class="table-row">
@@ -31,10 +32,12 @@
         </div>
         <div class="table-cell date-time">
           <div class="reg-date">{{ review.regDate }}</div>
-          <div class="like-indicator">
-            {{ review.reviewLikeYn ? "좋아요 👍" : "싫어요 👎" }}
+          <div class="like-indicator" :class="{ liked: review.reviewLikeYn }">
+            {{ review.reviewLikeYn ? "좋아요" : "싫어요" }}
           </div>
-          <button class="report-btn" @click="reportReview(review.reviewSeq)">신고</button>
+        </div>
+        <div class="table-cell activity-status">
+          {{ review.reviewBlind ? 'BLIND' : 'ACTIVE' }}
         </div>
       </div>
     </div>
@@ -70,7 +73,7 @@ export default {
 
     const fetchReviews = async () => {
       try {
-        const response = await axios.get('/review', {
+        const response = await axios.get('/admin/review', {
           headers: {
             Authorization: `Bearer ${authStore.accessToken}`
           }
@@ -87,13 +90,13 @@ export default {
         if (selectedCategory.value === 'all') {
           return true;
         } else if (selectedCategory.value === 'author') {
-          return review.userNickname.includes(searchQuery.value);
+          return review.userNickname?.includes(searchQuery.value);
         } else if (selectedCategory.value === 'location') {
-          return review.location.includes(searchQuery.value);
+          return review.location?.includes(searchQuery.value);
         } else if (selectedCategory.value === 'weather') {
           return String(review.weather).includes(searchQuery.value);
         } else if (selectedCategory.value === 'date') {
-          return review.regDate.includes(searchQuery.value);
+          return review.regDate?.includes(searchQuery.value);
         }
         return false;
       });
@@ -102,13 +105,10 @@ export default {
 
     const paginatedReviews = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      return filteredReviews.value.slice(start, end);
+      return filteredReviews.value.slice(start, start + itemsPerPage);
     });
 
-    const totalPages = computed(() => {
-      return Math.ceil(filteredReviews.value.length / itemsPerPage);
-    });
+    const totalPages = computed(() => Math.ceil(filteredReviews.value.length / itemsPerPage));
 
     const goToPage = (page) => {
       if (page > 0 && page <= totalPages.value) {
@@ -116,20 +116,13 @@ export default {
       }
     };
 
-    const reportReview = (reviewSeq) => {
-      console.log(`Review ${reviewSeq} reported.`);
-      // 신고 처리 로직을 추가할 수 있습니다.
-    };
-
     onMounted(fetchReviews);
 
     return {
       selectedCategory,
       searchQuery,
-      reviews,
       filteredReviews,
       paginatedReviews,
-      reportReview,
       currentPage,
       totalPages,
       goToPage,
@@ -143,28 +136,24 @@ export default {
 .review-page {
   width: 80%;
   margin: 20px auto;
-  font-family: Arial, sans-serif;
-  color: #333;
-  background-color: #f8f8f8;
   padding: 20px;
+  background-color: #f8f8f8;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-  text-align: left;
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 20px;
   color: #333;
+  margin-bottom: 20px;
 }
 
 .search-bar {
   display: flex;
-  align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
   justify-content: flex-end;
+  margin-bottom: 20px;
 }
 
 .search-bar select,
@@ -173,98 +162,59 @@ h2 {
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  outline: none;
 }
 
 .search-bar button {
   padding: 8px 12px;
   font-size: 14px;
-  cursor: pointer;
+  color: #fff;
   background-color: #0073e6;
-  border: none;
-  color: white;
   border-radius: 6px;
-  transition: background-color 0.3s;
-}
-
-.search-bar button:hover {
-  background-color: #005bb5;
 }
 
 .review-table {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
 }
 
 .table-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr;
-  padding: 10px;
+  grid-template-columns: 1fr 1fr 1fr 3fr 1fr 1fr;
   background-color: #e6f2ff;
-  font-weight: bold;
-  color: #333;
-  text-align: left;
+  padding: 10px;
 }
 
 .table-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr;
-  padding: 15px 10px;
+  grid-template-columns: 1fr 1fr 1fr 3fr 1fr 1fr;
+  padding: 15px;
   border-bottom: 1px solid #eee;
-  align-items: center;
-  font-size: 14px;
-  color: #444;
 }
 
-.table-row:last-child {
-  border-bottom: none;
-}
-
-.header-cell,
-.table-cell {
-  padding: 8px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.table-cell.review-content {
+.review-content p {
   white-space: normal;
   line-height: 1.5;
-  color: #555;
 }
 
-.table-cell.date-time {
+.date-time {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
-.date-time .reg-date {
-  font-size: 12px;
-  color: #999;
+.like-indicator.liked {
+  color: #ff9800;
 }
 
-.like-indicator {
-  font-size: 14px;
+.activity-status {
   font-weight: bold;
-  color: #333;
 }
 
-.report-btn {
-  background-color: transparent;
-  border: none;
-  color: #999;
-  cursor: pointer;
-  font-size: 12px;
-  margin-top: 4px;
-  padding: 0;
-  text-decoration: underline;
+.activity-status[data-status="ACTIVE"] {
+  color: green;
 }
 
-.report-btn:hover {
-  color: #666;
+.activity-status[data-status="BLIND"] {
+  color: red;
 }
 </style>

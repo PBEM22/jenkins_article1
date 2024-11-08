@@ -23,7 +23,6 @@ public class AdminReviewDTO {
         private double location;        // 위치 정보
         private double weather;         // 날씨 정보
         private String reviewContent;   // 리뷰 내용
-        private String reviewStatus;    // 리뷰 상태 (ACTIVE 또는 BLIND)
         private boolean reviewLikeYn;
         private boolean reviewBlind;
         private LocalDateTime regDate;

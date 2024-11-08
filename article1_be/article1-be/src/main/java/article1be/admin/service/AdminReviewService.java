@@ -35,7 +35,6 @@ public class AdminReviewService {
                             review.getReviewLocation(),
                             review.getReviewWeather(),
                             review.getReviewContent(),
-                            review.getReviewBlind() ? "BLIND" : "ACTIVE",
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
                             review.getRegDate()
