@@ -169,7 +169,6 @@ CREATE TABLE blame (
                        blame_board_seq BIGINT NULL,
                        blame_reply_seq BIGINT NULL,
                        blame_review_seq BIGINT NOT NULL,
-                       user_seq BIGINT NOT NULL,  -- 복합 외래 키로 사용할 user_seq 추가
                        blame_processingdate DATETIME NULL,
                        reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        up_date DATETIME NULL,
@@ -181,7 +180,6 @@ CREATE TABLE blame (
                        CONSTRAINT FK_blame_review FOREIGN KEY (blame_review_seq, user_seq) REFERENCES review (review_seq, user_seq) ON DELETE CASCADE
 );
 
--- 외래 키 제약 조건 추가 (ON DELETE CASCADE 적용)
 ALTER TABLE user
     ADD CONSTRAINT FK_user_style FOREIGN KEY (style_seq) REFERENCES style (style_seq) ON DELETE CASCADE,
     ADD CONSTRAINT FK_user_condition FOREIGN KEY (condition_seq) REFERENCES `condition` (condition_seq) ON DELETE CASCADE;
