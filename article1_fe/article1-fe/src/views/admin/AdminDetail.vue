@@ -9,7 +9,7 @@
       <div class="row">
         <div class="label">아이디</div>
         <div class="content">
-          <span class="badge">N</span> {{ user.userId }}
+          <span :class="badgeClass">{{ badgeText }}</span> {{ user.userId }}
         </div>
       </div>
 
@@ -60,12 +60,13 @@
 
 <script>
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/authStore'; // authStore의 경로에 맞게 설정
 
 export default {
   setup() {
-    const accessToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMSIsImF1dGgiOlsiQURNSU4iXSwiZXhwIjoxNzMwOTg1MzYxfQ.vZ8kQjwWEWrDzKIOeglLjiYcObulEd5v9WfUejgHx-ZLeJc1Kx3j9LxKKt4JmWkeLJz9a4pK49P_l6dgKNBf3w";
+    const authStore = useAuthStore();
     const user = ref(null);
     const route = useRoute();
     const router = useRouter();
@@ -75,7 +76,7 @@ export default {
       try {
         const response = await axios.get(`/admin/user/${userSeq}`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${authStore.accessToken}`
           }
         });
         user.value = response.data;
@@ -94,11 +95,11 @@ export default {
           userState: user.value.userState
         }, {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${authStore.accessToken}`
           }
         });
         alert("사용자 정보가 저장되었습니다.");
-        router.push('/admin');
+        router.push('/admin/user');
       } catch (error) {
         console.error('사용자 정보를 저장하는 중 오류가 발생했습니다.', error);
         alert("저장에 실패했습니다.");
@@ -109,9 +110,37 @@ export default {
       fetchUser();
     });
 
+    const badgeClass = computed(() => {
+      switch (user.value?.socialSite) {
+        case 'KAKAO':
+          return 'badge kakao';
+        case 'NAVER':
+          return 'badge naver';
+        case 'GOOGLE':
+          return 'badge google';
+        default:
+          return 'badge';
+      }
+    });
+
+    const badgeText = computed(() => {
+      switch (user.value?.socialSite) {
+        case 'KAKAO':
+          return 'K';
+        case 'NAVER':
+          return 'N';
+        case 'GOOGLE':
+          return 'G';
+        default:
+          return 'N';
+      }
+    });
+
     return {
       user,
-      saveUser
+      saveUser,
+      badgeClass,
+      badgeText
     };
   }
 };
@@ -161,30 +190,45 @@ export default {
 .row, .row-inline {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  padding: 10px 0;
 }
 
 .label, .label-inline {
   font-weight: bold;
   font-size: 18px;
   text-align: right;
-  padding-right: 15px;
+  padding-right: 20px;
+  min-width: 120px;
 }
 
 .content, .content-inline {
   font-size: 18px;
-  padding-left: 10px;
+  flex: 1;
 }
 
 .badge {
   display: inline-block;
-  background-color: #28a745;
-  color: white;
   padding: 5px 10px;
   border-radius: 4px;
   margin-right: 10px;
+}
+
+.badge.kakao {
+  background-color: #fee500;
+  color: #3c1e1e;
+}
+
+.badge.naver {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge.google {
+  background-color: white;
+  color: #db4437;
+  border: 1px solid #db4437;
 }
 
 .input, .select {

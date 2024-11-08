@@ -49,12 +49,11 @@
 <script>
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '@/store/authStore';
+import {useAuthStore} from "@/store/authStore.js";
 import { useRouter } from 'vue-router';
 
 export default {
   setup() {
-    const accessToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMSIsImF1dGgiOlsiQURNSU4iXSwiZXhwIjoxNzMwOTg1MzYxfQ.vZ8kQjwWEWrDzKIOeglLjiYcObulEd5v9WfUejgHx-ZLeJc1Kx3j9LxKKt4JmWkeLJz9a4pK49P_l6dgKNBf3w";
 
     const userList = ref([]);
     const searchField = ref('전체');
@@ -63,9 +62,8 @@ export default {
     const router = useRouter();
 
     const fetchUsers = async () => {
-      const token = accessToken;
-
-      if (!accessToken) {
+      // accessToken이 없는 경우를 확인
+      if (!authStore.accessToken) {
         console.error("토큰이 없습니다. 로그인 후 다시 시도해 주세요.");
         alert("로그인이 필요합니다.");
         router.push('/login');
@@ -75,7 +73,7 @@ export default {
       try {
         const response = await axios.get('/admin/user', {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${authStore.accessToken}`
           }
         });
         userList.value = Array.isArray(response.data) ? response.data : [];
