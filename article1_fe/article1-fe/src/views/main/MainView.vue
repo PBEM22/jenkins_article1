@@ -17,7 +17,7 @@ onMounted(() => {
 
   // Store에 토큰이 없는 경우에만 쿠키에서 로그인 시도
   if (!store.accessToken && token) {
-    console.log('쿠키에서 토큰을 가져왔습니다:', token);
+    console.log('쿠키에서 토큰을 가져왔습니다');
     store.login(token);
     isLogin.value = true;
   } else {
