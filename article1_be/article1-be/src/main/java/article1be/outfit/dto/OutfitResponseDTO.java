@@ -8,5 +8,4 @@ import lombok.*;
 public class OutfitResponseDTO {
     private Long outfitSeq;
     private String outfitName;
-    private String outfitImg;
 }

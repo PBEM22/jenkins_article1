@@ -25,8 +25,6 @@ public class Outfit {
 
     private Double outfitTempMin;
 
-    private String outfitImg;
-
     @Enumerated(EnumType.STRING)
     private OutfitGender outfitGender; // 악세사리는 null
 
