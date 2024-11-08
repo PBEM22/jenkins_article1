@@ -1,5 +1,4 @@
 <script setup>
-// component
 import Container from "@/components/board/Container.vue";
 import TopBar from "@/components/blame/TopBar.vue";
 import axios from "axios";
@@ -7,6 +6,11 @@ import {onMounted, ref} from "vue";
 import {useAuthStore} from "@/store/authStore.js";
 import BlameLi from "@/components/blame/BlameLi.vue";
 import Selection from "@/components/blame/Selection.vue";
+import NormalButton from "@/components/board/NormalButton.vue";
+import {useRouter} from "vue-router";
+
+// router
+const router = useRouter();
 
 // Jwt token value
 const authStore = useAuthStore();
@@ -16,7 +20,7 @@ const blameBoardList = ref([]);      // 게시글
 const blameReplyList = ref([]);      // 댓글
 const blameReviewList = ref([]);     // 리뷰
 
-// 데이터 호출
+// 신고된 게시글 데이터 호출
 async function fetchBoardData() {
   try {
     const response = await axios.get(`/board`, {
@@ -37,6 +41,7 @@ async function fetchBoardData() {
   }
 }
 
+// 신고된 댓글 데이터 호출
 async function fetchReplyData() {
   try {
     const FIND_ALL = -999;
@@ -57,6 +62,7 @@ async function fetchReplyData() {
   }
 }
 
+// 신고된 리뷰 데이터 호출
 async function fetchReviewData() {
   try {
     const response = await axios.get(`/review`, {
@@ -81,6 +87,10 @@ onMounted(() => {
   fetchReplyData();
   fetchReviewData();
 });
+
+function goToHome() {
+  router.push("/");
+}
 
 // 현재 선택된 타입
 const selectedType = ref('게시글'); // 기본값 설정
@@ -155,6 +165,12 @@ const selectedType = ref('게시글'); // 기본값 설정
       </template>
       </tbody>
     </table>
+    <div class="footer">
+      <NormalButton
+          text="홈으로"
+          @click="goToHome"
+      />
+    </div>
   </Container>
 </template>
 
@@ -176,5 +192,11 @@ tr {
 
 td {
   padding: 8px; /* 셀 패딩 */
+}
+
+.footer {
+  display: flex; /* Flexbox 사용 */
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin-top: 16px; /* 위쪽 여백 추가 */
 }
 </style>
