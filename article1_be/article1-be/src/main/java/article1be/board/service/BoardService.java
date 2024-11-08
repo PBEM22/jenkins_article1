@@ -127,10 +127,18 @@ public class BoardService {
     // 게시글 생성
     @Transactional
     public Board createBoard(RequestBoard newBoard) throws IOException {
+
+        boolean isNotice = false;
+
+        if (SecurityUtil.getCurrentUserAuthorities().equals(UserAuth.ADMIN)) {
+            isNotice = true;
+        }
+
         Board board = new Board().create(
-                SecurityUtil.getCurrentUserSeq(),           // 테스트 데이터(로그인 구현완료되면 수정할 예정)
+                SecurityUtil.getCurrentUserSeq(),
                 newBoard.getBoardTitle(),
-                newBoard.getBoardContent()
+                newBoard.getBoardContent(),
+                isNotice
         );
 
         // 1. DB(Board)에 데이터 저장
