@@ -7,6 +7,7 @@ import article1be.common.exception.ErrorCode;
 import article1be.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,12 +28,14 @@ public class AdminService {
                 .map(user -> new AdminDTO.UserInfo(
                         user.getUserSeq(),
                         user.getUserId(),
+                        user.getUserSocialSite(),
                         user.getUserName(),
                         user.getUserNickname(),
                         user.getUserPhoneNum(),
                         user.getUserBirthDate(),
                         user.getUserGender(),
-                        user.getUserState()))
+                        user.getUserState(),
+                        user.getUserAuth()))
                 .collect(Collectors.toList());
     }
 
@@ -43,12 +46,14 @@ public class AdminService {
         return new AdminDTO.UserInfo(
                 user.getUserSeq(),
                 user.getUserId(),
+                user.getUserSocialSite(),
                 user.getUserName(),
                 user.getUserNickname(),
                 user.getUserPhoneNum(),
                 user.getUserBirthDate(),
                 user.getUserGender(),
-                user.getUserState()
+                user.getUserState(),
+                user.getUserAuth()
         );
     }
 

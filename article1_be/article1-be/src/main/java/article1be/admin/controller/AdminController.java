@@ -32,7 +32,7 @@ public class AdminController {
     }
 
     // 회원 상태 변경
-    @PutMapping("/user/update")
+    @PutMapping("/user/{userSeq}")
     @Operation(summary = "관리자의 회원 상태 및 닉네임 변경", description = "회원의 상태와 닉네임을 동시에 변경할 수 있습니다.")
     public void updateMember(@RequestBody AdminDTO.UserUpdateRequest updateRequest) {
         adminService.updateUser(updateRequest);
