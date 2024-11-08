@@ -43,7 +43,6 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/login/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/weather/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/guest/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/review/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN")
                                 .anyRequest().authenticated()
                 )
