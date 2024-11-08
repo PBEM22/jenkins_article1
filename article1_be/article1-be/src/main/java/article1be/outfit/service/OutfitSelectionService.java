@@ -8,9 +8,11 @@ import article1be.outfit.repository.OutfitRepository;
 import article1be.outfit.repository.SelectOutfitRepository;
 import article1be.outfit.repository.SelectRecordRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class OutfitSelectionService {
@@ -20,7 +22,9 @@ public class OutfitSelectionService {
 
     @Transactional
     public void saveSelectedOutfits(OutfitSelectionRequestDTO requestDTO, Long userSeq) {
+        log.info("requestDTO.get {}", requestDTO.getCustomDate());
         SelectRecord savedRecord = selectRecordRepository.save(SelectRecord.create(requestDTO, userSeq));
+        log.info("saveRecord {}", savedRecord.toString());
 
         // Outfit 객체를 OutfitRepository에서 조회한 후 SelectOutfit 엔티티 생성 및 저장
         saveSelectedOutfit(savedRecord, requestDTO.getTopSeq());

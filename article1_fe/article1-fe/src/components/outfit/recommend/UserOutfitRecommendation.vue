@@ -106,7 +106,7 @@ export default {
             lon: store.selectedLongitude,
           }
         });
-
+        console.log(date);
         const weatherData = weatherResponse.data;
         const weatherCode = weatherData.nowWeatherCode;
         const highTemp = weatherData.highTemp;
