@@ -38,34 +38,54 @@ public class BoardService {
     private final AmazonS3Service amazonS3Service;
 
     // 게시글 목록 조회
-    public List<BoardDTO> getBoardList() {
-        // 모든 이미지 목록을 가져옵니다.
-        List<PictureDTO> pictureList = pictureRepository.findAll()
-                .stream()
-                .map(picture -> PictureDTO.builder()
-                        .pictureSeq(picture.getPictureSeq())
-                        .pictureBoardSeq(picture.getPictureBoardSeq())
-                        .pictureOriginName(picture.getPictureOriginName())
-                        .pictureChangedName(picture.getPictureChangedName())
-                        .pictureUrl(picture.getPictureUrl())
-                        .pictureType(picture.getPictureType())
-                        .regDate(picture.getRegDate())
-                        .delDate(picture.getDelDate())
-                        .pictureIsDelete(picture.isPictureIsDelete())
-                        .build())
-                .collect(Collectors.toList());
+    public List<BoardDTO> getBoardList(boolean isBlind) {
+        if (!isBlind) {
+            // 모든 이미지 목록을 가져옵니다.
+            List<PictureDTO> pictureList = pictureRepository.findAll()
+                    .stream()
+                    .map(picture -> PictureDTO.builder()
+                            .pictureSeq(picture.getPictureSeq())
+                            .pictureBoardSeq(picture.getPictureBoardSeq())
+                            .pictureOriginName(picture.getPictureOriginName())
+                            .pictureChangedName(picture.getPictureChangedName())
+                            .pictureUrl(picture.getPictureUrl())
+                            .pictureType(picture.getPictureType())
+                            .regDate(picture.getRegDate())
+                            .delDate(picture.getDelDate())
+                            .pictureIsDelete(picture.isPictureIsDelete())
+                            .build())
+                    .collect(Collectors.toList());
 
-        // 게시글 목록을 가져옵니다.
-        List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindFalse()
-                .stream()
-                .map(board -> {
-                    // 현재 게시글의 ID와 일치하는 이미지 목록을 필터링합니다.
-                    List<PictureDTO> imagesForBoard = pictureList.stream()
-                            .filter(picture -> picture.getPictureBoardSeq() == board.getBoardSeq()) // == 연산자로 비교
-                            .collect(Collectors.toList());
+            // 게시글 목록을 가져옵니다.
+            List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindFalse()
+                    .stream()
+                    .map(board -> {
+                        // 현재 게시글의 ID와 일치하는 이미지 목록을 필터링합니다.
+                        List<PictureDTO> imagesForBoard = pictureList.stream()
+                                .filter(picture -> picture.getPictureBoardSeq() == board.getBoardSeq()) // == 연산자로 비교
+                                .collect(Collectors.toList());
 
-                    // 게시글 DTO를 생성하고 이미지 목록을 추가합니다.
-                    return BoardDTO.builder()
+                        // 게시글 DTO를 생성하고 이미지 목록을 추가합니다.
+                        return BoardDTO.builder()
+                                .boardSeq(board.getBoardSeq())
+                                .userSeq(board.getUserSeq())
+                                .boardTitle(board.getBoardTitle())
+                                .boardContent(board.getBoardContent())
+                                .regDate(board.getRegDate())
+                                .upDate(board.getUpDate())
+                                .delDate(board.getDelDate())
+                                .boardIsBlind(board.getBoardIsBlind())
+                                .boardIsNotice(board.getBoardIsNotice())
+                                .boardPictureList(imagesForBoard) // 이미지 목록 추가
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+
+            return boardDTOList;
+        } else {
+            List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindFalse()
+                    .stream()
+                    .map(board -> BoardDTO.builder()
                             .boardSeq(board.getBoardSeq())
                             .userSeq(board.getUserSeq())
                             .boardTitle(board.getBoardTitle())
@@ -75,12 +95,11 @@ public class BoardService {
                             .delDate(board.getDelDate())
                             .boardIsBlind(board.getBoardIsBlind())
                             .boardIsNotice(board.getBoardIsNotice())
-                            .boardPictureList(imagesForBoard) // 이미지 목록 추가
-                            .build();
-                })
-                .collect(Collectors.toList());
+                            .build())
+                    .collect(Collectors.toList());
 
-        return boardDTOList;
+            return boardDTOList;
+        }
     }
 
     // 게시글 조회
