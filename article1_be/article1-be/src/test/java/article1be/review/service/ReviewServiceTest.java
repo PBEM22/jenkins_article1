@@ -40,8 +40,8 @@ class ReviewServiceTest {
     void testGetAllReviews() {
 
         // given
-        Review review = new Review(1L, 1L, "Test Content", 22.5, 126.8, false, false);
-        User user = new User(UserSocialSite.KAKAO, "test@example.com", "John Doe", "010-1234-5678",
+        Review review = new Review(1L, 1L, "xxxx", 22.5, 126.8, false, false);
+        User user = new User(UserSocialSite.KAKAO, "test@kakao.com", "hyun", "010-1234-5678",
                 LocalDate.of(1990, 1, 1), UserGender.MALE, UserState.ACTIVE, UserAuth.USER);
         when(reviewRepository.findAll()).thenReturn(List.of(review));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -59,9 +59,9 @@ class ReviewServiceTest {
     void testCreateReview() {
 
         // given
-        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "John Doe", 126.8, 22.5, "Test Content", "ACTIVE", false, false, null);
-        Review savedReview = new Review(1L, 1L, "Test Content", 22.5, 126.8, false, false);
-        User user = new User(UserSocialSite.KAKAO, "test@example.com", "John Doe", "010-1234-5678",
+        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "hhyun", 126.8, 22.5, "xxxx", "ACTIVE", false, false, null);
+        Review savedReview = new Review(1L, 1L, "xxxxx", 22.5, 126.8, false, false);
+        User user = new User(UserSocialSite.KAKAO, "test@kakao.com", "hyun", "010-1234-5678",
                 LocalDate.of(1990, 1, 1), UserGender.MALE, UserState.ACTIVE, UserAuth.USER);
 
         when(selectRecordRepository.existsById(1L)).thenReturn(true); // SelectRecordRepository 모킹 설정 추가
@@ -81,9 +81,9 @@ class ReviewServiceTest {
     void testUpdateReview() {
 
         // given
-        Review review = new Review(1L, 1L, "Updated Content", 22.5, 126.8, true, true);
-        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "John Doe", 126.8, 22.5, "Updated Content", "BLIND", true, true, null);
-        User user = new User(UserSocialSite.KAKAO, "test@example.com", "John Doe", "010-1234-5678",
+        Review review = new Review(1L, 1L, "xxxxx", 22.5, 126.8, true, true);
+        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "hhyun", 126.8, 22.5, "xxxxxxx", "BLIND", true, true, null);
+        User user = new User(UserSocialSite.KAKAO, "test@kakao.com", "hhyun", "010-1234-5678",
                 LocalDate.of(1990, 1, 1), UserGender.MALE, UserState.ACTIVE, UserAuth.USER);
 
         when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
