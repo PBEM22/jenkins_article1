@@ -14,12 +14,17 @@ const store = useAuthStore();
 // 로그인 관련 이벤트 Mounted
 onMounted(() => {
   const token = getCookie('token');
+  const isNewMember = getCookie('newMember');
 
   // Store에 토큰이 없는 경우에만 쿠키에서 로그인 시도
   if (!store.accessToken && token) {
     console.log('쿠키에서 토큰을 가져왔습니다');
     store.login(token);
     isLogin.value = true;
+    // 닉네임 등 입력이 안되어있으면 이동
+    if (isNewMember === 'Y'){
+      // router.push('/user/data');
+    }
   } else {
     console.log('쿠키에 토큰이 없습니다 또는 이미 로그아웃 상태입니다.');
     isLogin.value = false;
