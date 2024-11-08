@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-@Tag(name = "관리자 회원 조회 및 수정" , description = "관리자의 회원 조회 및 상태 변경")
+@Tag(name = "관리자 관련 API", description = "관리자 권한 사용자가 사용하는 API")
 public class AdminController {
 
     private final AdminService adminService;
