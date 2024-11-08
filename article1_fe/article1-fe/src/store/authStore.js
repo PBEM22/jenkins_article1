@@ -4,27 +4,29 @@ import {onMounted, ref} from "vue";
 export const useAuthStore = defineStore('auth', () => {
     const accessToken = ref(null);
     const userRole = ref(null);
+    const isLoggedIn = ref(false);
 
     onMounted(() => {
         const token = localStorage.getItem('accessToken');
-        console.log(token);
         if (token) {
-            // accessToken.value = token;
-            accessToken.value = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjQiLCJhdXRoIjpbIlVTRVIiXSwiZXhwIjoxNzMwOTk1NDQ3fQ._JxHARwU5ky1fMoJR_hxAx3VtFzatjo4lZst5jANKPtsE1XD-jfbPnvmUh6opw-RmI8Wyzqe7ItMB5kjfp9bpw";
-            const payload = JSON.parse(atob(token.split('.')[1])); // JWT 토큰의 페이로드 추출
+            accessToken.value = token;
+            const payload = JSON.parse(atob(token.split('.')[1]));
             userRole.value = payload.auth[0].slice(5);
-            console.log(userRole.value)
+            isLoggedIn.value = true;
         }
     });
 
     function login(token) {
+        isLoggedIn.value = true;
         accessToken.value = token;
         localStorage.setItem('accessToken', token);
         const payload = JSON.parse(atob(token.split('.')[1]));
         userRole.value = payload.auth[0].slice(5);
+        console.log(userRole);
     }
 
     function logout() {
+        isLoggedIn.value = false;
         accessToken.value = null;
         userRole.value = null;
         localStorage.removeItem('accessToken');
@@ -35,5 +37,5 @@ export const useAuthStore = defineStore('auth', () => {
         return userRole.value.includes(requiredRole);
     }
 
-    return {accessToken, userRole, login, logout, isAuthorized};
+    return {accessToken, userRole, login, logout, isAuthorized, isLoggedIn};
 });

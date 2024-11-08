@@ -5,7 +5,7 @@ import Header from "@/components/Header.vue";
 <template>
   <Header />
   <div id="app">
-    <RouterView key="$route.fullPath"/>
+    <RouterView :key="$route.fullPath"/>
   </div>
 </template>
 
