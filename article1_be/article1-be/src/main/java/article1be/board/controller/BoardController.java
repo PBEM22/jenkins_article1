@@ -43,12 +43,12 @@ public class BoardController {
     // 게시글 목록 조회
     @Operation(
             summary = "게시글 목록 조회",
-            description = "블라인드 처리되지 않은 모든 게시글을 조회하여 목록으로 반환"
+            description = "블라인드 여부에 맞는 게시글 목록 반환(기본값: 블라인드 되지 않은)"
     )
     @GetMapping
-    public ResponseEntity<List<BoardDTO>> getBoard() {
+    public ResponseEntity<List<BoardDTO>> getBoard(@RequestParam(defaultValue = "false") boolean isBlind) {
 
-        return ResponseEntity.ok(this.service.getBoardList());
+        return ResponseEntity.ok(this.service.getBoardList(isBlind));
     }
 
     // 게시글 조회

@@ -75,7 +75,7 @@ async function fetchBoardData() {
 async function fetchReplyList() {
   try {
     const boardSeq = route.params.boardSeq;
-    const response = await axios.get(`http://localhost:8080/reply/${boardSeq}`, {
+    const response = await axios.get(`/reply/${boardSeq}`, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`
       }
@@ -84,6 +84,8 @@ async function fetchReplyList() {
     if (response.status === 200) {
       replyList.value = response.data;
       console.log("조회된 댓글 데이터", replyList.value);
+    } else if(response.status === 404) {
+      console.log("게시글에 댓글이 없습니다.")
     } else {
       console.log("댓글 조회 실패", `코드: ${response.status}`);
     }

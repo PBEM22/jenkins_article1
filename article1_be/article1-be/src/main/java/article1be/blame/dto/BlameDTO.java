@@ -1,6 +1,5 @@
 package article1be.blame.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
