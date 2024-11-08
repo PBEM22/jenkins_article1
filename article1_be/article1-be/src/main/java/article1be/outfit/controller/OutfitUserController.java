@@ -10,13 +10,16 @@ import article1be.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("user/outfit")
 @RequiredArgsConstructor
@@ -35,6 +38,10 @@ public class OutfitUserController {
     }
     @PostMapping("/select")
     public ResponseEntity<String> selectOutfit(@RequestBody OutfitSelectionRequestDTO requestDTO) {
+        LocalDateTime customDate = requestDTO.getCustomDate();
+        log.info("customDate: {}", customDate);
+        requestDTO.setCustomDate(customDate);
+
         Long userSeq = SecurityUtil.getCurrentUserSeq();
         outfitSelectionService.saveSelectedOutfits(requestDTO, userSeq);
         return ResponseEntity.ok("복장이 성공적으로 저장되었습니다.");

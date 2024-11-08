@@ -8,18 +8,17 @@
       @itemClicked="toggleSelection"
       @saveSelection="saveSelection"
   />
-
 </template>
 
 <script>
 import axios from 'axios';
 import OutfitRecommendationList from '@/components/outfit/recommend/OutfitRecommendationList.vue';
-import {useSelectedInfoStore} from '@/store/selectedInfoStore.js';
+import { useSelectedInfoStore } from '@/store/selectedInfoStore.js';
 import outfitRecommendationResult from "@/views/outfit/recommend/OutfitRecommendationResult.vue";
+import { useAuthStore } from "@/store/authStore.js";
 
 export default {
-
-  components: {OutfitRecommendationList},
+  components: { OutfitRecommendationList },
   data() {
     return {
       outfits: null,
@@ -36,8 +35,10 @@ export default {
   async created() {
     await this.fetchOutfitRecommendations();
   },
+
   methods: {
     async fetchOutfitRecommendations() {
+      const authStore = useAuthStore();
       const store = useSelectedInfoStore();
       try {
         let date = new Date(store.selectedDate);
@@ -51,16 +52,15 @@ export default {
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMiIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzA5MTUzNDh9.hYUPrRqbHdmVswbBVCmAgWxqrseP1VNFI3oSjAhP9L0wCIKMLZJRr7DzLOKQbFFhrlZibSiIRnP0ouSLBP2Bcg'
+            'Authorization': `Bearer ${authStore.accessToken}`
           }
         });
         this.outfits = response.data;
-
       } catch (error) {
         console.error("추천 데이터를 불러오지 못했습니다:", error);
       }
-
     },
+
     isSelected(category, outfitSeq) {
       if (category === 'ACCESSORY') {
         return this.selectedOutfits.accessorySeq.includes(outfitSeq);
@@ -69,11 +69,12 @@ export default {
       } else {
         return this.selectedOutfits[`${category.toLowerCase()}Seq`] === outfitSeq;
       }
-    }
-    ,
+    },
+
     getImageSrc(outfitSeq) {
       return new URL(`/src/assets/images/outfits/${outfitSeq}.png`, import.meta.url).href;
     },
+
     toggleSelection(category, outfitSeq) {
       if (category === 'ACCESSORY') {
         const index = this.selectedOutfits.accessorySeq.indexOf(outfitSeq);
@@ -87,17 +88,43 @@ export default {
       } else {
         this.selectedOutfits[`${category.toLowerCase()}Seq`] = outfitSeq;
       }
-      // 선택 상태가 업데이트된 것을 확인
       console.log("Updated selectedOutfits:", this.selectedOutfits);
+    },
+
+    async getAddressFromCoordinates(lat, lon) {
+      try {
+        const token = `KakaoAK ${import.meta.env.VITE_KAKAO_REST_API_KEY}`;
+
+        const response = await axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json`, {
+          params: {
+            x: lon,
+            y: lat
+          },
+          headers: {
+            Authorization: token  // Kakao REST API 키를 입력하세요.
+
+          }
+        });
+        console.log(`KakaoAK ${import.meta.env.VITE_KAKAO_REST_API_KEY}`);
+        const address = response.data.documents[0].address;
+        return `${address.region_1depth_name} ${address.region_2depth_name} ${address.region_3depth_name}`;
+      } catch (error) {
+        console.error("주소 변환에 실패했습니다:", error);
+        return `${lat}, ${lon}`; // 변환 실패 시 기본 위도/경도로 반환
+      }
     },
 
     async saveSelection() {
       const store = useSelectedInfoStore();
+      const authStore = useAuthStore();
       try {
-        const formattedDate = store.selectedDate.toISOString().split('.')[0]; // 'Z'와 밀리초 제거
+        let date = new Date(store.selectedDate);
+        date.setHours(date.getHours() + 9);
+
+        // 날씨 정보 가져오기
         const weatherResponse = await axios.get('/weather', {
           params: {
-            time: formattedDate,
+            time: date.toISOString().split('.')[0],
             lat: store.selectedLatitude,
             lon: store.selectedLongitude,
           }
@@ -111,12 +138,14 @@ export default {
         const curTemp = weatherData.nowTemp;
         const precipitation = weatherData.list[0]?.rain?.['1h'] || 0;
 
-        console.log("Sending selected outfits:", this.selectedOutfits);
+        // 위도와 경도를 주소로 변환
+        const customLocation = await this.getAddressFromCoordinates(store.selectedLatitude, store.selectedLongitude);
 
+        // 선택한 복장 데이터 전송
         await axios.post('/user/outfit/select', {
           situationSeq: store.selectedSituation,
-          customDate: store.selectedDate.toISOString(),
-          customLocation: `${store.selectedLatitude}, ${store.selectedLongitude}`,
+          customDate: date.toISOString().split('.')[0],
+          customLocation: customLocation,  // 변환된 주소 사용
           weatherCode: weatherCode,
           highTemp: highTemp,
           lowTemp: lowTemp,
@@ -131,7 +160,7 @@ export default {
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMiIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzA5MTUzNDh9.hYUPrRqbHdmVswbBVCmAgWxqrseP1VNFI3oSjAhP9L0wCIKMLZJRr7DzLOKQbFFhrlZibSiIRnP0ouSLBP2Bcg'
+            'Authorization': `Bearer ${authStore.accessToken}`
           }
         });
         alert("선택한 복장이 저장되었습니다.");

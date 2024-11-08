@@ -61,9 +61,10 @@ public class BlameService {
                 .blameReviewSeq(null)
                 .build()
         );
+        log.info("신고 객체 생성");
 
         // 해당 댓글에 대한 신고 개수 확인
-        long blameCount = blameRepository.findByBlameReplySeq(replySeq).stream().count();
+        long blameCount = blameRepository.findByBlameReplySeq(replySeq).size();
         log.info(replySeq + "번 댓글에 누적 신고 개수 = " + blameCount);
 
         // 신고 개수가 10개 이상이면 boardIsBlind 값을 true로 업데이트
@@ -90,7 +91,7 @@ public class BlameService {
         );
 
         // 해당 댓글에 대한 신고 개수 확인
-        long blameCount = blameRepository.findByBlameReviewSeq(reviewSeq).stream().count();
+        long blameCount = blameRepository.findByBlameReviewSeq(reviewSeq).size();
         log.info(reviewSeq + "번 리뷰에 누적 신고 개수 = " + blameCount);
 
         // 신고 개수가 10개 이상이면 boardIsBlind 값을 true로 업데이트

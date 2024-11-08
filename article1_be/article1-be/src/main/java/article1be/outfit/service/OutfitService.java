@@ -93,8 +93,6 @@ public class OutfitService {
         Map<OutfitCategory, List<OutfitResponseDTO>> recommendedOutfits = new HashMap<>();
 
         for (OutfitCategory outfitCategory : OutfitCategory.values()) {
-
-
             List<Outfit> filteredOutfits = outfitRepository.findByCategoryAndWeatherConditions(outfitCategory, minTemp, maxTemp, weatherCode)
                     .stream()
                     .filter(outfit -> outfit.getOutfitGender() == OutfitGender.N ||
@@ -108,7 +106,7 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), styleSeq, userSeq),
                             calculateScore(o1, requestDTO.getSituationSeq(), styleSeq, userSeq)
                     ))
-                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(), outfit.getOutfitName(), outfit.getOutfitImg()))
+                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(), outfit.getOutfitName()))
                     .collect(Collectors.toList());
 
             recommendedOutfits.put(outfitCategory, topOutfits);
@@ -162,7 +160,7 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), null, null),
                             calculateScore(o1, requestDTO.getSituationSeq(), null, null)
                     ))
-                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(), outfit.getOutfitName(), outfit.getOutfitImg()))
+                    .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(), outfit.getOutfitName()))
                     .collect(Collectors.toList());
 
             recommendedOutfits.put(outfitCategory, topOutfits);
