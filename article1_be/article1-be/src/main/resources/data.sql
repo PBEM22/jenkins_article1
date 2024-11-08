@@ -291,7 +291,7 @@ INSERT INTO `condition` (condition_name) VALUES
 
 
 -- 사용자 더미 데이터 삽입
-INSERT INTO USER (user_social_site, user_id, user_name, user_nickname, user_phone_num, user_birth_date, user_gender, user_state, reg_date, style_seq, condition_seq, user_auth) VALUES
+INSERT INTO user (user_social_site, user_id, user_name, user_nickname, user_phone_num, user_birth_date, user_gender, user_state, reg_date, style_seq, condition_seq, user_auth) VALUES
 ('KAKAO', 'user1@kakao.com', '사용자 1', '닉네임 1', '010-1111-1111', '1990-01-01', 'MALE', 'ACTIVE', NOW(), 1, 1, 'USER'),
 ('NAVER', 'user2@naver.com', '사용자 2', '닉네임 2', '010-2222-2222', '1992-02-02', 'FEMALE', 'ACTIVE', NOW(), 2, 2, 'USER'),
 ('GOOGLE', 'user3@gmail.com', '사용자 3', '닉네임 3', '010-3333-3333', '1989-03-03', 'MALE', 'ACTIVE', NOW(), 1, 3, 'USER'),

@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +57,17 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info("토큰 생성 확인 : {}", token);
 
-        response.setHeader("token", token);
-        response.sendRedirect("http://localhost:5173");
+        // 쿠키에 토큰 설정
+        Cookie tokenCookie = new Cookie("token", token);
+        tokenCookie.setHttpOnly(false);  // 클라이언트에서 접근하지 못하도록 설정
+        tokenCookie.setSecure(false);    // HTTPS 연결에서만 쿠키가 전달되도록 설정
+        tokenCookie.setPath("/");       // 모든 경로에서 쿠키를 사용할 수 있도록 설정
+        tokenCookie.setMaxAge(60 * 60); // 쿠키의 유효 시간 설정 (1시간)
 
+        response.addCookie(tokenCookie);
+
+        // 리다이렉트
+        response.sendRedirect("http://localhost:5173");
     }
 
 }

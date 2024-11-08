@@ -29,7 +29,7 @@ const emit = defineEmits(['delete']); // 'delete' 이벤트 정의
 // 신고 이벤트
 async function blame() {
   try {
-    const response = await axios.post(`http://localhost:8003/blame/comment/${props.replySeq}`, {}, {
+    const response = await axios.post(`http://localhost:8080/blame/reply/${props.replySeq}`, {}, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
       }

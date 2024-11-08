@@ -16,11 +16,12 @@ import {useRouter} from "vue-router";
 
 // Pinia
 import {useAuthStore} from "@/store/authStore.js";
+import NormalButton from "@/components/board/NormalButton.vue";
 
 // Jwt 토근 정보 확인
 const authStore = useAuthStore();
 
-// 게시글 목록 변수
+// 호출 데이터
 const boardList = ref([]);
 
 // 데이터 호출
@@ -34,6 +35,7 @@ const fetchData = async () => {
 
     if (response.status === 200) {
       boardList.value = response.data;
+      // console.log(boardList.value);
     } else {
       console.log("게시글 목록 조회 실패");
       console.log(`코드: ` + response.status);
@@ -94,13 +96,10 @@ function goToDetailPage(boardSeq) {
 
 // 게시들 등록 페이지 이동
 function goToRegister() {
-  router.push(`/board/BoardRegister`);
+  router.push(`/board/register`);
 }
 
 onMounted(() => {
-  console.log("access token");
-  console.log(authStore.accessToken);
-
   fetchData();
 })
 
@@ -114,7 +113,7 @@ onMounted(() => {
         <!-- 공지사항 표시 (최대 2개) -->
         <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
           <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                         v-on:click="goToDetailPage(item.boardSeq)"
+                         @click="goToDetailPage(item.boardSeq)"
                          :title="item.boardTitle"
                          :content="item.boardContent"
                          :date="formatDate(item.regDate)"
@@ -122,7 +121,7 @@ onMounted(() => {
                          :imageUrl="item.boardPictureList[0]?.pictureUrl"
           />
           <BoardNoticeLi v-else
-                         v-on:click="goToDetailPage(item.boardSeq)"
+                         @click="goToDetailPage(item.boardSeq)"
                          :title="item.boardTitle"
                          :content="item.boardContent"
                          :date="formatDate(item.regDate)"
@@ -134,7 +133,7 @@ onMounted(() => {
         <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
         <tr v-if="regularPosts && regularPosts.length > 0" v-for="item in regularPosts" :key="item.boardSeq">
           <BoardLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                   v-on:click="goToDetailPage(item.boardSeq)"
+                   @:click="goToDetailPage(item.boardSeq)"
                    :title="item.boardTitle"
                    :content="item.boardContent"
                    :date="formatDate(item.regDate)"
@@ -142,7 +141,7 @@ onMounted(() => {
                    :imageUrl="item.boardPictureList[0]?.pictureUrl"
           />
           <BoardLi v-else
-                   v-on:click="goToDetailPage(item.boardSeq)"
+                   @:click="goToDetailPage(item.boardSeq)"
                    :title="item.boardTitle"
                    :content="item.boardContent"
                    :date="formatDate(item.regDate)"
@@ -152,6 +151,12 @@ onMounted(() => {
         </tr>
         </tbody>
       </table>
+      <div class="button-container">
+        <NormalButton
+            @:click="goToRegister"
+            text="글쓰기"
+        />
+      </div>
     </Container>
   </div>
 </template>
@@ -171,5 +176,11 @@ table {
 
 tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+.button-container {
+  display: flex; /* Flexbox 사용 */
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin-top: 10px; /* 버튼 위쪽 여백 추가 */
 }
 </style>

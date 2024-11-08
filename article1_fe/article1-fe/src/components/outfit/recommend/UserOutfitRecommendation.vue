@@ -40,31 +40,25 @@ export default {
     async fetchOutfitRecommendations() {
       const store = useSelectedInfoStore();
       try {
-        const response = await axios.post('http://localhost:8080/user/outfit/recommendations', {
+        let date = new Date(store.selectedDate);
+        date.setHours(date.getHours() + 9);
+        console.log(date.toISOString().split('.')[0]);
+        const response = await axios.post('/user/outfit/recommendations', {
           situationSeq: store.selectedSituation,
-          requestedAt: store.selectedDate,
+          requestedAt: date.toISOString().split('.')[0],
           latitude: store.selectedLatitude,
           longitude: store.selectedLongitude,
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMSIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzEwNDA0ODJ9.WCYmcaULDFylzKSXoO2NYgsekOxmYSWfcj0FSEge9ICwbAAkrehZZtPqSkMBb9_7IIBkYeCwEXUDTDZ94wBbng'
+            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMiIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzA5MTUzNDh9.hYUPrRqbHdmVswbBVCmAgWxqrseP1VNFI3oSjAhP9L0wCIKMLZJRr7DzLOKQbFFhrlZibSiIRnP0ouSLBP2Bcg'
           }
         });
         this.outfits = response.data;
 
-
       } catch (error) {
         console.error("추천 데이터를 불러오지 못했습니다:", error);
       }
-
-      console.log("복장"+JSON.stringify(this.outfits, null, 2));
-
-      console.log("상황번호: "+store.selectedSituation);
-      console.log("위도: "+store.selectedLatitude);
-      console.log("경도: "+store.selectedLongitude);
-      console.log("날짜: "+store.selectedDate);
-      console.log("현재날짜"+store.selectedDate);
 
     },
     isSelected(category, outfitSeq) {
@@ -101,8 +95,7 @@ export default {
       const store = useSelectedInfoStore();
       try {
         const formattedDate = store.selectedDate.toISOString().split('.')[0]; // 'Z'와 밀리초 제거
-
-        const weatherResponse = await axios.get('http://localhost:8080/weather', {
+        const weatherResponse = await axios.get('/weather', {
           params: {
             time: formattedDate,
             lat: store.selectedLatitude,
@@ -120,7 +113,7 @@ export default {
 
         console.log("Sending selected outfits:", this.selectedOutfits);
 
-        await axios.post('http://localhost:8080/user/outfit/select', {
+        await axios.post('/user/outfit/select', {
           situationSeq: store.selectedSituation,
           customDate: store.selectedDate.toISOString(),
           customLocation: `${store.selectedLatitude}, ${store.selectedLongitude}`,
@@ -138,7 +131,7 @@ export default {
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMSIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzEwNDA0ODJ9.WCYmcaULDFylzKSXoO2NYgsekOxmYSWfcj0FSEge9ICwbAAkrehZZtPqSkMBb9_7IIBkYeCwEXUDTDZ94wBbng'
+            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMiIsImF1dGgiOlsiVVNFUiJdLCJleHAiOjE3MzA5MTUzNDh9.hYUPrRqbHdmVswbBVCmAgWxqrseP1VNFI3oSjAhP9L0wCIKMLZJRr7DzLOKQbFFhrlZibSiIRnP0ouSLBP2Bcg'
           }
         });
         alert("선택한 복장이 저장되었습니다.");

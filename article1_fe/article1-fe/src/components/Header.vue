@@ -1,10 +1,20 @@
 <script setup>
-import {ref} from 'vue';
+import {computed, nextTick, ref} from 'vue';
 import router from "@/router/index.js";
+import {useAuthStore} from "@/store/authStore.js";
 
-// 로그인 상태를 나타내는 변수
-const isLogIn = ref(false);
+// 상태관리
+const store = useAuthStore();
 
+// 로그인 유무
+const isLogIn = computed(() => store.accessToken !== null);
+
+// 로그아웃 후 메인페이지로 이동
+const logout = async () => {
+  await store.logout();
+  await nextTick();      // 상태가 반영된 후 페이지 이동
+  await router.push('/');
+}
 </script>
 
 <template>
@@ -25,11 +35,10 @@ const isLogIn = ref(false);
     <div class="login-logout">
       <template v-if="isLogIn">
         <!-- 로그아웃 버튼 -->
-        <button @click="toggleLogin" class="logout-btn">LOGOUT</button>
+        <button @click="logout" class="logout-btn">LOGOUT</button>
       </template>
       <template v-else>
-        <!-- 회원가입과 로그인 버튼 -->
-        <button @click="router.push('/login')" class="signup-btn">SIGN UP</button>
+        <!-- 로그인 버튼 -->
         <button @click="router.push('/login')" class="login-btn">LOGIN</button>
       </template>
     </div>
