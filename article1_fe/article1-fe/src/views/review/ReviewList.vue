@@ -1,13 +1,11 @@
 <template>
   <div class="review-page">
-    <h2>한 줄 리뷰</h2>
+    <h2>전체 리뷰 조회</h2>
     <div class="search-bar">
       <select v-model="selectedCategory">
         <option value="all">전체</option>
         <option value="author">작성자</option>
         <option value="location">위치</option>
-        <option value="weather">날씨</option>
-        <option value="date">작성일</option>
       </select>
       <input v-model="searchQuery" placeholder="검색" />
       <button @click="searchReviews">검색</button>
@@ -31,9 +29,7 @@
         </div>
         <div class="table-cell date-time">
           <div class="reg-date">{{ review.regDate }}</div>
-          <div class="like-indicator">
-            {{ review.reviewLikeYn ? "좋아요 👍" : "싫어요 👎" }}
-          </div>
+          <div class="like-indicator">좋아요 {{ review.reviewLikeYn ? "👍" : "👎" }}</div>
           <button class="report-btn" @click="reportReview(review.reviewSeq)">신고</button>
         </div>
       </div>
@@ -51,8 +47,8 @@
 <script>
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '@/store/authStore';
-import Pagination from '@/components/common/Pagination.vue';
+import { useAuthStore } from '@/store/authStore'; // authStore 경로 확인 필요
+import Pagination from '@/components/common/Pagination.vue'; // Pagination 컴포넌트 경로 확인 필요
 
 export default {
   components: {
@@ -63,8 +59,8 @@ export default {
     const selectedCategory = ref('all');
     const searchQuery = ref('');
     const reviews = ref([]);
-    const filteredReviews = ref([]);
 
+    // Pagination state
     const currentPage = ref(1);
     const itemsPerPage = 10;
 
@@ -76,29 +72,23 @@ export default {
           }
         });
         reviews.value = response.data;
-        filteredReviews.value = reviews.value; // 기본 전체 조회
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
     };
 
-    const searchReviews = () => {
-      filteredReviews.value = reviews.value.filter((review) => {
+    const filteredReviews = computed(() => {
+      return reviews.value.filter((review) => {
         if (selectedCategory.value === 'all') {
           return true;
         } else if (selectedCategory.value === 'author') {
           return review.userNickname.includes(searchQuery.value);
         } else if (selectedCategory.value === 'location') {
           return review.location.includes(searchQuery.value);
-        } else if (selectedCategory.value === 'weather') {
-          return String(review.weather).includes(searchQuery.value);
-        } else if (selectedCategory.value === 'date') {
-          return review.regDate.includes(searchQuery.value);
         }
         return false;
       });
-      currentPage.value = 1; // 검색 후 첫 페이지로 초기화
-    };
+    });
 
     const paginatedReviews = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
@@ -116,9 +106,18 @@ export default {
       }
     };
 
-    const reportReview = (reviewSeq) => {
-      console.log(`Review ${reviewSeq} reported.`);
-      // 신고 처리 로직을 추가할 수 있습니다.
+    const reportReview = async (reviewSeq) => {
+      try {
+        await axios.post(`/blame/review/${reviewSeq}`, {}, {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`
+          }
+        });
+        alert('신고가 완료되었습니다.');
+      } catch (error) {
+        console.error("Failed to report review:", error);
+        alert('신고에 실패하였습니다. 다시 시도해 주세요.');
+      }
     };
 
     onMounted(fetchReviews);
@@ -133,7 +132,6 @@ export default {
       currentPage,
       totalPages,
       goToPage,
-      searchReviews,
     };
   },
 };
@@ -141,27 +139,21 @@ export default {
 
 <style scoped>
 .review-page {
-  width: 80%;
-  margin: 20px auto;
+  width: 90%;
+  margin: 0 auto;
   font-family: Arial, sans-serif;
   color: #333;
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-  text-align: left;
+  text-align: center;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #333;
 }
 
 .search-bar {
   display: flex;
-  align-items: center;
   gap: 10px;
   margin-bottom: 20px;
   justify-content: flex-end;
@@ -169,102 +161,79 @@ h2 {
 
 .search-bar select,
 .search-bar input {
-  padding: 8px;
+  padding: 5px;
   font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
 }
 
 .search-bar button {
-  padding: 8px 12px;
+  padding: 6px 12px;
   font-size: 14px;
   cursor: pointer;
-  background-color: #0073e6;
+  background-color: #cce4ff;
   border: none;
-  color: white;
-  border-radius: 6px;
-  transition: background-color 0.3s;
-}
-
-.search-bar button:hover {
-  background-color: #005bb5;
+  color: #333;
 }
 
 .review-table {
-  background-color: #ffffff;
+  background-color: #f9f9ff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  padding: 20px;
 }
 
 .table-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr;
+  grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr;
   padding: 10px;
-  background-color: #e6f2ff;
+  background-color: #cce4ff;
+  border-radius: 8px;
+}
+
+.header-cell {
+  text-align: center;
   font-weight: bold;
-  color: #333;
-  text-align: left;
+  color: #555;
 }
 
 .table-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr;
-  padding: 15px 10px;
-  border-bottom: 1px solid #eee;
+  grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
   align-items: center;
-  font-size: 14px;
+}
+
+.review-content {
+  font-size: 16px;
   color: #444;
 }
 
-.table-row:last-child {
-  border-bottom: none;
-}
-
-.header-cell,
-.table-cell {
-  padding: 8px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.table-cell.review-content {
-  white-space: normal;
-  line-height: 1.5;
-  color: #555;
-}
-
-.table-cell.date-time {
+.date-time {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #888;
 }
 
-.date-time .reg-date {
-  font-size: 12px;
-  color: #999;
+.reg-date {
+  font-size: 16px;
+  color: #888;
+  font-weight: normal;
 }
 
 .like-indicator {
-  font-size: 14px;
+  font-size: 16px;
+  color: #555;
   font-weight: bold;
-  color: #333;
 }
 
 .report-btn {
   background-color: transparent;
   border: none;
-  color: #999;
+  color: #888;
   cursor: pointer;
-  font-size: 12px;
-  margin-top: 4px;
-  padding: 0;
-  text-decoration: underline;
-}
-
-.report-btn:hover {
-  color: #666;
+  font-size: 14px;
 }
 </style>
