@@ -8,7 +8,7 @@
     <div class="item"><span>종류</span></div>
     <div class="item"><span>내용</span></div>
     <div class="item"><span>작성자</span></div>
-    <div class="item"><span>처리하기</span></div>
+    <div class="item"><span>블라인드</span></div>
   </div>
 </template>
 
