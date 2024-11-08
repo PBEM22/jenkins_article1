@@ -87,9 +87,7 @@ INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_mi
 ('부채', NULL, 100, 17, 'ACCESSORY', 'N', 'SELECTION'),
 ('비니', NULL, 25, -10, 'ACCESSORY', 'N', 'SELECTION'),
 ('보조배터리', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION'),
-('스마트워치', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION'),
-('아날로그손목시계', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION');
-
+('스마트워치', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION');
 
 INSERT INTO style (style_name) VALUES
                                    ('casual'),   -- 1
@@ -183,8 +181,8 @@ INSERT INTO outfit_style (outfit_seq, style_seq) VALUES
 (74, 1), -- 부채:
 (75, 1), -- 비니
 (76, 1), -- 보조배터리
-(77, 1),    (77, 3) ,        -- 스마트워치
-(78, 2);
+(77, 1),    (77, 3) ;       -- 스마트워치
+
 
 INSERT INTO situation (situation_name) VALUES
                                            ('daily'),    -- 1: 일상
@@ -279,8 +277,7 @@ INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
                                                              (74, 1), (74, 2),                       -- 부채: 일상, 여행
                                                              (75, 1), (75, 3),-- 비니
                                                              (76, 1),  (76, 2), -- 보조배터리
-                                                             (77, 1),    (77, 4) ,        -- 스마트워치
-                                                             (78, 3), (78, 5); -- 아날로그손목시계
+                                                             (77, 1),    (77, 4);
 
 INSERT INTO `condition` (condition_name) VALUES
                                              ('HOT'),
