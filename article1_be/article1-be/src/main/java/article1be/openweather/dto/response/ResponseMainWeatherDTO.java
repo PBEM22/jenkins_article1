@@ -44,6 +44,9 @@ public class ResponseMainWeatherDTO {
     // 지정시점 ~ 24시이전까지의 날씨 데이터
     private List<ChangeWeatherListDTO> list;
 
+    // 현재 날씨코드
+    private int realWeatherCode;
+
     // WeatherListDTO 변환 및 세팅
     public void setList(List<WeatherListDTO> list) {
         // 변환한 데이터를 담을 리스트 생성
@@ -62,10 +65,11 @@ public class ResponseMainWeatherDTO {
                 // 실제 날씨 코드 저장
                 weatherDTO.setWeatherCode(weatherDTOId);
 
-                // 2xx, 3xx, 5xx 비와 관련된 날씨데이터 500으로 통일
+                // 2xx, 3xx, 5xx, 6xx 비와 관련된 날씨데이터 500으로 통일
                 if ((weatherDTOId >= 200 && weatherDTOId <= 232) 
                         || (weatherDTOId >= 300 && weatherDTOId <= 321) 
-                        || (weatherDTOId >= 500 && weatherDTOId <= 531)) {
+                        || (weatherDTOId >= 500 && weatherDTOId <= 531)
+                        || (weatherDTOId >= 600 && weatherDTOId <= 622)) {
                     weatherDTO.setId(500);
                 }
             }

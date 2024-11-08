@@ -31,14 +31,17 @@
 <script>
 import { useSelectedInfoStore } from '@/store/selectedInfoStore.js';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/authStore.js'; // 인증 상태 확인을 위해 추가
 
 export default {
   setup() {
     const store = useSelectedInfoStore();
+    const authStore = useAuthStore(); // 인증 상태를 가져오기 위한 Pinia Store
     const router = useRouter();
 
     return {
       store,
+      authStore,
       router,
       selectedSituation: null,
       situations: [
@@ -58,7 +61,13 @@ export default {
     getRecommendation() {
       if (this.selectedSituation) {
         this.store.selectedSituation = this.selectedSituation; // 상황을 스토어에 저장
-        this.router.push({ name: 'UserOutfitRecommendation' }); // 게스트 복장 추천 페이지로 이동
+
+        // 로그인 상태 확인
+        if (this.authStore.isLoggedIn) {
+          this.router.push({name: 'UserOutfitRecommendation'}); // 로그인 상태: User 페이지로 이동
+        } else {
+          this.router.push({name: 'GuestOutfitRecommendation'}); // 비로그인 상태: Guest 페이지로 이동
+        }
       } else {
         alert("상황을 선택해 주세요.");
       }

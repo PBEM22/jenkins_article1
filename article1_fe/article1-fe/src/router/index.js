@@ -4,34 +4,11 @@ import userRouter from "@/router/userRouter.js"
 import mypageRouter from "@/router/mypageRouter.js"
 import adminRouter from "@/router/adminRouter.js";
 import reviewRouter from "@/router/reviewRouter.js";
-import MapWithDateView from "@/views/outfit/setting/MapWithDateView.vue";
-import SelectSituation from "@/views/outfit/setting/SituationView.vue";
 import {createRouter, createWebHistory} from "vue-router";
-import GuestOutfitRecommendation from "@/components/outfit/recommend/GuestOutfitRecommendation.vue";
-import UserOutfitRecommendation from "@/components/outfit/recommend/UserOutfitRecommendation.vue";
 import blameRouter from "@/router/blameRouter.js";
+import outfitRouter from "@/router/outfitRouter.js";
 
 const routes = [
-    {
-        path: "/map",
-        name: "MapWithDateView",
-        component: MapWithDateView,
-    },
-    {
-        path: "/map/select-situation",
-        name: "SelectSituation",
-        component: SelectSituation,
-    },
-    {
-        path: "/guest/outfit/recommendation",
-        name: "GuestOutfitRecommendation",
-        component: GuestOutfitRecommendation,
-    },
-    {
-        path: "/user/outfit/recommendations", // 회원용 복장 추천 경로 추가
-        name: "UserOutfitRecommendation",
-        component: UserOutfitRecommendation,
-    },
 
     // 메인 라우터
     ...mainRouter,
@@ -46,7 +23,9 @@ const routes = [
     // 관리자페이지 라우터
     ...adminRouter,
     // 리뷰 라우터
-    ...reviewRouter
+    ...reviewRouter,
+    // 복장 추천 라우터
+    ...outfitRouter
 ]
 
 const router = createRouter({
