@@ -2,12 +2,14 @@ package article1be.user.service;
 
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.outfit.entity.OutfitCategory;
+import article1be.outfit.entity.SelectOutfit;
+import article1be.outfit.entity.SelectRecord;
 import article1be.outfit.entity.Style;
+import article1be.outfit.repository.SelectOutfitRepository;
+import article1be.outfit.repository.SelectRecordRepository;
 import article1be.security.util.SecurityUtil;
-import article1be.user.dto.PreferenceResponseDTO;
-import article1be.user.dto.UserDataDTO;
-import article1be.user.dto.UserPreferDTO;
-import article1be.user.dto.UserResponseDTO;
+import article1be.user.dto.*;
 import article1be.user.entity.Condition;
 import article1be.user.entity.User;
 import article1be.user.repository.ConditionRepository;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,6 +40,8 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final StyleRepository styleRepository;
     private final ConditionRepository conditionRepository;
+    private final SelectRecordRepository selectRecordRepository;
+    private final SelectOutfitRepository selectOutfitRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userSeq) throws UsernameNotFoundException {
@@ -154,4 +159,76 @@ public class UserService implements UserDetailsService {
         throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
     }
 
+
+    // 선택 복장 조회
+    public SelectOutfitResponseDTO getUserSelectOutfit(Long userSeq,Long selectSeq) {
+        User user = userRepository.findByUserSeqWithStyleAndCondition(userSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        List<SelectOutfit> selectOutfits = selectOutfitRepository.findBySelectRecord_SelectSeq(selectSeq);
+
+        // 각 카테고리별 ID 및 이름 분류
+        Long topSeq = null;
+        String topName = null;
+        Long bottomSeq = null;
+        String bottomName = null;
+        Long shoesSeq = null;
+        String shoesName = null;
+        Long outerSeq = null;
+        String outerName = null;
+        List<Long> accessorySeq = null;
+        List<String> accessoryNames = null;
+
+        for (SelectOutfit outfit : selectOutfits) {
+            switch (outfit.getOutfit().getOutfitCategory()) {
+                case TOP -> {
+                    topSeq = outfit.getOutfit().getOutfitSeq();
+                    topName = outfit.getOutfit().getOutfitName();
+                }
+                case BOTTOM -> {
+                    bottomSeq = outfit.getOutfit().getOutfitSeq();
+                    bottomName = outfit.getOutfit().getOutfitName();
+                }
+                case SHOES -> {
+                    shoesSeq = outfit.getOutfit().getOutfitSeq();
+                    shoesName = outfit.getOutfit().getOutfitName();
+                }
+                case OUTERWEAR -> {
+                    outerSeq = outfit.getOutfit().getOutfitSeq();
+                    outerName = outfit.getOutfit().getOutfitName();
+                }
+                case ACCESSORY -> {
+                    if (accessorySeq == null) accessorySeq = new java.util.ArrayList<>();
+                    if (accessoryNames == null) accessoryNames = new java.util.ArrayList<>();
+                    accessorySeq.add(outfit.getOutfit().getOutfitSeq());
+                    accessoryNames.add(outfit.getOutfit().getOutfitName());
+                }
+            }
+        }
+
+        // DTO로 반환
+        return new SelectOutfitResponseDTO(
+                topSeq, topName,
+                bottomSeq, bottomName,
+                shoesSeq, shoesName,
+                outerSeq, outerName,
+                accessorySeq, accessoryNames
+        );
+    }
+
+    // 선택 기록 조회
+    public List<SelectRecordResponseDTO> getUserSelectRecords(Long userSeq) {
+
+        List<SelectRecord> selectRecords = selectRecordRepository.findAllByUserSeqOrderBySelectDateDesc(userSeq);
+
+        return selectRecords.stream()
+                .map(record -> new SelectRecordResponseDTO(
+                        record.getSelectSeq(),
+                        record.getSelectDate(),
+                        record.getCustomDate(),
+                        record.getCustomLocation(),
+                        record.getCurTemp()
+                ))
+                .collect(Collectors.toList());
+    }
 }
