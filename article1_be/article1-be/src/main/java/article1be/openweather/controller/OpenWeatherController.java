@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,12 +96,12 @@ public class OpenWeatherController {
     @Operation(summary = "지정된 날짜의 날씨 및 대기 데이터",
             description = "지정시간부터 다음날 00시까지의 (온도, 체감온도, 날씨코드, 미세먼지 및 초미세먼지 농도, 최저/최고기온 포함) 데이터 조회")
     @GetMapping
-    public ResponseEntity<ResponseMainWeatherDTO> getMainWeatherData(@RequestParam("time") String inputTime,
+    public ResponseEntity<ResponseMainWeatherDTO> getMainWeatherData(@RequestParam("time") LocalDateTime inputTime,
                                                                      @RequestParam("lat") String lat,
                                                                      @RequestParam("lon") String lon) throws UnsupportedEncodingException{
 
-        LocalDateTime time = DateTimeUtil.stringParseToLocalDateTime(inputTime);
-        ResponseMainWeatherDTO mainWeatherData = openWeatherService.getMainWeatherData(time, lat, lon);
+//        LocalDateTime time = DateTimeUtil.stringParseToLocalDateTime(inputTime);
+        ResponseMainWeatherDTO mainWeatherData = openWeatherService.getMainWeatherData(inputTime, lat, lon);
 
         return ResponseEntity.ok(mainWeatherData);
     }

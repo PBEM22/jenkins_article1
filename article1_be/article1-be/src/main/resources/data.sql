@@ -72,7 +72,7 @@ INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_mi
 -- 악세사리 (ACCESSORY)
 ('핫팩', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
 ('장갑', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
-('귀마개', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
+('손수건', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION'),
 ('목도리', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
 ('플리스_모자', NULL, 5, -100, 'ACCESSORY', 'N', 'RECOMMENDED'),
 ('귀도리', NULL, 10, -5, 'ACCESSORY', 'N', 'RECOMMENDED'),
@@ -87,9 +87,7 @@ INSERT INTO outfit (outfit_name, outfit_weather, outfit_temp_max, outfit_temp_mi
 ('부채', NULL, 100, 17, 'ACCESSORY', 'N', 'SELECTION'),
 ('비니', NULL, 25, -10, 'ACCESSORY', 'N', 'SELECTION'),
 ('보조배터리', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION'),
-('스마트워치', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION'),
-('아날로그손목시계', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION');
-
+('스마트워치', NULL, 100, -100, 'ACCESSORY', 'N', 'SELECTION');
 
 INSERT INTO style (style_name) VALUES
                                    ('casual'),   -- 1
@@ -168,7 +166,7 @@ INSERT INTO outfit_style (outfit_seq, style_seq) VALUES
 -- 악세사리 (ACCESSORY)
 (60, 1), (60, 2), (60, 3), (60, 4), -- 핫팩:
 (61, 1), (61, 2), (61, 3), (61, 4), -- 장갑:
-(62, 1), (62, 2), (62, 3), (62, 4), -- 귀마개:
+(62, 2), (62, 3), -- 손수건
 (63, 1), (63, 2),               -- 목도리: ,
 (64, 1),                        -- 플리스_모자:
 (65, 1), (65, 2),               -- 귀도리:
@@ -183,8 +181,8 @@ INSERT INTO outfit_style (outfit_seq, style_seq) VALUES
 (74, 1), -- 부채:
 (75, 1), -- 비니
 (76, 1), -- 보조배터리
-(77, 1),    (77, 3) ,        -- 스마트워치
-(78, 2);
+(77, 1),    (77, 3) ;       -- 스마트워치
+
 
 INSERT INTO situation (situation_name) VALUES
                                            ('daily'),    -- 1: 일상
@@ -194,27 +192,26 @@ INSERT INTO situation (situation_name) VALUES
                                            ('formal'),   -- 5: 격식있는 자리
                                            ('normal');   -- 6: 무관
 -- outfit과 situation 연결 (총 75개 아웃핏)
--- outfit과 situation 연결 (총 75개 아웃핏)
 INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
                                                              (1, 1), (1, 4), (1, 3),                 -- 기모_맨투맨: 일상, 운동, 데이트
                                                              (2, 1), (2, 3),                         -- 니트_스웨터: 일상, 데이트
                                                              (3, 1), (3, 2),                         -- 일반_맨투맨: 일상, 여행
                                                              (4, 1), (4, 4),                         -- 후드티: 일상, 운동
-                                                             (5, 1), (5, 3),                         -- 셔츠: 일상, 데이트
-                                                             (6, 1), (6, 2),                         -- 린넨셔츠: 일상, 여행
+                                                             (5, 3),                         -- 셔츠: 일상, 데이트
+                                                             (6, 2),                         -- 린넨셔츠: 일상, 여행
                                                              (7, 1), (7, 2),                         -- 얇은_니트: 일상, 여행
-                                                             (8, 1), (8, 4), (8, 5),                 -- 롱슬리브: 일상, 운동, 격식있는 자리
-                                                             (9, 1), (9, 3),                         -- 블라우스: 일상, 데이트
+                                                             (8, 1),  (8, 5),                 -- 롱슬리브: 일상, 운동, 격식있는 자리
+                                                              (9, 3),                         -- 블라우스: 일상, 데이트
                                                              (10, 1), (10, 5),                       -- 폴로_반팔티: 일상, 격식있는 자리
                                                              (11, 1), (11, 2), (11, 3),              -- 반팔_티셔츠: 일상, 여행, 데이트
                                                              (12, 1), (12, 4),                       -- 반팔_셔츠: 일상, 운동
                                                              (13, 4),                                -- 드라이핏_티셔츠: 운동
-                                                             (14, 1), (14, 3),                       -- 크롭티: 일상, 데이트
+                                                              (14, 3),                       -- 크롭티: 일상, 데이트
                                                              (15, 1), (15, 4),                       -- 나시: 일상, 운동
 
 -- 하의 (BOTTOM)
                                                              (16, 1), (16, 4), (16, 3),              -- 기모바지: 일상, 운동, 데이트
-                                                             (17, 1), (17, 4),                       -- 트레이닝_팬츠: 일상, 운동
+                                                             (17, 4),                       -- 트레이닝_팬츠: 일상, 운동
                                                              (18, 1), (18, 4),                       -- 조거_팬츠: 일상, 운동
                                                              (19, 1), (19, 2),                       -- 긴청바지: 일상, 여행
                                                              (20, 1), (20, 3),                       -- 스키니_진: 일상, 데이트
@@ -222,8 +219,8 @@ INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
                                                              (22, 1), (22, 4),                       -- 카고_팬츠: 일상, 운동
                                                              (23, 1), (23, 2),                       -- 롱슬랙스: 일상, 여행
                                                              (24, 1), (24, 4),                       -- 와이드_팬츠: 일상, 운동
-                                                             (25, 1), (25, 5),                       -- 레깅스: 일상, 격식있는 자리
-                                                             (26, 1), (26, 3),                       -- 롱_스커트: 일상, 데이트
+                                                              (25, 4),                       -- 레깅스: 운동
+                                                             (26, 1), (26, 3),   (26, 5),                      -- 롱_스커트: 일상, 데이트
                                                              (27, 1), (27, 2),                       -- 청반바지: 일상, 여행
                                                              (28, 4),                                -- 트레이닝_반바지: 운동
                                                              (29, 1), (29, 3),                       -- 슬랙스_반바지: 일상, 데이트
@@ -265,7 +262,7 @@ INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
 -- 악세사리 (ACCESSORY)
                                                              (60, 1), (60, 2), (60, 4),              -- 핫팩: 일상, 여행, 운동
                                                              (61, 1), (61, 4),                       -- 장갑: 일상, 운동
-                                                             (62, 1), (62, 2),                       -- 귀마개: 일상, 여행
+                                                             (62, 3), (62, 5),                       -- 손수건: 일상, 여행
                                                              (63, 1), (63, 3), (63, 5),              -- 목도리: 일상, 데이트, 격식있는 자리
                                                              (64, 1),                                -- 플리스_모자: 일상
                                                              (65, 1), (65, 5),                       -- 귀도리: 일상, 격식있는 자리
@@ -280,8 +277,7 @@ INSERT INTO outfit_situation (outfit_seq, situation_seq) VALUES
                                                              (74, 1), (74, 2),                       -- 부채: 일상, 여행review
                                                              (75, 1), (75, 3),-- 비니
                                                              (76, 1),  (76, 2), -- 보조배터리
-                                                             (77, 1),    (77, 4) ,        -- 스마트워치
-                                                             (78, 3), (78, 5); -- 아날로그손목시계
+                                                             (77, 1),    (77, 4);
 
 INSERT INTO `condition` (condition_name) VALUES
                                              ('HOT'),
