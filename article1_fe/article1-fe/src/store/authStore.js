@@ -23,7 +23,6 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('accessToken', token);
         const payload = JSON.parse(atob(token.split('.')[1]));
         userRole.value = payload.auth[0].slice(5);
-        console.log(userRole);
     }
 
     function logout() {

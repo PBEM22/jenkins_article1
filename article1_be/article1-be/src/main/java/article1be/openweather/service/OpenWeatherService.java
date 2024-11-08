@@ -276,28 +276,20 @@ public class OpenWeatherService {
         // 다음날 00시 계산
         LocalDateTime tomorrowTime = getTomorrowTime(inputLocalDateTime);
 
-        log.info("tomorrowTime : {}", tomorrowTime);
         // 현재 시간
         LocalDateTime nowTime = LocalDateTime.now();
 
         // 가장 가까운 3시간 단위 시간 계산
         LocalDateTime nearestDataTime = getNearestDataTime(inputLocalDateTime);
 
-        log.info("Nearest Data Time : {}", nearestDataTime);
-
-        log.info("nowTime : {}", nowTime);
         // 현재시간 ~ 사용자가 입력한 시간까지의 데이터 개수
         int excludeCnt = getCnt(nowTime, nearestDataTime);
-//        excludeCnt = excludeCnt == 0 ? 0 : excludeCnt + 1;
 
-        log.info("excludeCnt : {}", excludeCnt);        // 현재시간인지, 최근 데이터인지 검증 변수
         boolean checkDate = false;
 
         // 지정시간과 요청시간의 차이가 얼마 나지 않으면 현재 시간을 호출 (&& 3시간단위로 있는 다음 데이터시간과 1시간 이상 차이 나야함)
         int timeDiff = inputLocalDateTime.getHour() / 3;    // 3시간 단위가 아니라면
         if (timeDiff != 0){
-
-            log.info("timeDiff {}", timeDiff);
 
             // 다음 데이터가 있는 시간
             // (timeDiff + 1) * 3이 24일 경우 다음날로 설정
@@ -319,7 +311,6 @@ public class OpenWeatherService {
             } else {
 
                  dataDate = inputLocalDateTime.withHour((timeDiff + 1) * 3).withMinute(0).withSecond(0).withNano(0);
-                log.info("dataDate : {}", dataDate);        // 현재시간인지, 최근 데이터인지 검증 변수
             }
 
             // 남은 시간 (3으로 나눠을때 반내림이 되면 excludeCnt -1)
@@ -334,7 +325,6 @@ public class OpenWeatherService {
         // 현재시간 ~ 사용자가 입력한 시간의 다음날 00시까지의 데이터 개수
         // 현재 시간부터 다음날 00시까지 남은 시간 계산하기 (남은 시간 / 3, 다음날 00시 까지의 개수라서 +1)
         int cnt = getCnt(nowTime, tomorrowTime) + 1;
-        log.info("cnt : {}", cnt);        // 현재시간인지, 최근 데이터인지 검증 변수
 
         // 미래 데이터 가져오기
         OpenWeather5DayDTO openWeather5DayDTO = get5DayWeatherData(lat, lon, cnt);
@@ -353,7 +343,12 @@ public class OpenWeatherService {
         if (checkDate){
             // 지정시간이 현재시간과 비슷하다면 현재시간 기입
             OpenWeatherDTO currentWeatherData = getCurrentWeatherData(lat, lon);
-            responseMainWeatherDTO.setNowWeatherCode(currentWeatherData.getWeather().get(0).getId());
+
+            int weatherId = currentWeatherData.getWeather().get(0).getId();
+            int changeCode = getChangeCode(weatherId);
+            responseMainWeatherDTO.setRealWeatherCode(weatherId);
+            responseMainWeatherDTO.setNowWeatherCode(changeCode);
+
             responseMainWeatherDTO.setNowWeatherDescription(currentWeatherData.getWeather().get(0).getDescription());
             responseMainWeatherDTO.setNowTemp(currentWeatherData.getMain().getTemp());
             responseMainWeatherDTO.setNowFeelsLike(currentWeatherData.getMain().getFeels_like());
@@ -364,7 +359,10 @@ public class OpenWeatherService {
             responseMainWeatherDTO.setNowTime(callTime);
         } else {
             // 지정시간에 가장 가까운 (날씨코드, 아이콘, 온도, 체감온도) 기입
-            responseMainWeatherDTO.setNowWeatherCode(weatherListDTOS.get(0).getWeather().get(0).getId());
+            int weatherId = weatherListDTOS.get(0).getWeather().get(0).getId();
+            int changeCode = getChangeCode(weatherId);
+            responseMainWeatherDTO.setRealWeatherCode(weatherId);
+            responseMainWeatherDTO.setNowWeatherCode(changeCode);
             responseMainWeatherDTO.setNowWeatherIcon(weatherListDTOS.get(0).getWeather().get(0).getIcon());
             responseMainWeatherDTO.setNowWeatherDescription(weatherListDTOS.get(0).getWeather().get(0).getDescription());
             responseMainWeatherDTO.setNowTemp(weatherListDTOS.get(0).getMain().getTemp());
@@ -466,5 +464,17 @@ public class OpenWeatherService {
 
         // 반올림된 시간을 기준으로 새로운 LocalDateTime 생성
         return dataDate;
+    }
+
+    // 2xx, 3xx, 5xx, 6xx 비와 관련된 날씨데이터 500으로 통일
+    private int getChangeCode(int weatherCode){
+
+        if ((weatherCode >= 200 && weatherCode <= 232)
+                || (weatherCode >= 300 && weatherCode <= 321)
+                || (weatherCode >= 500 && weatherCode <= 531)
+                || (weatherCode >= 600 && weatherCode <= 622)) {
+            return 500;
+        }
+        return weatherCode;
     }
 }

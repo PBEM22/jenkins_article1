@@ -1,6 +1,8 @@
 <script setup>
 import axios from 'axios';
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import {useWeatherStore} from "@/store/useWeatherStore.js";
+import {useSelectedInfoStore} from "@/store/selectedInfoStore.js";
 
 const time = ref('');   // 시간
 const lat = ref('');    // 위도
@@ -17,10 +19,21 @@ const nowDescription = ref('');
 
 const openWeather = ref([]);  // 날씨 데이터를 저장할 객체
 
-const getWeather = async () => {
-  time.value = '2024-11-08-14:12';
-  lat.value = '37.4972160230992';
-  lon.value = '126.927607240617';
+// 날씨관련 배경 변경
+const weatherStore = useWeatherStore();
+
+// 시간 선택 스토어에서 값 받아오기
+const selectStore = useSelectedInfoStore();
+
+onMounted(() => {
+  getWeather();
+})
+async function getWeather () {
+  let date = new Date(selectStore.selectedDate);
+  date.setHours(date.getHours() + 9);
+  time.value = date.toISOString().split('.')[0]
+  lat.value = selectStore.selectedLatitude;
+  lon.value = selectStore.selectedLongitude;
   await axios.get(`/weather`, {
     params: {
       time: time.value,
@@ -32,7 +45,7 @@ const getWeather = async () => {
         openWeather.value = res.data;
         console.log(openWeather.value);
         if (openWeather.value != null) {
-          nowWeatherCode.value = openWeather.value.nowWeatherCode;
+          nowWeatherCode.value = openWeather.value.realWeatherCode;
           nowWeatherIcon.value = openWeather.value.nowWeatherIcon;
           nowTemp.value = Math.round(openWeather.value.nowTemp);
           nowFeelsLike.value = Math.round(openWeather.value.nowFeelsLike);
@@ -41,6 +54,8 @@ const getWeather = async () => {
           pm2_5.value = openWeather.value.pm2_5;
           pm10.value = openWeather.value.pm10;
           nowDescription.value = openWeather.value.nowWeatherDescription;
+
+          weatherStore.setWeatherCode(nowWeatherCode.value);
         }
       })
       .catch(err => {

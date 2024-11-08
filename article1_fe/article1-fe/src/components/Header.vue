@@ -30,6 +30,33 @@ function deleteCookie(name) {
   }
 }
 
+function moveToItem(move) {
+
+  let item;
+  switch (move){
+
+    case 'outfit':
+      item = '/map';
+      break;
+
+    case 'review':
+      item = '/review';
+      break;
+
+    case 'board':
+      item = '/board';
+      break;
+
+    case 'mypage':
+      item = '/mypage';
+      break;
+
+    default:
+      item = '/';
+      break;
+  }
+  router.push(`${item}`);
+}
 </script>
 
 <template>
@@ -41,10 +68,10 @@ function deleteCookie(name) {
     <div class="menu-list" v-if="isLogIn">
       <ul>
 
-        <li @click="router.push('/map')" >OUTFIT</li>
-        <li>REVIEW</li>
-        <li>BOARD</li>
-        <li>MYPAGE</li>
+        <li @click="moveToItem('outfit')" >OUTFIT</li>
+        <li @click="moveToItem('review')">REVIEW</li>
+        <li @click="moveToItem('board')">BOARD</li>
+        <li @click="moveToItem('mypage')">MYPAGE</li>
       </ul>
     </div>
     <!-- 로그인/로그아웃 버튼 -->
