@@ -9,6 +9,7 @@ import SelectSituation from "@/views/outfit/setting/SituationView.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import GuestOutfitRecommendation from "@/components/outfit/recommend/GuestOutfitRecommendation.vue";
 import UserOutfitRecommendation from "@/components/outfit/recommend/UserOutfitRecommendation.vue";
+import blameRouter from "@/router/blameRouter.js";
 
 const routes = [
     {
@@ -40,6 +41,8 @@ const routes = [
     ...userRouter,
     // 마이페이지 라우터
     ...mypageRouter,
+    // 신고 라우터
+    ...blameRouter,
     // 관리자페이지 라우터
     ...adminRouter,
     // 리뷰 라우터

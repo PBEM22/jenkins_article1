@@ -8,6 +8,9 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    // 블라인드인드 되지 않은 값을 조회
+    // 블라인드 되지 않은 값을 조회
     List<Board> findByBoardIsBlindFalse();
+
+    // 블라인드 된 값을 조회
+    List<Board> findByBoardIsBlindTrue();
 }

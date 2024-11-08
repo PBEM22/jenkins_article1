@@ -1,7 +1,9 @@
 package article1be.reply.controller;
 
+import article1be.board.entity.Board;
 import article1be.reply.dto.ReplyDTO;
 import article1be.reply.dto.RequestReply;
+import article1be.reply.entity.Reply;
 import article1be.reply.service.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
