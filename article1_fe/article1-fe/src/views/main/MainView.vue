@@ -1,9 +1,12 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {useAuthStore} from "@/store/authStore.js";
+import router from "@/router/index.js";
 
 const termsRef = ref(null);
 const showTerms = ref(false);
+// 로그인 여부
+const isLogin = ref();
 
 // store 생성
 const store = useAuthStore();
@@ -16,8 +19,10 @@ onMounted(() => {
   if (!store.accessToken && token) {
     console.log('쿠키에서 토큰을 가져왔습니다:', token);
     store.login(token);
+    isLogin.value = true;
   } else {
     console.log('쿠키에 토큰이 없습니다 또는 이미 로그아웃 상태입니다.');
+    isLogin.value = false;
   }
 });
 
@@ -34,6 +39,11 @@ function scrollToTerms() {
   if (termsRef.value) {
     termsRef.value.scrollIntoView({ behavior: 'smooth' });
   }
+}
+
+// 로그인 여부에 따라 이동
+function moveTo(){
+    router.push('/map');
 }
 </script>
 
@@ -65,7 +75,7 @@ function scrollToTerms() {
             "입기 좋은 날"은 이용자에 대한 위치정보의 수집∙이용∙제공사실을 위치정보시스템에 자동으로 기록, 보존하며, 6개월 이상 보관합니다.
           </p>
         </div>
-        <button class="agree">동의</button>
+        <button class="agree" @click="moveTo">동의</button>
         <button class="refusal">거절</button>
       </div>
 
