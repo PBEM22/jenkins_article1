@@ -30,7 +30,8 @@ public class Board extends BaseTimeEntity {
     public Board create(
             long userSeq,
             String boardTitle,
-            String boardContent
+            String boardContent,
+            boolean isNotice
     ) {
         Board newBoard = new Board();
 
@@ -40,7 +41,7 @@ public class Board extends BaseTimeEntity {
         newBoard.boardContent = boardContent;
         newBoard.delDate = null;
         newBoard.boardIsBlind = false;
-        newBoard.boardIsNotice = false;
+        newBoard.boardIsNotice = isNotice;
 
         return newBoard;
     }
@@ -52,5 +53,9 @@ public class Board extends BaseTimeEntity {
 
     public void setBlind() {
         this.boardIsBlind = true;
+    }
+
+    public void unBlind() {
+        this.boardIsBlind = false;
     }
 }

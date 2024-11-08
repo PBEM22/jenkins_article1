@@ -28,14 +28,14 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <div id="title-bar">
+  <div id="top-bar">
     <span class="user-seq">{{ props.userSeq }}</span>
     <span class="reg-data">{{ formatDate(props.regData) }}</span>
   </div>
 </template>
 
 <style scoped>
-#title-bar {
+#top-bar {
   display: flex; /* Flexbox 사용 */
   justify-content: space-between; /* 좌우 공간 분배 */
   align-items: center; /* 세로 중앙 정렬 */

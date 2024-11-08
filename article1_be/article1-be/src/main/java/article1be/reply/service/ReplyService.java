@@ -20,23 +20,43 @@ public class ReplyService {
 
     private final ReplyRepository repository;
 
+    private final long FIND_ALL = -999L;
+
     // 댓글 목록 조회
     public List<ReplyDTO> getReplyList(long boardSeq) {
-        List<ReplyDTO> replyDTOList = repository.findByBoardSeqAndReplyIsBlindFalse(boardSeq)
-                .stream()
-                .map(reply ->
-                        ReplyDTO.builder()
-                                .replySeq(reply.getReplySeq())
-                                .boardSeq(reply.getBoardSeq())
-                                .replyUserSeq(reply.getReplyUserSeq())
-                                .replyContent(reply.getReplyContent())
-                                .regDate(reply.getRegDate())
-                                .delDate(reply.getDelDate())
-                                .replyIsBlind(reply.getReplyIsBlind())
-                                .build())
-                .toList();
+        if (boardSeq != FIND_ALL) {
+            List<ReplyDTO> replyDTOList = repository.findByBoardSeqAndReplyIsBlindFalse(boardSeq)
+                    .stream()
+                    .map(reply ->
+                            ReplyDTO.builder()
+                                    .replySeq(reply.getReplySeq())
+                                    .boardSeq(reply.getBoardSeq())
+                                    .replyUserSeq(reply.getReplyUserSeq())
+                                    .replyContent(reply.getReplyContent())
+                                    .regDate(reply.getRegDate())
+                                    .delDate(reply.getDelDate())
+                                    .replyIsBlind(reply.getReplyIsBlind())
+                                    .build())
+                    .toList();
 
-        return replyDTOList;
+            return replyDTOList;
+        } else {
+            List<ReplyDTO> replyDTOList = repository.findByReplyIsBlindTrue()
+                    .stream()
+                    .map(reply ->
+                            ReplyDTO.builder()
+                                    .replySeq(reply.getReplySeq())
+                                    .boardSeq(reply.getBoardSeq())
+                                    .replyUserSeq(reply.getReplyUserSeq())
+                                    .replyContent(reply.getReplyContent())
+                                    .regDate(reply.getRegDate())
+                                    .delDate(reply.getDelDate())
+                                    .replyIsBlind(reply.getReplyIsBlind())
+                                    .build())
+                    .toList();
+
+            return replyDTOList;
+        }
     }
 
     // 댓글 삭제
