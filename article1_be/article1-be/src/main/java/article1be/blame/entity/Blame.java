@@ -1,9 +1,7 @@
 package article1be.blame.entity;
 
 import article1be.common.aggregate.entity.BaseTimeEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,6 +13,7 @@ import java.time.LocalDateTime;
 public class Blame extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long blameSeq;                          // 신고 번호
     long blameUserSeq;                      // 신고자
     Long blameBoardSeq;                     // 신고 게시글 번호
