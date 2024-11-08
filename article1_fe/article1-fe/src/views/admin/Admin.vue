@@ -28,7 +28,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="user in filteredUsers" :key="user.userSeq">
+      <tr v-for="user in paginatedUsers" :key="user.userSeq">
         <td>
           <router-link :to="{ name: 'AdminDetail', params: { userSeq: user.userSeq } }">
             {{ user.userName }}
@@ -43,26 +43,39 @@
       </tr>
       </tbody>
     </table>
+
+    <!-- Pagination Component -->
+    <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        :goToPage="goToPage"
+    />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
-import {useAuthStore} from "@/store/authStore.js";
+import { useAuthStore } from "@/store/authStore.js";
 import { useRouter } from 'vue-router';
+import Pagination from '@/components/common/Pagination.vue';
 
 export default {
+  components: {
+    Pagination,
+  },
   setup() {
-
     const userList = ref([]);
     const searchField = ref('전체');
     const searchTerm = ref('');
     const authStore = useAuthStore();
     const router = useRouter();
 
+    // Pagination state
+    const currentPage = ref(1);
+    const itemsPerPage = 10;
+
     const fetchUsers = async () => {
-      // accessToken이 없는 경우를 확인
       if (!authStore.accessToken) {
         console.error("토큰이 없습니다. 로그인 후 다시 시도해 주세요.");
         alert("로그인이 필요합니다.");
@@ -83,6 +96,7 @@ export default {
       }
     };
 
+    // 필터링된 사용자 리스트
     const filteredUsers = computed(() => {
       return userList.value.filter(user => {
         if (searchField.value === '전체') {
@@ -93,6 +107,24 @@ export default {
         return String(user[searchField.value])?.toLowerCase().includes(searchTerm.value.toLowerCase());
       });
     });
+
+    // 페이지별로 표시할 사용자 리스트
+    const paginatedUsers = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      return filteredUsers.value.slice(start, end);
+    });
+
+    // 총 페이지 수 계산
+    const totalPages = computed(() => {
+      return Math.ceil(filteredUsers.value.length / itemsPerPage);
+    });
+
+    const goToPage = (page) => {
+      if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+      }
+    };
 
     const statusClass = (status) => {
       return {
@@ -115,8 +147,12 @@ export default {
       searchField,
       searchTerm,
       filteredUsers,
+      paginatedUsers,
       statusClass,
-      authClass
+      authClass,
+      currentPage,
+      totalPages,
+      goToPage,
     };
   }
 };

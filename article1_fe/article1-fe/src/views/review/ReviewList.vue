@@ -20,7 +20,7 @@
         <span class="header-cell">작성일</span>
       </div>
 
-      <div v-for="(review, index) in filteredReviews" :key="review.reviewSeq" class="table-row">
+      <div v-for="(review, index) in paginatedReviews" :key="review.reviewSeq" class="table-row">
         <div class="table-cell">{{ review.userNickname }}</div>
         <div class="table-cell">{{ review.location }}</div>
         <div class="table-cell">{{ review.weather }}°C</div>
@@ -34,28 +34,49 @@
         </div>
       </div>
     </div>
+
+    <!-- Pagination Component -->
+    <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        :goToPage="goToPage"
+    />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/store/authStore'; // authStore 경로 확인 필요
+import Pagination from '@/components/common/Pagination.vue'; // Pagination 컴포넌트 경로 확인 필요
 
 export default {
+  components: {
+    Pagination,
+  },
   setup() {
+    const authStore = useAuthStore();
     const selectedCategory = ref('all');
     const searchQuery = ref('');
     const reviews = ref([]);
 
+    // Pagination state
+    const currentPage = ref(1);
+    const itemsPerPage = 10;
+
     const fetchReviews = async () => {
       try {
-        const response = await axios.get('/review');
+        const response = await axios.get('/review', {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`
+          }
+        });
         reviews.value = response.data;
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
     };
-    
+
     const filteredReviews = computed(() => {
       return reviews.value.filter((review) => {
         if (selectedCategory.value === 'all') {
@@ -69,9 +90,27 @@ export default {
       });
     });
 
+    // 페이지별로 표시할 리뷰 계산
+    const paginatedReviews = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      return filteredReviews.value.slice(start, end);
+    });
+
+    // 총 페이지 수 계산
+    const totalPages = computed(() => {
+      return Math.ceil(filteredReviews.value.length / itemsPerPage);
+    });
+
+    const goToPage = (page) => {
+      if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+      }
+    };
+
     const reportReview = (reviewSeq) => {
       console.log(`Review ${reviewSeq} reported.`);
-
+      // 신고 처리 로직을 추가할 수 있습니다.
     };
 
     onMounted(fetchReviews);
@@ -81,7 +120,11 @@ export default {
       searchQuery,
       reviews,
       filteredReviews,
+      paginatedReviews,
       reportReview,
+      currentPage,
+      totalPages,
+      goToPage,
     };
   },
 };
