@@ -188,7 +188,7 @@ public class BoardService {
         if (!Objects.equals(board.get().getUserSeq(), SecurityUtil.getCurrentUserSeq())) {
             return false;
         }
-        // 어드민이 아닌 경우 -> 권한 기능이 수정될 예정이므로 이 코드도 수정해야됨.
+        // 어드민이 아닌 경우
         else if (SecurityUtil.getCurrentUserAuthorities().equals(UserAuth.USER)) {
             return false;
         }
