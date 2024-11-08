@@ -28,51 +28,39 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import { useSelectedInfoStore } from '@/store/selectedInfoStore.js';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/authStore.js'; // 인증 상태 확인을 위해 추가
 
-export default {
-  setup() {
-    const store = useSelectedInfoStore();
-    const authStore = useAuthStore(); // 인증 상태를 가져오기 위한 Pinia Store
-    const router = useRouter();
+const selectedSituation = ref(null);
+const store = useSelectedInfoStore();
+const authStore = useAuthStore(); // 인증 상태를 가져오기 위한 Pinia Store
+const router = useRouter();
 
-    return {
-      store,
-      authStore,
-      router,
-      selectedSituation: null,
-      situations: [
-        { label: "일상", seq: 1, icon: new URL('@/assets/images/situation/routine.png', import.meta.url).href },
-        { label: "여행", seq: 2, icon: new URL('@/assets/images/situation/travel.png', import.meta.url).href },
-        { label: "데이트", seq: 3, icon: new URL('@/assets/images/situation/dating.png', import.meta.url).href },
-        { label: "운동", seq: 4, icon: new URL('@/assets/images/situation/sports.png', import.meta.url).href },
-        { label: "격식있는자리", seq: 5, icon: new URL('@/assets/images/situation/formal.png', import.meta.url).href },
-        { label: "무관", seq: 6, icon: new URL('@/assets/images/situation/none.png', import.meta.url).href },
-      ],
-    };
-  },
-  methods: {
-    selectSituation(seq) {
-      this.selectedSituation = seq;
-    },
-    getRecommendation() {
-      if (this.selectedSituation) {
-        this.store.selectedSituation = this.selectedSituation; // 상황을 스토어에 저장
+const situations = [
+  { label: "일상", seq: 1, icon: new URL('@/assets/images/situation/routine.png', import.meta.url).href },
+  { label: "여행", seq: 2, icon: new URL('@/assets/images/situation/travel.png', import.meta.url).href },
+  { label: "데이트", seq: 3, icon: new URL('@/assets/images/situation/dating.png', import.meta.url).href },
+  { label: "운동", seq: 4, icon: new URL('@/assets/images/situation/sports.png', import.meta.url).href },
+  { label: "격식있는자리", seq: 5, icon: new URL('@/assets/images/situation/formal.png', import.meta.url).href },
+  { label: "무관", seq: 6, icon: new URL('@/assets/images/situation/none.png', import.meta.url).href },
+];
 
-        // 로그인 상태 확인
-        if (this.authStore.isLoggedIn) {
-          this.router.push({name: 'UserOutfitRecommendation'}); // 로그인 상태: User 페이지로 이동
-        } else {
-          this.router.push({name: 'GuestOutfitRecommendation'}); // 비로그인 상태: Guest 페이지로 이동
-        }
-      } else {
-        alert("상황을 선택해 주세요.");
-      }
-    },
-  },
+const selectSituation = (seq) => {
+  selectedSituation.value = seq;
+};
+
+const getRecommendation = () => {
+  if (selectedSituation.value) {
+    store.selectedSituation = selectedSituation.value; // 상황을 스토어에 저장
+
+
+    router.push({name: 'weatherAndOutfitResult'});
+  } else {
+    alert("상황을 선택해 주세요.");
+  }
 };
 </script>
 
@@ -112,9 +100,9 @@ export default {
 }
 
 .situation-option.selected {
-  background-color: #007bff;
+  background-color: #72BCD5;
   color: white;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+  //box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
   transform: scale(1.05);
 }
 
@@ -133,7 +121,7 @@ export default {
   margin-top: 30px;
   padding: 12px 40px;
   font-size: 1.1rem;
-  background-color: #007bff;
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 8px;
@@ -142,7 +130,7 @@ export default {
 }
 
 .recommend-button:hover {
-  background-color: #0056b3;
+  background-color: #28a745;
 }
 
 .info-box {
