@@ -28,6 +28,7 @@ public class AdminService {
                 .map(user -> new AdminDTO.UserInfo(
                         user.getUserSeq(),
                         user.getUserId(),
+                        user.getUserSocialSite(),
                         user.getUserName(),
                         user.getUserNickname(),
                         user.getUserPhoneNum(),
@@ -45,6 +46,7 @@ public class AdminService {
         return new AdminDTO.UserInfo(
                 user.getUserSeq(),
                 user.getUserId(),
+                user.getUserSocialSite(),
                 user.getUserName(),
                 user.getUserNickname(),
                 user.getUserPhoneNum(),

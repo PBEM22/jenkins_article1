@@ -2,6 +2,7 @@ package article1be.admin.dto;
 
 import article1be.user.entity.UserAuth;
 import article1be.user.entity.UserGender;
+import article1be.user.entity.UserSocialSite;
 import article1be.user.entity.UserState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class AdminDTO {
     public static class UserInfo {
         private Long userSeq;
         private String userId;
+        private UserSocialSite socialSite;
         private String userName;
         private String userNickname;
         private String userPhoneNum;
