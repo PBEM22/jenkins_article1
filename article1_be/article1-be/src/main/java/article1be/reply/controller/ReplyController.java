@@ -82,16 +82,4 @@ public class ReplyController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    // 댓글 블라이늗 해제
-    @Operation(
-            summary = "댓글 블라인드 해제",
-            description = "관리자가 댓글의 블라인드를 해제"
-    )
-    @PutMapping(value = "/release/{replySeq}")
-    public ResponseEntity<Reply> releaseReply(@PathVariable long replySeq) {
-        Reply reply = service.releaseReply(replySeq);
-
-        return ResponseEntity.ok(reply);
-    }
 }

@@ -232,11 +232,4 @@ public class BoardService {
             throw new EntityNotFoundException("게시글을 찾을 수 없습니다."); // 게시글이 없을 경우 예외 처리
         }
     }
-
-    public Board releaseBoard(long boardSeq) {
-        Board board = boardRepository.findById(boardSeq).get();
-        board.unBlind();
-
-        return boardRepository.save(board);
-    }
 }

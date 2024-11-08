@@ -145,16 +145,4 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 수정 중 오류가 발생했습니다.");
         }
     }
-
-    // 게시글 블라인드 해제
-    @Operation(
-            summary = "게시글 블라인드 해제",
-            description = "관리자가 게시글의 블라인드를 해제"
-    )
-    @PutMapping(value = "/release/{boardSeq}")
-    public ResponseEntity<Board> releaseBoard(@PathVariable long boardSeq) {
-        Board board = service.releaseBoard(boardSeq);
-
-        return ResponseEntity.ok(board);
-    }
 }

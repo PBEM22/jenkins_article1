@@ -94,13 +94,4 @@ public class ReplyService {
 
         return repository.save(reply);
     }
-
-    public Reply releaseReply(long replySeq) {
-        Reply reply = repository.findById(replySeq).orElse(null);
-        reply.unBlind();
-
-        repository.save(reply);
-
-        return reply;
-    }
 }
