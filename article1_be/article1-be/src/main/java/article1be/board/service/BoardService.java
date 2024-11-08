@@ -83,7 +83,7 @@ public class BoardService {
 
             return boardDTOList;
         } else {
-            List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindFalse()
+            List<BoardDTO> boardDTOList = boardRepository.findByBoardIsBlindTrue()
                     .stream()
                     .map(board -> BoardDTO.builder()
                             .boardSeq(board.getBoardSeq())
