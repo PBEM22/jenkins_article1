@@ -106,59 +106,60 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="background">
-    <Container>
-      <table>
-        <tbody>
-        <!-- 공지사항 표시 (최대 2개) -->
-        <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
-          <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                         @click="goToDetailPage(item.boardSeq)"
-                         :title="item.boardTitle"
-                         :content="item.boardContent"
-                         :date="formatDate(item.regDate)"
-                         :writer="item.userSeq"
-                         :imageUrl="item.boardPictureList[0]?.pictureUrl"
-          />
-          <BoardNoticeLi v-else
-                         @click="goToDetailPage(item.boardSeq)"
-                         :title="item.boardTitle"
-                         :content="item.boardContent"
-                         :date="formatDate(item.regDate)"
-                         :writer="item.userSeq"
-                         :imageUrl="null"
-          />
-        </tr>
-
-        <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
-        <tr v-if="regularPosts && regularPosts.length > 0" v-for="item in regularPosts" :key="item.boardSeq">
-          <BoardLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                   @:click="goToDetailPage(item.boardSeq)"
-                   :title="item.boardTitle"
-                   :content="item.boardContent"
-                   :date="formatDate(item.regDate)"
-                   :writer="item.userSeq"
-                   :imageUrl="item.boardPictureList[0]?.pictureUrl"
-          />
-          <BoardLi v-else
-                   @:click="goToDetailPage(item.boardSeq)"
-                   :title="item.boardTitle"
-                   :content="item.boardContent"
-                   :date="formatDate(item.regDate)"
-                   :writer="item.userSeq"
-                   :imageUrl="null"
-          />
-        </tr>
-        </tbody>
-      </table>
-      <div class="button-container">
-        <NormalButton
-            @:click="goToRegister"
-            text="글쓰기"
+  <Container>
+    <table>
+      <tbody>
+      <!-- 공지사항 표시 (최대 2개) -->
+      <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
+        <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
+                       @click="goToDetailPage(item.boardSeq)"
+                       :title="item.boardTitle"
+                       :content="item.boardContent"
+                       :date="formatDate(item.regDate)"
+                       :writer="item.userSeq"
+                       :imageUrl="item.boardPictureList[0]?.pictureUrl"
         />
-      </div>
-    </Container>
-  </div>
+        <BoardNoticeLi v-else
+                       @click="goToDetailPage(item.boardSeq)"
+                       :title="item.boardTitle"
+                       :content="item.boardContent"
+                       :date="formatDate(item.regDate)"
+                       :writer="item.userSeq"
+                       :imageUrl="null"
+        />
+      </tr>
+      <tr v-else>
+        <td colspan="5" class="no-results">조회 결과가 없습니다.</td> <!-- colspan을 추가하여 전체 열을 차지하게 함 -->
+      </tr>
+
+      <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
+      <tr v-if="regularPosts && regularPosts.length > 0" v-for="item in regularPosts" :key="item.boardSeq">
+        <BoardLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
+                 @click="goToDetailPage(item.boardSeq)"
+                 :title="item.boardTitle"
+                 :content="item.boardContent"
+                 :date="formatDate(item.regDate)"
+                 :writer="item.userSeq"
+                 :imageUrl="item.boardPictureList[0]?.pictureUrl"
+        />
+        <BoardLi v-else
+                 @click="goToDetailPage(item.boardSeq)"
+                 :title="item.boardTitle"
+                 :content="item.boardContent"
+                 :date="formatDate(item.regDate)"
+                 :writer="item.userSeq"
+                 :imageUrl="null"
+        />
+      </tr>
+      </tbody>
+    </table>
+    <div class="button-container">
+      <NormalButton
+          @click="goToRegister"
+          text="글쓰기"
+      />
+    </div>
+  </Container>
 </template>
 
 <style scoped>
@@ -182,5 +183,12 @@ tbody tr:hover {
   display: flex; /* Flexbox 사용 */
   justify-content: flex-end; /* 오른쪽 정렬 */
   margin-top: 10px; /* 버튼 위쪽 여백 추가 */
+}
+
+.no-results {
+  text-align: center; /* 가운데 정렬 */
+  font-size: 1.5em; /* 폰트 크기 조정 */
+  font-weight: bold; /* 볼드체 */
+  color: #555; /* 텍스트 색상 (선택 사항) */
 }
 </style>

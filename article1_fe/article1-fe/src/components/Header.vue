@@ -40,7 +40,8 @@ function deleteCookie(name) {
     <!-- 로그인 상태일 때만 메뉴 항목 표시 -->
     <div class="menu-list" v-if="isLogIn">
       <ul>
-        <li>OUTFIT</li>
+
+        <li @click="router.push('/map')" >OUTFIT</li>
         <li>REVIEW</li>
         <li>BOARD</li>
         <li>MYPAGE</li>

@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/review")
 @RequiredArgsConstructor
-@Tag(name = "관리자 리뷰 관리", description = "관리자의 리뷰 조회 및 상태 변경")
+@Tag(name = "관리자 관련 API", description = "관리자 권한 사용자가 사용하는 API")
 public class AdminReviewController {
 
     private final AdminReviewService reviewService;
