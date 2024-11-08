@@ -2,6 +2,8 @@ import mainRouter from "@/router/mainRouter.js";
 import boardRouter from "@/router/boardRouter.js";
 import userRouter from "@/router/userRouter.js"
 import mypageRouter from "@/router/mypageRouter.js"
+import adminRouter from "@/router/adminRouter.js";
+import reviewRouter from "@/router/reviewRouter.js";
 import MapWithDateView from "@/views/outfit/setting/MapWithDateView.vue";
 import SelectSituation from "@/views/outfit/setting/SituationView.vue";
 import {createRouter, createWebHistory} from "vue-router";
@@ -37,7 +39,11 @@ const routes = [
     // 회원 라우터
     ...userRouter,
     // 마이페이지 라우터
-    ...mypageRouter
+    ...mypageRouter,
+    // 관리자페이지 라우터
+    ...adminRouter,
+    // 리뷰 라우터
+    ...reviewRouter
 ]
 
 const router = createRouter({

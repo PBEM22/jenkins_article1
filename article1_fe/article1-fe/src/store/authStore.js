@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     onMounted(() => {
         const token = localStorage.getItem('accessToken');
+        console.log(token);
         if (token) {
             accessToken.value = token;
             const payload = JSON.parse(atob(token.split('.')[1]));
