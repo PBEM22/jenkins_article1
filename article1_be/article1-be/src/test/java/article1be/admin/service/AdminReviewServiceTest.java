@@ -2,12 +2,12 @@ package article1be.admin.service;
 
 import article1be.admin.dto.AdminReviewDTO;
 import article1be.admin.repository.AdminReviewRepository;
+import article1be.outfit.entity.Outfit;
+import article1be.outfit.entity.SelectOutfit;
+import article1be.outfit.entity.SelectRecord;
+import article1be.outfit.repository.SelectOutfitRepository;
 import article1be.review.entity.Review;
-import article1be.user.entity.User;
-import article1be.user.entity.UserAuth;
-import article1be.user.entity.UserGender;
-import article1be.user.entity.UserSocialSite;
-import article1be.user.entity.UserState;
+import article1be.user.entity.*;
 import article1be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +32,15 @@ class AdminReviewServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private SelectOutfitRepository selectOutfitRepository;
+
+    @Mock
+    private SelectRecord selectRecord;
+
+    @Mock
+    private Outfit outfit; // Outfit을 Mock으로 설정
+
     @InjectMocks
     private AdminReviewService adminReviewService;
 
@@ -52,8 +61,17 @@ class AdminReviewServiceTest {
         );
         user.updateUser("hhyun");
 
+        // Mock된 Outfit 설정
+        when(outfit.getOutfitName()).thenReturn("Casual Outfit");
+
+        // SelectOutfit 설정
+        SelectOutfit selectOutfit = SelectOutfit.create(selectRecord, outfit);
+        List<SelectOutfit> selectOutfits = List.of(selectOutfit);
+
         when(reviewRepository.findAll()).thenReturn(List.of(review));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()))
+                .thenReturn(selectOutfits);
 
         // when
         List<AdminReviewDTO.ReviewInfo> result = adminReviewService.getAllReviews();
@@ -63,6 +81,8 @@ class AdminReviewServiceTest {
         assertEquals(1, result.size());
         assertEquals("xxx", result.get(0).getReviewContent());
         assertEquals("hhyun", result.get(0).getUserNickname());
+        assertEquals(1, result.get(0).getOutfits().size());
+        assertEquals("Casual Outfit", result.get(0).getOutfits().get(0).getOutfitName());
     }
 
     @DisplayName("리뷰 블라인드 상태 업데이트 테스트")
