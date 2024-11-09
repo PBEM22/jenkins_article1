@@ -13,6 +13,7 @@
         <option value="userAuth">권한</option>
       </select>
       <input v-model="searchTerm" placeholder="검색어를 입력하세요" />
+      <button @click="searchUsers">검색</button>
     </div>
 
     <table>
@@ -90,15 +91,17 @@ export default {
           }
         });
         userList.value = Array.isArray(response.data) ? response.data : [];
+        filteredUsers.value = userList.value; // 기본적으로 전체 사용자 표시
       } catch (error) {
         console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
         userList.value = [];
       }
     };
 
-    // 필터링된 사용자 리스트
-    const filteredUsers = computed(() => {
-      return userList.value.filter(user => {
+    // 검색 기능 - 버튼 클릭 시 실행
+    const searchUsers = () => {
+      currentPage.value = 1; // 검색 후 첫 페이지로 초기화
+      filteredUsers.value = userList.value.filter(user => {
         if (searchField.value === '전체') {
           return Object.values(user).some(value =>
               String(value).toLowerCase().includes(searchTerm.value.toLowerCase())
@@ -106,7 +109,10 @@ export default {
         }
         return String(user[searchField.value])?.toLowerCase().includes(searchTerm.value.toLowerCase());
       });
-    });
+    };
+
+    // 필터링된 사용자 리스트 - ref로 변경하여 수동으로 업데이트
+    const filteredUsers = ref([]);
 
     // 페이지별로 표시할 사용자 리스트
     const paginatedUsers = computed(() => {
@@ -153,6 +159,7 @@ export default {
       currentPage,
       totalPages,
       goToPage,
+      searchUsers,
     };
   }
 };
