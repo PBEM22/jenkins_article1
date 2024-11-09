@@ -2,7 +2,6 @@ package article1be.user.service;
 
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
-import article1be.outfit.entity.OutfitCategory;
 import article1be.outfit.entity.SelectOutfit;
 import article1be.outfit.entity.SelectRecord;
 import article1be.outfit.entity.Style;
@@ -159,7 +158,6 @@ public class UserService implements UserDetailsService {
         throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
     }
 
-
     // 선택 복장 조회
     public SelectOutfitResponseDTO getUserSelectOutfit(Long userSeq,Long selectSeq) {
         User user = userRepository.findByUserSeqWithStyleAndCondition(userSeq)
@@ -208,6 +206,7 @@ public class UserService implements UserDetailsService {
 
         // DTO로 반환
         return new SelectOutfitResponseDTO(
+                selectSeq,
                 topSeq, topName,
                 bottomSeq, bottomName,
                 shoesSeq, shoesName,

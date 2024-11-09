@@ -9,6 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SelectOutfitResponseDTO {
+    private Long selectSeq;
+
     private Long topSeq;
     private String topName;
 
