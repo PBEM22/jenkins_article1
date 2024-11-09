@@ -1,6 +1,6 @@
 import UserDetail from "@/components/user/UserDetail.vue";
 import MyPageLayout from "@/views/user/MyPageLayout.vue";
-import UserPreference from "@/components/user/UserPreference.vue";
+import UserPreference from "@/components/user/EditPreference.vue";
 import UserOutfitList from "@/components/user/UserOutfitList.vue";
 import UserOutfitStats from "@/components/user/UserOutfitStats.vue";
 import UserReview from "@/components/user/UserReview.vue";

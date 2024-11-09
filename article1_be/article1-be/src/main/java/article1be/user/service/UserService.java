@@ -128,8 +128,8 @@ public class UserService implements UserDetailsService {
 
         // PreferenceResponseDTO에 User의 스타일과 체질 정보를 담아서 반환
         return new PreferenceResponseDTO(
-                user.getStyle() != null ? user.getStyle().getStyleName() : null,
-                user.getCondition() != null ? user.getCondition().getConditionName() : null
+                user.getStyle() != null ? user.getStyle().getStyleSeq() : null,
+                user.getCondition() != null ? user.getCondition().getConditionSeq() : null
         );
     }
 
