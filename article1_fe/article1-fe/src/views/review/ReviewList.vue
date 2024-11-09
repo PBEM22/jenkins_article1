@@ -30,23 +30,25 @@
 
           <!-- 옷 정보 슬라이더 추가 -->
           <div v-if="review.outfits && review.outfits.length > 0" class="outfit-slider">
-            <button class="slider-btn" @click="scrollOutfits(-1)">←</button>
+            <button class="slider-btn" @click="scrollOutfits(index, -1)">←</button>
             <div class="outfit-images">
               <img
-                  v-for="outfit in review.outfits"
+                  v-for="outfit in getVisibleOutfits(review.outfits, index)"
                   :key="outfit.outfitSeq"
                   :src="getImageUrl(outfit.outfitSeq)"
                   :alt="outfit.outfitName"
                   class="outfit-image"
               />
             </div>
-            <button class="slider-btn" @click="scrollOutfits(1)">→</button>
+            <button class="slider-btn" @click="scrollOutfits(index, 1)">→</button>
           </div>
         </div>
 
         <div class="table-cell date-time">
           <div class="reg-date">{{ review.regDate }}</div>
-          <div class="like-indicator">좋아요 {{ review.reviewLikeYn ? "👍" : "👎" }}</div>
+          <div class="like-indicator">
+            {{ review.reviewLikeYn ? '좋아요 👍' : '싫어요 👎' }}
+          </div>
           <button class="report-btn" @click="reportReview(review.reviewSeq)">신고</button>
         </div>
       </div>
@@ -77,6 +79,7 @@ export default {
     const searchQuery = ref('');
     const reviews = ref([]);
     const reportedReviews = ref([]);
+    const currentIndexes = ref([]); // 각 리뷰의 슬라이드 시작 인덱스
 
     const currentPage = ref(1);
     const itemsPerPage = 10;
@@ -89,6 +92,7 @@ export default {
           }
         });
         reviews.value = response.data;
+        currentIndexes.value = Array(reviews.value.length).fill(0); // 각 리뷰에 대한 슬라이드 시작 인덱스 초기화
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
@@ -143,6 +147,21 @@ export default {
       }
     };
 
+    const getVisibleOutfits = (outfits, reviewIndex) => {
+      const startIndex = currentIndexes.value[reviewIndex];
+      return outfits.slice(startIndex, startIndex + 2); // 최대 2개의 옷 이미지를 반환
+    };
+
+    const scrollOutfits = (reviewIndex, direction) => {
+      const maxIndex = Math.max(0, reviews.value[reviewIndex].outfits.length - 2);
+      currentIndexes.value[reviewIndex] += direction;
+      if (currentIndexes.value[reviewIndex] < 0) {
+        currentIndexes.value[reviewIndex] = maxIndex;
+      } else if (currentIndexes.value[reviewIndex] > maxIndex) {
+        currentIndexes.value[reviewIndex] = 0;
+      }
+    };
+
     onMounted(fetchReviews);
 
     return {
@@ -156,22 +175,19 @@ export default {
       totalPages,
       goToPage,
       reportedReviews,
+      getVisibleOutfits,
+      scrollOutfits
     };
   },
   methods: {
     getImageUrl(outfitSeq) {
-      return `/assets/images/outfits/${outfitSeq}.png`; // outfitSeq로 이미지를 불러오기
-    },
-    scrollOutfits(direction) {
-      // 슬라이더 이동 로직 (필요시 구현)
-    },
-  },
+      return new URL(`/src/assets/images/outfits/${outfitSeq}.png`, import.meta.url).href;
+    }
+  }
 };
 </script>
 
 <style scoped>
-/* 기존 스타일 유지 */
-
 .review-page {
   width: 90%;
   margin: 0 auto;
@@ -221,20 +237,19 @@ h2 {
   padding: 10px;
   background-color: #cce4ff;
   border-radius: 8px;
-}
-
-.header-cell {
-  text-align: center;
   font-weight: bold;
-  color: #555;
 }
 
 .table-row {
   display: grid;
   grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
   align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd; /* 일정한 밑줄을 각 행에 적용 */
+}
+
+.table-cell {
+  padding: 10px 5px; /* 셀마다 균일한 패딩 설정 */
 }
 
 .review-content {
@@ -265,28 +280,32 @@ h2 {
 
 .report-btn {
   background-color: transparent;
-  border: none;
-  color: #888;
+  border: 1px solid #ddd;
+  color: #555;
   cursor: pointer;
   font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 5px;
 }
 
 .outfit-slider {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px; /* 상단과의 간격 추가 */
+  margin-top: 10px;
 }
 
 .outfit-images {
   display: flex;
-  overflow-x: auto;
+  overflow-x: hidden;
   gap: 10px;
+  max-width: 150px;
 }
 
 .outfit-image {
   width: 50px;
   height: 50px;
+  object-fit: cover;
   border-radius: 4px;
 }
 
