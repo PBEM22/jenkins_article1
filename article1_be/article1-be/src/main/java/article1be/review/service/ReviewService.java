@@ -1,7 +1,6 @@
 package article1be.review.service;
 
 import article1be.outfit.dto.OutfitResponseDTO;
-import article1be.outfit.entity.SelectOutfit;
 import article1be.outfit.repository.SelectOutfitRepository;
 import article1be.outfit.repository.SelectRecordRepository;
 import article1be.review.entity.Review;
@@ -44,7 +43,6 @@ public class ReviewService {
                             ))
                             .collect(Collectors.toList());
 
-                    System.out.println("Total outfits for review " + review.getReviewSeq() + ": " + outfits.size());
 
                     return new ReviewDTO(
                             review.getReviewSeq(),

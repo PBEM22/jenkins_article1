@@ -1,11 +1,13 @@
 package article1be.admin.dto;
 
+import article1be.outfit.dto.OutfitResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +28,7 @@ public class AdminReviewDTO {
         private boolean reviewLikeYn;
         private boolean reviewBlind;
         private LocalDateTime regDate;
+        private List<OutfitResponseDTO> outfits; // 의상 정보 추가
     }
 
     // 리뷰 상태 업데이트 요청 DTO
