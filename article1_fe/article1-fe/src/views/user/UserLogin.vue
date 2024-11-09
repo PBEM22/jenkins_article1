@@ -125,6 +125,4 @@ a, button {
   cursor: pointer;
   transition: background 0.25s cubic-bezier(0.33, 1, 0.68, 1), color 0.25s cubic-bezier(0.33, 1, 0.68, 1);
 }
-
-
 </style>
