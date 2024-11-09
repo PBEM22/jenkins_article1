@@ -24,9 +24,26 @@
         <div class="table-cell">{{ review.userNickname }}</div>
         <div class="table-cell">{{ review.location }}</div>
         <div class="table-cell">{{ review.weather }}°C</div>
+
         <div class="table-cell review-content">
           <p>{{ review.reviewContent }}</p>
+
+          <!-- 옷 정보 슬라이더 추가 -->
+          <div v-if="review.outfits && review.outfits.length > 0" class="outfit-slider">
+            <button class="slider-btn" @click="scrollOutfits(-1)">←</button>
+            <div class="outfit-images">
+              <img
+                  v-for="outfit in review.outfits"
+                  :key="outfit.outfitSeq"
+                  :src="getImageUrl(outfit.outfitSeq)"
+                  :alt="outfit.outfitName"
+                  class="outfit-image"
+              />
+            </div>
+            <button class="slider-btn" @click="scrollOutfits(1)">→</button>
+          </div>
         </div>
+
         <div class="table-cell date-time">
           <div class="reg-date">{{ review.regDate }}</div>
           <div class="like-indicator">좋아요 {{ review.reviewLikeYn ? "👍" : "👎" }}</div>
@@ -141,10 +158,20 @@ export default {
       reportedReviews,
     };
   },
+  methods: {
+    getImageUrl(outfitSeq) {
+      return `/assets/images/outfits/${outfitSeq}.png`; // outfitSeq로 이미지를 불러오기
+    },
+    scrollOutfits(direction) {
+      // 슬라이더 이동 로직 (필요시 구현)
+    },
+  },
 };
 </script>
 
 <style scoped>
+/* 기존 스타일 유지 */
+
 .review-page {
   width: 90%;
   margin: 0 auto;
@@ -242,5 +269,31 @@ h2 {
   color: #888;
   cursor: pointer;
   font-size: 14px;
+}
+
+.outfit-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px; /* 상단과의 간격 추가 */
+}
+
+.outfit-images {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+}
+
+.outfit-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+}
+
+.slider-btn {
+  background-color: #ddd;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 </style>

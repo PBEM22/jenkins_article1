@@ -1,5 +1,8 @@
 package article1be.review.service;
 
+import article1be.outfit.dto.OutfitResponseDTO;
+import article1be.outfit.entity.SelectOutfit;
+import article1be.outfit.repository.SelectOutfitRepository;
 import article1be.outfit.repository.SelectRecordRepository;
 import article1be.review.entity.Review;
 import article1be.review.dto.ReviewDTO;
@@ -22,14 +25,25 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final SelectOutfitRepository selectOutfitRepository;
     private final SelectRecordRepository selectRecordRepository;
 
     public List<ReviewDTO> getAllReviews() {
         return reviewRepository.findAll().stream()
                 .map(review -> {
+
                     String userNickname = userRepository.findById(review.getUserSeq())
                             .map(user -> user.getUserNickname())
                             .orElse("Unknown User");
+
+
+                    List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeq(review.getSelectSeq()).stream()
+                            .map(selectOutfit -> new OutfitResponseDTO(
+                                    selectOutfit.getOutfit().getOutfitSeq(),
+                                    selectOutfit.getOutfit().getOutfitName()
+                            ))
+                            .collect(Collectors.toList());
+
                     return new ReviewDTO(
                             review.getReviewSeq(),
                             review.getUserSeq(),
@@ -41,7 +55,8 @@ public class ReviewService {
                             review.getReviewBlind() ? "BLIND" : "ACTIVE",
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
-                            review.getRegDate()
+                            review.getRegDate(),
+                            outfits
                     );
                 })
                 .collect(Collectors.toList());
@@ -53,19 +68,29 @@ public class ReviewService {
                 .orElse("Unknown User");
 
         return reviewRepository.findByUserSeq(userSeq).stream()
-                .map(review -> new ReviewDTO(
-                        review.getReviewSeq(),
-                        review.getUserSeq(),
-                        review.getSelectSeq(),
-                        userNickname,
-                        review.getReviewLocation(),
-                        review.getReviewWeather(),
-                        review.getReviewContent(),
-                        review.getReviewBlind() ? "BLIND" : "ACTIVE",
-                        review.getReviewLikeYn(),
-                        review.getReviewBlind(),
-                        review.getRegDate()
-                ))
+                .map(review -> {
+                    List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeq(review.getSelectSeq()).stream()
+                            .map(selectOutfit -> new OutfitResponseDTO(
+                                    selectOutfit.getOutfit().getOutfitSeq(),
+                                    selectOutfit.getOutfit().getOutfitName()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return new ReviewDTO(
+                            review.getReviewSeq(),
+                            review.getUserSeq(),
+                            review.getSelectSeq(),
+                            userNickname,
+                            review.getReviewLocation(),
+                            review.getReviewWeather(),
+                            review.getReviewContent(),
+                            review.getReviewBlind() ? "BLIND" : "ACTIVE",
+                            review.getReviewLikeYn(),
+                            review.getReviewBlind(),
+                            review.getRegDate(),
+                            outfits // 옷 정보 추가
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -90,6 +115,13 @@ public class ReviewService {
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
+        List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeq(review.getSelectSeq()).stream()
+                .map(selectOutfit -> new OutfitResponseDTO(
+                        selectOutfit.getOutfit().getOutfitSeq(),
+                        selectOutfit.getOutfit().getOutfitName()
+                ))
+                .collect(Collectors.toList());
+
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
@@ -101,7 +133,8 @@ public class ReviewService {
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewLikeYn(),
                 review.getReviewBlind(),
-                review.getRegDate()
+                review.getRegDate(),
+                outfits
         );
     }
 
@@ -122,6 +155,13 @@ public class ReviewService {
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
+        List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeq(review.getSelectSeq()).stream()
+                .map(selectOutfit -> new OutfitResponseDTO(
+                        selectOutfit.getOutfit().getOutfitSeq(),
+                        selectOutfit.getOutfit().getOutfitName()
+                ))
+                .collect(Collectors.toList());
+
         return new ReviewDTO(
                 review.getReviewSeq(),
                 review.getUserSeq(),
@@ -133,7 +173,8 @@ public class ReviewService {
                 review.getReviewBlind() ? "BLIND" : "ACTIVE",
                 review.getReviewLikeYn(),
                 review.getReviewBlind(),
-                review.getRegDate()
+                review.getRegDate(),
+                outfits
         );
     }
 
