@@ -47,8 +47,8 @@
 <script>
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '@/store/authStore'; // authStore 경로 확인 필요
-import Pagination from '@/components/common/Pagination.vue'; // Pagination 컴포넌트 경로 확인 필요
+import { useAuthStore } from '@/store/authStore';
+import Pagination from '@/components/common/Pagination.vue';
 
 export default {
   components: {
@@ -59,8 +59,8 @@ export default {
     const selectedCategory = ref('all');
     const searchQuery = ref('');
     const reviews = ref([]);
+    const reportedReviews = ref([]);
 
-    // Pagination state
     const currentPage = ref(1);
     const itemsPerPage = 10;
 
@@ -107,12 +107,18 @@ export default {
     };
 
     const reportReview = async (reviewSeq) => {
+      if (reportedReviews.value.includes(reviewSeq)) {
+        alert('이미 신고된 리뷰입니다.');
+        return;
+      }
+
       try {
         await axios.post(`/blame/review/${reviewSeq}`, {}, {
           headers: {
             Authorization: `Bearer ${authStore.accessToken}`
           }
         });
+        reportedReviews.value.push(reviewSeq);
         alert('신고가 완료되었습니다.');
       } catch (error) {
         console.error("Failed to report review:", error);
@@ -132,6 +138,7 @@ export default {
       currentPage,
       totalPages,
       goToPage,
+      reportedReviews,
     };
   },
 };

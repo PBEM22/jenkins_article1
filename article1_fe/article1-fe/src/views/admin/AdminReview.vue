@@ -37,12 +37,16 @@
           </div>
         </div>
         <div class="table-cell activity-status">
-          {{ review.reviewBlind ? 'BLIND' : 'ACTIVE' }}
+          <div class="custom-select">
+            <select v-model="review.reviewBlind" @change="toggleReviewBlindStatus(review)">
+              <option :value="false">ACTIVE</option>
+              <option :value="true">BLIND</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Pagination Component -->
     <Pagination
         :currentPage="currentPage"
         :totalPages="totalPages"
@@ -67,7 +71,6 @@ export default {
     const searchQuery = ref('');
     const reviews = ref([]);
     const filteredReviews = ref([]);
-
     const currentPage = ref(1);
     const itemsPerPage = 10;
 
@@ -79,7 +82,7 @@ export default {
           }
         });
         reviews.value = response.data;
-        filteredReviews.value = reviews.value; // 기본 전체 조회
+        filteredReviews.value = reviews.value;
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
@@ -100,7 +103,7 @@ export default {
         }
         return false;
       });
-      currentPage.value = 1; // 검색 후 첫 페이지로 초기화
+      currentPage.value = 1;
     };
 
     const paginatedReviews = computed(() => {
@@ -116,6 +119,27 @@ export default {
       }
     };
 
+    // 블라인드 상태 업데이트 메서드
+    const toggleReviewBlindStatus = async (review) => {
+      try {
+        await axios.put(
+            '/admin/review/status',
+            {
+              reviewSeq: review.reviewSeq,
+              reviewBlind: review.reviewBlind, // 현재 선택한 상태 값을 전송
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${authStore.accessToken}`
+              }
+            }
+        );
+        alert("상태가 변경되었습니다"); // 상태 변경 알림
+      } catch (error) {
+        console.error("Failed to update review blind status:", error);
+      }
+    };
+
     onMounted(fetchReviews);
 
     return {
@@ -127,6 +151,7 @@ export default {
       totalPages,
       goToPage,
       searchReviews,
+      toggleReviewBlindStatus, // 메서드 반환
     };
   },
 };
@@ -206,15 +231,35 @@ h2 {
   color: #ff9800;
 }
 
-.activity-status {
+.custom-select {
+  position: relative;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+}
+
+.custom-select select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  appearance: none;
+  font-size: 16px;
   font-weight: bold;
+  text-align: center;
 }
 
-.activity-status[data-status="ACTIVE"] {
-  color: green;
+.custom-select::after {
+  content: "▼";
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
-.activity-status[data-status="BLIND"] {
-  color: red;
+.custom-select select:focus {
+  outline: none;
+  border-bottom-color: #000;
 }
 </style>
