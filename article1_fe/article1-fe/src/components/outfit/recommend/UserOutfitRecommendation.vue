@@ -1,41 +1,110 @@
 <template>
-  <OutfitRecommendationList
-      title="회원 복장 추천 리스트"
-      :outfits="outfits"
-      :isSelected="isSelected"
-      :getImageSrc="getImageSrc"
-      :showSaveButton="true"
-      @itemClicked="toggleSelection"
-      @saveSelection="saveSelection"
-  />
+  <div class="recommendation-container">
+    <div class="title">{{ title }}</div>
+    <div class="content-wrapper">
+      <!-- 왼쪽 섹션 -->
+      <div class="left-section">
+        <div v-for="(items, category) in leftCategories" :key="category" class="category-section">
+          <h3>{{ getCategoryName(category) }}</h3>
+          <div class="carousel-container">
+            <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
+              <div
+                  v-for="item in items"
+                  :key="item.outfitSeq"
+                  class="item-card"
+                  :class="{ selected: isSelected(category, item.outfitSeq) }"
+                  @click="toggleSelection(category, item.outfitSeq)"
+              >
+                <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
+                <p>{{ item.outfitName }}</p>
+              </div>
+            </div>
+            <button class="nav-button left" @click="moveCarousel(category, -1)">&#8249;</button>
+            <button class="nav-button right" @click="moveCarousel(category, 1)">&#8250;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽 섹션 -->
+      <div class="right-section">
+        <div v-for="(items, category) in rightCategories" :key="category" class="category-section">
+          <h3>{{ getCategoryName(category) }}</h3>
+          <div class="carousel-container">
+            <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
+              <div
+                  v-for="item in items"
+                  :key="item.outfitSeq"
+                  class="item-card"
+                  :class="{ selected: isSelected(category, item.outfitSeq) }"
+                  @click="toggleSelection(category, item.outfitSeq)"
+              >
+                <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
+                <p>{{ item.outfitName }}</p>
+              </div>
+            </div>
+            <button class="nav-button left" @click="moveCarousel(category, -1)">&#8249;</button>
+            <button class="nav-button right" @click="moveCarousel(category, 1)">&#8250;</button>
+          </div>
+        </div>
+        <div class="save-button-container">
+          <button @click="saveSelection">선택 완료</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
-import OutfitRecommendationList from '@/components/outfit/recommend/OutfitRecommendationList.vue';
-import { useSelectedInfoStore } from '@/store/selectedInfoStore.js';
-import outfitRecommendationResult from "@/views/outfit/recommend/OutfitRecommendationResult.vue";
+import axios from "axios";
+import { useSelectedInfoStore } from "@/store/selectedInfoStore.js";
 import { useAuthStore } from "@/store/authStore.js";
 
 export default {
-  components: { OutfitRecommendationList },
   data() {
     return {
-      outfits: null,
+      outfits: {
+        TOP: [],
+        BOTTOM: [],
+        OUTERWEAR: [],
+        SHOES: [],
+        ACCESSORY: [],
+      },
       selectedOutfits: {
         topSeq: null,
         bottomSeq: null,
         shoesSeq: null,
         outerSeq: null,
-        accessorySeq: []
-      }
+        accessorySeq: [],
+      },
+      carouselOffsets: {
+        TOP: 0,
+        BOTTOM: 0,
+        OUTERWEAR: 0,
+        SHOES: 0,
+        ACCESSORY: 0,
+      },
+      itemWidth: 150, // 각 아이템의 너비
+      title: "회원 복장 추천 리스트",
     };
   },
-
+  computed: {
+    leftCategories() {
+      return {
+        TOP: this.outfits.TOP,
+        BOTTOM: this.outfits.BOTTOM,
+        OUTERWEAR: this.outfits.OUTERWEAR,
+      };
+    },
+    rightCategories() {
+      return {
+        SHOES: this.outfits.SHOES,
+        ACCESSORY: this.outfits.ACCESSORY,
+      };
+    },
+  },
   async created() {
     await this.fetchOutfitRecommendations();
   },
-
   methods: {
     async fetchOutfitRecommendations() {
       const authStore = useAuthStore();
@@ -43,54 +112,80 @@ export default {
       try {
         let date = new Date(store.selectedDate);
         date.setHours(date.getHours() + 9);
-        console.log(date.toISOString().split('.')[0]);
-        const response = await axios.post('/user/outfit/recommendations', {
-          situationSeq: store.selectedSituation,
-          requestedAt: date.toISOString().split('.')[0],
-          latitude: store.selectedLatitude,
-          longitude: store.selectedLongitude,
-        }, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authStore.accessToken}`
-          }
-        });
-        this.outfits = response.data;
+
+        const response = await axios.post(
+            "/user/outfit/recommendations",
+            {
+              situationSeq: store.selectedSituation,
+              requestedAt: date.toISOString().split(".")[0],
+              latitude: store.selectedLatitude,
+              longitude: store.selectedLongitude,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authStore.accessToken}`,
+              },
+            }
+        );
+
+        this.outfits = response.data || {
+          TOP: [],
+          BOTTOM: [],
+          OUTERWEAR: [],
+          SHOES: [],
+          ACCESSORY: [],
+        };
       } catch (error) {
         console.error("추천 데이터를 불러오지 못했습니다:", error);
       }
     },
-
-    isSelected(category, outfitSeq) {
-      if (category === 'ACCESSORY') {
-        return this.selectedOutfits.accessorySeq.includes(outfitSeq);
-      } else if (category === 'OUTERWEAR') {
-        return this.selectedOutfits.outerSeq === outfitSeq;
-      } else {
-        return this.selectedOutfits[`${category.toLowerCase()}Seq`] === outfitSeq;
-      }
+    getCategoryName(category) {
+      const categoryNames = {
+        TOP: "상의",
+        BOTTOM: "하의",
+        OUTERWEAR: "아우터",
+        SHOES: "신발",
+        ACCESSORY: "악세사리",
+      };
+      return categoryNames[category] || category;
     },
-
+    isSelected(category, outfitSeq) {
+      if (category === "ACCESSORY") {
+        return this.selectedOutfits.accessorySeq.includes(outfitSeq);
+      } else if (category === "OUTERWEAR") {
+        return this.selectedOutfits.outerSeq === outfitSeq;
+      } else if (category === "TOP") {
+        return this.selectedOutfits.topSeq === outfitSeq;
+      } else if (category === "BOTTOM") {
+        return this.selectedOutfits.bottomSeq === outfitSeq;
+      } else if (category === "SHOES") {
+        return this.selectedOutfits.shoesSeq === outfitSeq;
+      }
+      return false;
+    },
     getImageSrc(outfitSeq) {
       return new URL(`/src/assets/images/outfits/${outfitSeq}.png`, import.meta.url).href;
     },
-
     toggleSelection(category, outfitSeq) {
-      if (category === 'ACCESSORY') {
+      if (category === "ACCESSORY") {
         const index = this.selectedOutfits.accessorySeq.indexOf(outfitSeq);
         if (index >= 0) {
-          this.selectedOutfits.accessorySeq.splice(index, 1);
+          this.selectedOutfits.accessorySeq.splice(index, 1); // 선택 해제
         } else {
-          this.selectedOutfits.accessorySeq.push(outfitSeq);
+          this.selectedOutfits.accessorySeq.push(outfitSeq); // 선택
         }
-      } else if (category === 'OUTERWEAR') {
-        this.selectedOutfits.outerSeq = outfitSeq;
-      } else {
-        this.selectedOutfits[`${category.toLowerCase()}Seq`] = outfitSeq;
+      } else if (category === "OUTERWEAR") {
+        this.selectedOutfits.outerSeq = outfitSeq; // 아우터 선택
+      } else if (category === "TOP") {
+        this.selectedOutfits.topSeq = outfitSeq; // 상의 선택
+      } else if (category === "BOTTOM") {
+        this.selectedOutfits.bottomSeq = outfitSeq; // 하의 선택
+      } else if (category === "SHOES") {
+        this.selectedOutfits.shoesSeq = outfitSeq; // 신발 선택
       }
       console.log("Updated selectedOutfits:", this.selectedOutfits);
     },
-
     async getAddressFromCoordinates(lat, lon) {
       try {
         const token = `KakaoAK ${import.meta.env.VITE_KAKAO_REST_API_KEY}`;
@@ -113,7 +208,12 @@ export default {
         return `${lat}, ${lon}`; // 변환 실패 시 기본 위도/경도로 반환
       }
     },
-
+    moveCarousel(category, direction) {
+      const maxOffset =
+          this.outfits[category].length * this.itemWidth - 3 * this.itemWidth;
+      const newOffset = this.carouselOffsets[category] + direction * this.itemWidth;
+      this.carouselOffsets[category] = Math.min(Math.max(newOffset, 0), maxOffset);
+    },
     async saveSelection() {
       const store = useSelectedInfoStore();
       const authStore = useAuthStore();
@@ -172,3 +272,108 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.recommendation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0px; /* 패딩 줄이기 */
+}
+
+.title {
+  font-size: 0.8rem; /* 제목 크기 축소 */
+  font-weight: bold;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px; /* 전체 컨테이너 너비 축소 */
+}
+
+.left-section,
+.right-section {
+  display: flex;
+  flex-direction: column;
+  width: 48%;
+}
+
+.category-section {
+  margin-bottom: 0px; /* 각 섹션 간격 축소 */
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  height: 120px; /* 높이 줄이기 */
+  width: calc(90px * 3 + 85px); /* 아이템 3개 + 간격 */
+}
+
+.carousel {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.item-card {
+  flex-shrink: 0;
+  width: 90px; /* 너비 축소 */
+  height: 90px; /* 높이 축소 */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-right: 40px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.item-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 이미지 비율 유지 */
+}
+
+.item-card p {
+  margin-top: 5px;
+  font-size: 0.8rem; /* 글자 크기 축소 */
+}
+
+.item-card.selected {
+  border-color: #007bff; /* 선택된 의상에 파란색 테두리 추가 */
+  background-color: #e7f0ff; /* 선택된 의상 배경색 변경 */
+}
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 25px;
+  height: 25px; /* 버튼 크기 축소 */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-button.left {
+  left: -2px;
+}
+
+.nav-button.right {
+  right: 5px;
+}
+
+.save-button-container {
+  margin-top: 70px; /* 선택 완료 버튼 위 간격 축소 */
+}
+
+.save-button-container button {
+  padding: 5px 10px; /* 버튼 크기 줄이기 */
+  font-size: 0.9rem; /* 버튼 텍스트 크기 축소 */
+}
+</style>

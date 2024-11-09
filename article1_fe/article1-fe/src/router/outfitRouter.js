@@ -2,6 +2,7 @@ import MapWithDateView from "@/views/outfit/setting/MapWithDateView.vue";
 import SelectSituation from "@/views/outfit/setting/SituationView.vue";
 import GuestOutfitRecommendation from "@/components/outfit/recommend/GuestOutfitRecommendation.vue";
 import UserOutfitRecommendation from "@/components/outfit/recommend/UserOutfitRecommendation.vue";
+import weatherAndOutfitResult from "@/views/outfit/recommend/OutfitRecommendationResult.vue"
 
 export default [
     {
@@ -24,4 +25,9 @@ export default [
         name: "UserOutfitRecommendation",
         component: UserOutfitRecommendation,
     },
+    {
+        path: "/outfit/result",
+        name: "weatherAndOutfitResult",
+        component: weatherAndOutfitResult,
+    }
 ];
