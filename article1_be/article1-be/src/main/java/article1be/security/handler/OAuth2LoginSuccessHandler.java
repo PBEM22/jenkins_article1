@@ -64,7 +64,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         tokenCookie.setPath("/");       // 모든 경로에서 쿠키를 사용할 수 있도록 설정
         tokenCookie.setMaxAge(60 * 60); // 쿠키의 유효 시간 설정 (1시간)
 
+        String newMember = "Y";
+
+        if(principalDetails.getUser().getUserNickname() != null && principalDetails.getUser().getStyle() != null && principalDetails.getUser().getCondition() != null) newMember = "N";
+
+        Cookie newMemberCookie = new Cookie("newMember", newMember);
+
         response.addCookie(tokenCookie);
+        response.addCookie(newMemberCookie);
 
         // 리다이렉트
         response.sendRedirect("http://localhost:5173");
