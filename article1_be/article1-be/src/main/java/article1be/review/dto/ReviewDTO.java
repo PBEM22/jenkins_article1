@@ -1,8 +1,10 @@
 package article1be.review.dto;
 
+import article1be.outfit.dto.OutfitResponseDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +23,5 @@ public class ReviewDTO {
     private boolean reviewLikeYn;    // 좋아요 유무
     private boolean reviewBlind;
     private LocalDateTime regDate;
+    private List<OutfitResponseDTO> outfits; // 옷 정보 추가
 }

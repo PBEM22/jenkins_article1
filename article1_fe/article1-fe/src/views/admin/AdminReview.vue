@@ -29,20 +29,41 @@
         <div class="table-cell">{{ review.weather }}°C</div>
         <div class="table-cell review-content">
           <p>{{ review.reviewContent }}</p>
-        </div>
-        <div class="table-cell date-time">
-          <div class="reg-date">{{ review.regDate }}</div>
-          <div class="like-indicator" :class="{ liked: review.reviewLikeYn }">
-            {{ review.reviewLikeYn ? "좋아요" : "싫어요" }}
+
+          <!-- 옷 정보 슬라이더 추가 -->
+          <div v-if="review.outfits && review.outfits.length > 0" class="outfit-slider">
+            <button class="slider-btn" @click="scrollOutfits(index, -1)">←</button>
+            <div class="outfit-images">
+              <img
+                  v-for="outfit in getVisibleOutfits(review.outfits, index)"
+                  :key="outfit.outfitSeq"
+                  :src="getImageUrl(outfit.outfitSeq)"
+                  :alt="outfit.outfitName"
+                  class="outfit-image"
+              />
+            </div>
+            <button class="slider-btn" @click="scrollOutfits(index, 1)">→</button>
           </div>
         </div>
+
+        <div class="table-cell date-time">
+          <div class="reg-date">{{ review.regDate }}</div>
+          <div class="like-indicator">
+            {{ review.reviewLikeYn ? '좋아요 👍' : '싫어요 👎' }}
+          </div>
+        </div>
+
         <div class="table-cell activity-status">
-          {{ review.reviewBlind ? 'BLIND' : 'ACTIVE' }}
+          <div class="custom-select">
+            <select v-model="review.reviewBlind" @change="toggleReviewBlindStatus(review)">
+              <option :value="false">ACTIVE</option>
+              <option :value="true">BLIND</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Pagination Component -->
     <Pagination
         :currentPage="currentPage"
         :totalPages="totalPages"
@@ -67,7 +88,7 @@ export default {
     const searchQuery = ref('');
     const reviews = ref([]);
     const filteredReviews = ref([]);
-
+    const currentIndexes = ref([]);
     const currentPage = ref(1);
     const itemsPerPage = 10;
 
@@ -79,7 +100,8 @@ export default {
           }
         });
         reviews.value = response.data;
-        filteredReviews.value = reviews.value; // 기본 전체 조회
+        filteredReviews.value = reviews.value;
+        currentIndexes.value = Array(reviews.value.length).fill(0);
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
@@ -100,7 +122,7 @@ export default {
         }
         return false;
       });
-      currentPage.value = 1; // 검색 후 첫 페이지로 초기화
+      currentPage.value = 1;
     };
 
     const paginatedReviews = computed(() => {
@@ -116,6 +138,45 @@ export default {
       }
     };
 
+    const toggleReviewBlindStatus = async (review) => {
+      try {
+        await axios.put(
+            '/admin/review/status',
+            {
+              reviewSeq: review.reviewSeq,
+              reviewBlind: review.reviewBlind,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${authStore.accessToken}`
+              }
+            }
+        );
+        alert("상태가 변경되었습니다");
+      } catch (error) {
+        console.error("Failed to update review blind status:", error);
+      }
+    };
+
+    const getVisibleOutfits = (outfits, reviewIndex) => {
+      const startIndex = currentIndexes.value[reviewIndex];
+      return outfits.slice(startIndex, startIndex + 2);
+    };
+
+    const scrollOutfits = (reviewIndex, direction) => {
+      const maxIndex = Math.max(0, reviews.value[reviewIndex].outfits.length - 2);
+      currentIndexes.value[reviewIndex] += direction;
+      if (currentIndexes.value[reviewIndex] < 0) {
+        currentIndexes.value[reviewIndex] = maxIndex;
+      } else if (currentIndexes.value[reviewIndex] > maxIndex) {
+        currentIndexes.value[reviewIndex] = 0;
+      }
+    };
+
+    const getImageUrl = (outfitSeq) => {
+      return new URL(`/src/assets/images/outfits/${outfitSeq}.png`, import.meta.url).href;
+    };
+
     onMounted(fetchReviews);
 
     return {
@@ -127,6 +188,10 @@ export default {
       totalPages,
       goToPage,
       searchReviews,
+      toggleReviewBlindStatus,
+      getVisibleOutfits,
+      scrollOutfits,
+      getImageUrl,
     };
   },
 };
@@ -134,87 +199,125 @@ export default {
 
 <style scoped>
 .review-page {
-  width: 80%;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #f8f8f8;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  color: #333;
 }
 
 h2 {
+  text-align: center;
   font-size: 24px;
   font-weight: bold;
-  color: #333;
   margin-bottom: 20px;
 }
 
 .search-bar {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
   margin-bottom: 20px;
+  justify-content: flex-end;
 }
 
 .search-bar select,
 .search-bar input {
-  padding: 8px;
+  padding: 5px;
   font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
 }
 
 .search-bar button {
-  padding: 8px 12px;
+  padding: 6px 12px;
   font-size: 14px;
-  color: #fff;
-  background-color: #0073e6;
-  border-radius: 6px;
+  cursor: pointer;
+  background-color: #cce4ff;
+  border: none;
+  color: #333;
 }
 
 .review-table {
-  background-color: #ffffff;
+  background-color: #f9f9ff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 .table-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr 1fr;
-  background-color: #e6f2ff;
+  grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr 1fr;
   padding: 10px;
+  background-color: #cce4ff;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
 .table-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 3fr 1fr 1fr;
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+  grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr 1fr;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.review-content p {
-  white-space: normal;
-  line-height: 1.5;
+.table-cell {
+  padding: 10px 5px;
+}
+
+.review-content {
+  font-size: 16px;
+  color: #444;
 }
 
 .date-time {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #888;
 }
 
-.like-indicator.liked {
-  color: #ff9800;
-}
-
-.activity-status {
+.like-indicator {
+  font-size: 16px;
+  color: #555;
   font-weight: bold;
 }
 
-.activity-status[data-status="ACTIVE"] {
-  color: green;
+.custom-select select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  appearance: none;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
 }
 
-.activity-status[data-status="BLIND"] {
-  color: red;
+.outfit-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.outfit-images {
+  display: flex;
+  overflow-x: hidden;
+  gap: 10px;
+  max-width: 150px;
+}
+
+.outfit-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.slider-btn {
+  background-color: #ddd;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 </style>
