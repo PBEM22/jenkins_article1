@@ -64,7 +64,7 @@ onMounted(() => {
 
 <template>
   <div class="preference_title">
-    <h1 style="font-size: 40px">선호도 수정</h1>
+    <h1 style="font-size: 40px">선호도</h1>
     <button @click="handlePreferenceEdit">수정</button>
   </div>
 
@@ -99,7 +99,7 @@ button {
   background-color: #007BFF;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 16px;
   cursor: pointer;
   font-size: 17px;
 }
