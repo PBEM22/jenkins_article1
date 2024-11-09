@@ -8,6 +8,7 @@ import article1be.review.dto.ReviewDTO;
 import article1be.review.repository.ReviewRepository;
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.security.util.SecurityUtil;
 import article1be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -63,14 +64,18 @@ public class ReviewService {
 
     }
 
-    public List<ReviewDTO> getReviewsByUser(Long userSeq) {
+    public List<ReviewDTO> getMyReviews() {
+        Long userSeq = SecurityUtil.getCurrentUserSeq();
+        if (userSeq == null) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
         String userNickname = userRepository.findById(userSeq)
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
         return reviewRepository.findByUserSeq(userSeq).stream()
                 .map(review -> {
-                    // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
                     List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                             .map(selectOutfit -> new OutfitResponseDTO(
                                     selectOutfit.getOutfit().getOutfitSeq(),

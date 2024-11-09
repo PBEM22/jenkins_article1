@@ -32,12 +32,12 @@ public class ReviewController {
 
     // 특정 사용자의 리뷰 조회
     @Operation(
-            summary = "특정 사용자의 리뷰 조회",
-            description = "사용자 번호를 입력받아 해당 사용자의 리뷰(리뷰 번호, 작성자, 닉네임, 위치 정보, 날씨 정보, 리뷰 내용, 리뷰 상태) 목록을 반환"
+            summary = "본인 리뷰 조회",
+            description = "현재 로그인한 사용자의 리뷰(리뷰 번호, 작성자, 닉네임, 위치 정보, 날씨 정보, 리뷰 내용, 리뷰 상태) 목록을 반환"
     )
-    @GetMapping("/user/{userSeq}")
-    public List<ReviewDTO> getReviewsByUser(@PathVariable Long userSeq) {
-        return reviewService.getReviewsByUser(userSeq);
+    @GetMapping("/myreview")
+    public List<ReviewDTO> getMyReviews() {
+        return reviewService.getMyReviews();
     }
 
     // 리뷰 등록
