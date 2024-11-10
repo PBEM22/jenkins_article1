@@ -5,10 +5,10 @@ import { useAuthStore } from '@/store/authStore.js';
 import Pagination from '@/components/common/Pagination.vue';
 
 const authStore = useAuthStore();
-const startDate = ref('');
-const endDate = ref('');
 const selectedRecords = ref([]);
 const myReview = ref([]);
+const startDate = ref('');
+const endDate = ref('');
 const currentPage = ref(1);
 const itemsPerPage = 4;
 
@@ -22,7 +22,7 @@ const fetchDataSelectedRecords = async () => {
 
     if (response.status === 200) {
       selectedRecords.value = response.data;
-    } else console.error("리뷰 조회 실패", response.status);
+    } else console.error("아웃핏 이력 조회 실패", response.status);
   } catch (error) {
     console.error("데이터 fetching 중 에러 발생:", error);
 
@@ -64,11 +64,13 @@ const totalPages = computed(() => {
 
 const paginatedReviews = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
+
   return filteredReviews.value.slice(start, start + itemsPerPage);
 });
 
 const goToPage = (page) => {
   if (page < 1 || page > totalPages.value) return;
+
   currentPage.value = page;
 };
 

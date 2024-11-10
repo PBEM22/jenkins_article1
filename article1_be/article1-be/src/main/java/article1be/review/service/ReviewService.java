@@ -114,7 +114,7 @@ public class ReviewService {
                 reviewDto.getWeather(),
                 reviewDto.getLocation(),
                 "BLIND".equals(reviewDto.getReviewStatus()),
-                false
+                reviewDto.isReviewLikeYn()
         );
         review = reviewRepository.save(review);
 
