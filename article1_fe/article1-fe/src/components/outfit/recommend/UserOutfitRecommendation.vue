@@ -1,5 +1,9 @@
 <template>
   <div class="recommendation-container">
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>복장을 추천 중입니다. 잠시만 기다려주세요.</p>
+    </div>
     <div class="title">{{ title }}</div>
     <div class="content-wrapper">
       <!-- 왼쪽 섹션 -->
@@ -62,6 +66,7 @@ import { useAuthStore } from "@/store/authStore.js";
 export default {
   data() {
     return {
+      isLoading: true,
       outfits: {
         TOP: [],
         BOTTOM: [],
@@ -107,6 +112,7 @@ export default {
   },
   methods: {
     async fetchOutfitRecommendations() {
+      this.isLoading = true;
       const authStore = useAuthStore();
       const store = useSelectedInfoStore();
       try {
@@ -138,6 +144,8 @@ export default {
         };
       } catch (error) {
         console.error("추천 데이터를 불러오지 못했습니다:", error);
+      } finally {
+        this.isLoading = false; // 로딩 상태 종료
       }
     },
     getCategoryName(category) {
@@ -264,6 +272,7 @@ export default {
           }
         });
         alert("선택한 복장이 저장되었습니다.");
+        this.$router.push('/mypage/outfit/list'); // 메인 화면으로 이동
       } catch (error) {
         console.error("선택한 복장을 저장하지 못했습니다:", error);
         alert("저장 중 오류가 발생했습니다.");
@@ -376,4 +385,45 @@ export default {
   padding: 5px 10px; /* 버튼 크기 줄이기 */
   font-size: 0.9rem; /* 버튼 텍스트 크기 축소 */
 }
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.spinner {
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay p {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #555;
+  font-weight: bold;
+}
+
+
 </style>
