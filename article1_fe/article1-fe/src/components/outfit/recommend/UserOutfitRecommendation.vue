@@ -13,10 +13,12 @@
           <div class="carousel-container">
             <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
               <div
-                  v-for="item in items"
+                  v-for="(item, index) in items"
                   :key="item.outfitSeq"
                   class="item-card"
-                  :class="{ selected: isSelected(category, item.outfitSeq) }"
+                  :class="{
+                    'first-item': index === 0,
+                    selected: isSelected(category, item.outfitSeq) }"
                   @click="toggleSelection(category, item.outfitSeq)"
               >
                 <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
@@ -36,10 +38,12 @@
           <div class="carousel-container">
             <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
               <div
-                  v-for="item in items"
+                  v-for="(item, index) in items"
                   :key="item.outfitSeq"
                   class="item-card"
-                  :class="{ selected: isSelected(category, item.outfitSeq) }"
+                  :class="{
+                    'first-item': index === 0,
+                    selected: isSelected(category, item.outfitSeq) }"
                   @click="toggleSelection(category, item.outfitSeq)"
               >
                 <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
@@ -328,6 +332,8 @@ export default {
 }
 
 .item-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
   width: 90px; /* 너비 축소 */
   height: 90px; /* 높이 축소 */
@@ -342,17 +348,28 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: contain; /* 이미지 비율 유지 */
+  transition: transform 0.2s ease; /* 선택 효과 애니메이션 */
 }
 
 .item-card p {
   margin-top: 5px;
-  font-size: 0.8rem; /* 글자 크기 축소 */
+  font-size: 0.8rem;
+}
+
+.item-card.first-item {
+  border: 2px solid #ff9800; /* 가장 앞 복장의 테두리를 강조 */
+  background-color: #fff5e6; /* 강조된 배경색 */
 }
 
 .item-card.selected {
-  border-color: #007bff; /* 선택된 의상에 파란색 테두리 추가 */
-  background-color: #e7f0ff; /* 선택된 의상 배경색 변경 */
+  border-color: #007bff; /* 선택된 의상에 파란색 테두리 */
+  background-color: #e7f0ff; /* 선택된 의상 배경 */
 }
+.item-card:hover img {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
+
 .nav-button {
   position: absolute;
   top: 50%;
@@ -378,12 +395,12 @@ export default {
 }
 
 .save-button-container {
-  margin-top: 70px; /* 선택 완료 버튼 위 간격 축소 */
+  margin-top: 70px;
 }
 
 .save-button-container button {
-  padding: 5px 10px; /* 버튼 크기 줄이기 */
-  font-size: 0.9rem; /* 버튼 텍스트 크기 축소 */
+  padding: 5px 10px;
+  font-size: 0.9rem;
 }
 
 .loading-overlay {

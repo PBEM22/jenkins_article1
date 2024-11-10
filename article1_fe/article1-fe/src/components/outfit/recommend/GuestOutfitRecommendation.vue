@@ -13,9 +13,11 @@
           <div class="carousel-container">
             <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
               <div
-                  v-for="item in items"
+                  v-for="(item, index) in items"
                   :key="item.outfitSeq"
                   class="item-card"
+                  :class="{
+                    'first-item': index === 0}"
                   @click="alertGuest"
               >
                 <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
@@ -35,9 +37,11 @@
           <div class="carousel-container">
             <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
               <div
-                  v-for="item in items"
+                  v-for="(item, index) in items"
                   :key="item.outfitSeq"
                   class="item-card"
+                  :class="{
+                    'first-item': index === 0}"
                   @click="alertGuest"
               >
                 <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
@@ -202,6 +206,11 @@ export default {
   margin-right: 40px;
   text-align: center;
   background-color: #f9f9f9;
+}
+
+.item-card.first-item {
+  border: 2px solid #ff9800; /* 가장 앞 복장의 테두리를 강조 */
+  background-color: #fff5e6; /* 강조된 배경색 */
 }
 
 .item-card img {
