@@ -122,7 +122,6 @@ const getPm10Text = (pm10) => {
 
 <template>
   <div class="weather-container">
-    <button @click="getWeather">날씨 불러오기</button>
     <div class="weather-container_top">
       <div class="weather-icon">
         <!-- 옵셔널 체이닝을 사용하여 안전하게 접근 -->
