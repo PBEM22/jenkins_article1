@@ -1,6 +1,17 @@
 <template>
   <div class="situation-view">
     <h2 class="list-title">그날의 아웃핏 상황을 선택해주세요.</h2>
+    <div class="info-box">
+      <p><strong>아웃핏 상황 안내</strong></p>
+      <ul>
+        <li><b>일상:</b> 등교, 출근 등 일상 활동에 어울리는 아웃핏을 추천합니다.</li>
+        <li><b>여행:</b> 여행지의 날씨에 맞춰서 활동하기 좋은 아웃핏을 추천합니다.</li>
+        <li><b>데이트:</b> 데이트 분위기에 어울리는 세련된 아웃핏을 추천합니다.</li>
+        <li><b>운동:</b> 운동이나 야외 활동에 적합한 편안한 아웃핏을 추천합니다.</li>
+        <li><b>격식있는자리:</b> 비즈니스 미팅, 발표 등 격식을 차려야 하는 자리에 어울리는 단정한 아웃핏을 추천합니다.</li>
+        <li><b>무관:</b> 상황과 관계없이 날씨에 맞는 편안한 아웃핏을 추천합니다.</li>
+      </ul>
+    </div>
     <div class="situation-container">
       <div
           v-for="situation in situations"
@@ -14,17 +25,7 @@
       </div>
     </div>
     <button class="recommend-button" @click="getRecommendation">추천 받기</button>
-    <div class="info-box">
-      <p><strong>아웃핏 상황 안내</strong></p>
-      <ul>
-        <li>일상: 등교, 출근 등 일상 활동에 어울리는 아웃핏을 추천합니다.</li>
-        <li>여행: 여행지의 날씨에 맞춰서 활동하기 좋은 아웃핏을 추천합니다.</li>
-        <li>데이트: 데이트 분위기에 어울리는 세련된 아웃핏을 추천합니다.</li>
-        <li>운동: 운동이나 야외 활동에 적합한 편안한 아웃핏을 추천합니다.</li>
-        <li>격식있는자리: 비즈니스 미팅, 발표 등 격식을 차려야 하는 자리에 어울리는 단정한 아웃핏을 추천합니다.</li>
-        <li>무관: 상황과 관계없이 날씨에 맞는 편안한 아웃핏을 추천합니다.</li>
-      </ul>
-    </div>
+
   </div>
 </template>
 
@@ -70,7 +71,7 @@ const getRecommendation = () => {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px;
+  padding: 0px 40px;
   background-size: cover;
   height: 100vh;
   color: #333;
@@ -82,6 +83,7 @@ const getRecommendation = () => {
 }
 
 .situation-container {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -99,11 +101,14 @@ const getRecommendation = () => {
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
+.situation-option:hover{
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
+
 .situation-option.selected {
-  background-color: #72BCD5;
+  background-color: #007bff;
   color: white;
-  //box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
-  transform: scale(1.05);
 }
 
 .situation-option img {
@@ -121,7 +126,8 @@ const getRecommendation = () => {
   margin-top: 30px;
   padding: 12px 40px;
   font-size: 1.1rem;
-  background-color: #28a745;
+  font-weight: bold;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -130,25 +136,35 @@ const getRecommendation = () => {
 }
 
 .recommend-button:hover {
-  background-color: #28a745;
+  background-color: #007bff;
 }
 
 .info-box {
-  margin-top: 30px;
-  padding: 20px;
-  max-width: 600px;
+  padding: 10px;
+  max-width: 700px;
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .info-box p {
   font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .info-box ul {
+  text-align: left;
   padding-left: 20px;
   list-style-type: disc;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.info-box ul li {
+  margin-bottom: 8px;
+  line-height: 1.4;
 }
 </style>
