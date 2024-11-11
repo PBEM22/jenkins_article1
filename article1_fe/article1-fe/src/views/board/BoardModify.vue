@@ -50,7 +50,7 @@
 
     <div class="button-container">
       <NormalButton
-          text="등록"
+          text="수정"
           @click="sendData"
       />
     </div>
@@ -106,10 +106,6 @@ async function fetchData() {
       title.value = boardData.value.boardTitle; // 게시글 제목
       content.value = boardData.value.boardContent; // 게시글 내용
 
-      // 이미지 리스트가 존재하면 설정
-      if (boardData.value.boardPictureList) {
-        imageList.value = boardData.value.boardPictureList; // 서버에서 반환된 이미지 리스트
-      }
     } else {
       console.log("게시글 조회 실패", `코드: ${response.status}`);
     }
@@ -129,24 +125,35 @@ watch(imageList, (newList) => {
 
 async function sendData() {
   try {
-    const response = await axios.put(`http://localhost:8080/board/${route.params.boardSeq}`, {
-      boardTitle: title.value,
-      boardContent: content.value,
-      imageList: imageList.value
-    }, {
+    const formData = new FormData();
+    formData.append("boardTitle", title.value);
+    formData.append("boardContent", content.value);
+
+    // 이미지 리스트를 FormData에 추가
+    imageList.value.forEach(image => {
+      formData.append("imageList", image);
+    });
+
+    const response = await axios.put(`http://localhost:8080/board/${route.params.boardSeq}`, formData, {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`
+        Authorization: `Bearer ${authStore.accessToken}`,
+        'Content-Type': 'multipart/form-data'
       }
     });
 
     if (response.status === 200) {
       console.log("게시글 수정 성공", response.data);
       router.push(`/board/${route.params.boardSeq}`);
+      // console.log("수정 완료");
     }
   } catch (error) {
     console.error("게시글 수정 중 오류가 발생했습니다.", error);
   }
+
+  router.push(`/board`);
 }
+
+
 </script>
 
 <style scoped>

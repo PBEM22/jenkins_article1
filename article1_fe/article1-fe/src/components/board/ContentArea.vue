@@ -31,7 +31,7 @@ const emit = defineEmits(["delete"]);
 async function blameBoard() {
   try {
     const boardSeq = route.params.boardSeq;
-    const response = await axios.post(`http://localhost:8080/blame/board/${boardSeq}`, {}, {
+    const response = await axios.post(`/blame/board/${boardSeq}`, {}, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
       }
