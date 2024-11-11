@@ -1,9 +1,9 @@
-<div style="position: relative; text-align: center;">
+<div>
   <!-- Waving Banner -->
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=200&section=header&fontSize=90" style="width: 100%;"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=200&section=header&fontSize=90&text=NiceDayToWear" style="width: 100%;" />
 
-  <!-- Other Image on Top -->
-  <img src="https://github.com/user-attachments/assets/5594df99-3b11-42c7-beed-1663410da57d" alt="NiceDayToWear" style="position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 200px;" />
+  <!-- Image on Top (Centered) -->
+<img src="https://github.com/user-attachments/assets/5594df99-3b11-42c7-beed-1663410da57d" alt="NiceDayToWear" />
 </div>
 
 <br>
@@ -16,8 +16,7 @@
 
 ## 🛠️ 기술 스택
 
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <img src="https://img.shields.io/badge/spring data JPA-6DB33F?style=for-the-badge&logo=hibernate&logoColor=white">
 <img src="https://img.shields.io/badge/spring%20security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">
 <br>
@@ -50,15 +49,16 @@
 10. [빌드 및 배포 문서](#10-빌드-및-배포-문서)
 11. [Jenkins CI/CD 테스트 결과](#11-jenkins-cicd-테스트-결과)
 12. [회고](#12-회고)
-<br>
 
 <hr>
+<br>
 
 ## 1. 프로젝트 개요
 > <b>[입기 좋은 날]</b>
 > <br>
 > 위치, 날씨, 상황, 회원의 선호도에 따라 최적의 아웃핏(의상)을 추천해주고, 사용자들 간의 소통을 지원하는 아웃핏 추천 웹 애플리케이션
 
+<br>
 
 ## 2. 프로젝트 소개
 **"입기 좋은 날"** 은 사용자의 위치, 날씨, 그리고 상황(일상, 여행, 데이트 등)에 맞춘 아웃핏을 추천해주는 웹 애플리케이션입니다.
@@ -69,11 +69,12 @@
 
 아웃핏 추천뿐만 아니라 회원은 리뷰와 게시판을 통해 자신만의 스타일 및 코디를 사진으로 공유하고, 다른 회원들과 소통할 수 있습니다.
 
+<br>
 
 ## 3. 프로젝트 배경 및 필요성
 ### 3-1. 급변하는 기상 조건
 최근 몇 년간 우리나라는 예측할 수 없는 기후 변화를 경험하고 있습니다. 무더운 여름과 갑작스러운 한파, 짧아진 봄과 가을 등 날씨가 빠르게 변하고 있습니다.
-특히, 지역별 날씨 차이가 커짐에 따라, 동일한 지역 내에서도 날씨가 다른 경우가 빈번해지고 있습니다. 
+특히, 지역별 날씨 차이가 커짐에 따라, 동일한 지역 내에서도 날씨가 다른 경우가 빈번해지고 있습니다.
 이러한 변화를 반영한 "입기 좋은 날" 은 사용자가 실시간으로 정확한 날씨 정보를 바탕으로 아웃핏을 선택할 수 있게 도와줍니다.
 
 ### 3-2. 다양한 기상 악화에 따른 준비물
@@ -91,11 +92,16 @@
 "입기 좋은 날"은 회원들의 체질과 스타일에 대한 선호 데이터를 수집하고, 이를 바탕으로 최적의 의상을 추천하여 불편한 경험을 최소화할 수 있도록 도와줍니다.
 사용자 맞춤형 의상 추천 시스템은 향후 지속적으로 개선되어 더욱 정확하고 개인화된 아웃핏 추천을 제공할 것입니다.
 
+<br>
+
 ## 4. 이벤트 스토밍 기반 DDD 설계 문서
 <img width="1045" alt="DDD" src="https://github.com/user-attachments/assets/c90b0615-2407-423d-a94e-330b9b3fa4f9">
 
+<br>
+
 ## 5. 요구사항 명세서
 
+<br>
 
 ## 6. Database 설계
 ### 6-1. 논리 모델링
@@ -108,12 +114,17 @@
 - [DDL.sql](article1_be/article1-be/src/main/resources/Schema.sql)
 - [DML.sql](article1_be/article1-be/src/main/resources/data.sql)
 
+<br>
+
 ## 7. 화면 설계서
 [화면 설계서 (Figma)](https://www.figma.com/design/vQOctatRdm5PHNETWTKDgY/입기좋은날?node-id=94-810&node-type=symbol&t=Dr1ta4RAMDzX61WH-0)
 
+<br>
 
 ## 8. 시스템 아키텍처
 ![SystemArchitecture](https://github.com/user-attachments/assets/dc71c041-afd3-4488-829a-8cc0d2968b3c)
+
+<br>
 
 ## 9. 기능 수행 테스트 결과
 ### 9-1. 로그인
@@ -401,6 +412,7 @@
 </div>
 </details>
 
+<br>
 
 ## 10. 빌드 및 배포 문서
 ### 10-1. Dockerfile
@@ -900,8 +912,11 @@ pipeline {
   ```
 </details>
 
+<br>
 
 ## 11. Jenkins CI/CD 테스트 결과
+
+<br>
 
 ## 12. 회고
 | 이름      | 회고 내용                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
