@@ -1,24 +1,27 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore.js';
 import Pagination from '@/components/common/Pagination.vue';
 
 const authStore = useAuthStore();
-const startDate = ref('');
-const endDate = ref('');
 const selectedRecords = ref([]);
 const selectedOutfit = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = 4;
-const showModal = ref(false);
+const detail = ref([]);
+const myReview = ref([]);
 const selectedOutfitId = ref(null);
 const reviewText = ref('');
 const feedback = ref('');
+const existingReview = ref(null);
+const startDate = ref('');
+const endDate = ref('');
+const currentPage = ref(1);
+const itemsPerPage = 4;
+const showModal = ref(false);
 
 const fetchDataSelectedRecords = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/user/selectedRecords", {
+    const response = await axios.get("/user/selectedRecords", {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`
       }
@@ -30,6 +33,17 @@ const fetchDataSelectedRecords = async () => {
       // 모든 선택된 기록에 대해 아웃핏 데이터 조회
       for (const record of selectedRecords.value) {
         await fetchDataSelectedOutfit(record.selectSeq);
+
+        // 리뷰가 존재하는지 확인
+        const reviewResponse = await axios.get("/review/myreview", {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`
+          }
+        });
+
+        if (reviewResponse.status === 200) {
+          existingReview.value = reviewResponse.data;
+        }
       }
     } else console.error("아웃핏 이력 조회 실패", response.status);
   } catch (error) {
@@ -41,7 +55,7 @@ const fetchDataSelectedRecords = async () => {
 
 const fetchDataSelectedOutfit = async (selectSeq) => {
   try {
-    const response = await axios.get("http://localhost:8080/user/selectedOutfit", {
+    const response = await axios.get("/user/selectedOutfit", {
       params: { selectSeq: selectSeq },
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`
@@ -89,18 +103,232 @@ const goToPage = (page) => {
 const openModal = (id) => {
   selectedOutfitId.value = id;
   showModal.value = true;
+
+  // 선택된 아웃핏 이력에 대한 리뷰 확인
+  const selectedRecordData = selectedRecords.value.find(record => record.selectSeq === id);
+  const myReviewData = myReview.value.find(review => review.selectSeq === id);
+
+  if (myReviewData) {
+    existingReview.value = myReviewData; // 기존 리뷰 정보 저장
+    feedback.value = myReviewData.reviewLikeYn ? '좋아요' : '싫어요'; // 기존 리뷰의 좋아요 여부 설정
+    reviewText.value = myReviewData.reviewContent; // 기존 리뷰 내용 설정
+  } else {
+    existingReview.value = null;
+    feedback.value = '';
+    reviewText.value = '';
+  }
 };
 
-const submitReview = () => {
-  alert(`리뷰가 제출되었습니다: ${reviewText.value} (의견: ${feedback.value})`);
+const fetchDataDetail = async () => {
+  try {
+    const response = await axios.get("/user/detail", {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`
+      }
+    });
 
-  reviewText.value = '';
-  feedback.value = '';
-  showModal.value = false;
+    if (response.status === 200) {
+      detail.value = Array.isArray(response.data) ? response.data : [response.data];
+    } else console.error("회원 정보 조회 실패", response.status);
+  } catch (error) {
+    console.error("데이터 fetching 중 에러 발생:", error);
+
+    alert("데이터를 가져오는 중 오류가 발생했습니다. 다시 시도해 주세요.");
+  }
+};
+
+const fetchDataMyReview = async () => {
+  try {
+    const response = await axios.get("/review/myreview", {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`
+      }
+    });
+
+    if (response.status === 200) {
+      myReview.value = response.data;
+    } else console.error("리뷰 조회 실패", response.status);
+  } catch (error) {
+    console.error("데이터 fetching 중 에러 발생:", error);
+
+    alert("데이터를 가져오는 중 오류가 발생했습니다. 다시 시도해 주세요.");
+  }
+};
+
+const submitReview = async () => {
+  try {
+    const selectedOutfitData = selectedOutfit.value.find(outfit => outfit.selectSeq === selectedOutfitId.value);
+
+    if (!selectedOutfitData) {
+      alert("선택된 아웃핏 정보가 없습니다.");
+
+      return;
+    }
+
+    const userSeq = detail.value.length > 0 ? detail.value[0].userSeq : null;
+
+    if (!userSeq) {
+      alert("사용자 정보가 없습니다. ID가 null입니다.");
+
+      return;
+    }
+
+    const selectedRecordData = selectedRecords.value.find(record => record.selectSeq === selectedOutfitId.value);
+
+    if (!selectedRecordData) {
+      alert("선택된 기록 정보가 없습니다.");
+
+      return;
+    }
+
+    const customLocation = selectedRecordData.customLocation;
+
+    if (!customLocation) {
+      alert("위치 정보가 없습니다.");
+
+      return;
+    }
+
+    const reviewData = {
+      userSeq: userSeq,
+      selectSeq: selectedOutfitId.value,
+      reviewContent: reviewText.value,
+      weather: selectedRecordData.curTemp,
+      location: customLocation.split(',')[0],
+      reviewLikeYn: feedback.value === '좋아요',
+      reviewBlind: feedback.value === '좋아요' ? 0 : 1,
+      outfits: selectedOutfit.value
+          .filter(outfit => outfit.selectSeq === selectedOutfitId.value)
+          .map(outfit => ({
+            outfitSeq: outfit.outfitSeq,
+            outfitName: outfit.outfitName
+          }))
+    };
+
+    const response = await axios.post(`/review/user/${userSeq}`, reviewData, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`
+      }
+    });
+
+    if (response.status === 200) {
+      alert("리뷰가 성공적으로 제출되었습니다.");
+
+      // 작성한 리뷰를 myReview 배열에 추가
+      myReview.value.push({
+        ...reviewData,
+        reviewSeq: response.data.reviewSeq // 서버에서 받은 리뷰 ID
+      });
+
+      // 기존 리뷰 상태 업데이트
+      existingReview.value = myReview.value.find(review => review.reviewSeq === response.data.reviewSeq);
+    } else alert("리뷰 제출에 실패했습니다.");
+  } catch (error) {
+    console.error("리뷰 제출 중 에러 발생:", error);
+
+    alert("리뷰 제출 중 오류가 발생했습니다. 다시 시도해 주세요.");
+  } finally {
+    reviewText.value = '';
+    feedback.value = '';
+    showModal.value = false;
+  }
+};
+
+const updateReview = async () => {
+  if (!existingReview.value) {
+    alert("수정할 리뷰가 없습니다.");
+
+    return;
+  }
+
+  const myReviewData = myReview.value.find(review => review.selectSeq === selectedOutfitId.value);
+
+  if (!myReviewData) {
+    alert("수정할 리뷰를 찾을 수 없습니다.");
+
+    return;
+  }
+
+  try {
+    const selectedRecordData = selectedRecords.value.find(record => record.selectSeq === selectedOutfitId.value);
+
+    const updateData = {
+      reviewContent: reviewText.value,
+      weather: selectedRecordData.curTemp,
+      location: selectedRecordData.customLocation.split(',')[0],
+      reviewLikeYn: feedback.value === '좋아요',
+      reviewBlind: feedback.value === '좋아요' ? 0 : 1,
+    };
+
+    const response = await axios.put(`/review/${myReviewData.reviewSeq}`, updateData, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`
+      }
+    });
+
+    if (response.status === 200) {
+      alert("리뷰가 성공적으로 수정되었습니다.");
+
+      // myReview 배열 업데이트
+      Object.assign(myReviewData, updateData); // 수정된 데이터로 업데이트
+
+      existingReview.value = null; // 수정 후 초기화
+    }
+  } catch (error) {
+    console.error("리뷰 수정 중 에러 발생:", error);
+
+    alert("리뷰 수정 중 오류가 발생했습니다. 다시 시도해 주세요.");
+  } finally {
+    reviewText.value = '';
+    feedback.value = '';
+    showModal.value = false;
+  }
+};
+
+const deleteReview = async () => {
+  if (!existingReview.value) {
+    alert("삭제할 리뷰가 없습니다.");
+
+    return;
+  }
+
+  const myReviewData = myReview.value.find(review => review.selectSeq === selectedOutfitId.value);
+
+  if (!myReviewData) {
+    alert("삭제할 리뷰를 찾을 수 없습니다.");
+
+    return;
+  }
+
+  try {
+    const response = await axios.delete(`/review/${myReviewData.reviewSeq}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`
+      }
+    });
+
+    if (response.status === 200) {
+      alert("리뷰가 성공적으로 삭제되었습니다.");
+
+      // myReview 배열에서 삭제된 리뷰 제거
+      myReview.value = myReview.value.filter(review => review.reviewSeq !== myReviewData.reviewSeq); // 배열에서 제거
+      existingReview.value = null; // 삭제 후 초기화
+    }
+  } catch (error) {
+    console.error("리뷰 삭제 중 에러 발생:", error);
+
+    alert("리뷰 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
+  } finally {
+    reviewText.value = '';
+    feedback.value = '';
+    showModal.value = false;
+  }
 };
 
 onMounted(() => {
   fetchDataSelectedRecords();
+  fetchDataDetail();
+  fetchDataMyReview();
 });
 </script>
 
@@ -123,11 +351,12 @@ onMounted(() => {
           <div>customDate : {{ item.customDate.slice(0, 10) }}</div>
           <div>위치 : {{ item.customLocation }}</div>
           <div>날씨 : {{ item.curTemp }}°C</div>
-          <div>상의 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.topName.replace(/_/g, ' ') || '정보 없음' }}</div>
-          <div>하의 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.bottomName.replace(/_/g, ' ') || '정보 없음' }}</div>
-          <div>신발 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.shoesName.replace(/_/g, ' ') || '정보 없음' }}</div>
-          <div>아우터 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.outerName.replace(/_/g, ' ') || '정보 없음' }}</div>
-          <div>악세서리 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.accessoryNames.join(', ').replace(/_/g, ' ') || '정보 없음' }}</div>
+          <div>아웃핏</div>
+          <div>상의 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.topName.replace(/_/g, ' ') }}</div>
+          <div>하의 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.bottomName.replace(/_/g, ' ') }}</div>
+          <div>신발 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.shoesName.replace(/_/g, ' ') }}</div>
+          <div>아우터 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.outerName.replace(/_/g, ' ') }}</div>
+          <div>악세서리 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.accessoryNames.join(', ').replace(/_/g, ' ') }}</div>
         </div>
         <button class="review-button" @click="openModal(item.selectSeq)">리뷰 작성하기</button>
       </div>
@@ -142,7 +371,7 @@ onMounted(() => {
     <div v-if="showModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">리뷰 작성</h2>
+          <h2 class="modal-title">{{ existingReview ? '리뷰 수정' : '리뷰 작성' }}</h2>
           <button class="close-button" @click="showModal = false">X</button>
         </div>
         <div class="modal-body">
@@ -163,7 +392,9 @@ onMounted(() => {
           <textarea v-model="reviewText" placeholder="한 줄 리뷰를 작성하여 의견을 말씀해 주세요." class="review-textarea"></textarea>
         </div>
         <div class="modal-footer">
-          <button class="review-submit" @click="submitReview">리뷰쓰기</button>
+          <button class="modal-review-button" v-if="!existingReview" @click="submitReview">리뷰쓰기</button>
+          <button class="modal-edit-button" v-if="existingReview" @click="updateReview">수정</button>
+          <button class="modal-delete-button" v-if="existingReview" @click="deleteReview">삭제</button>
         </div>
       </div>
     </div>
@@ -308,17 +539,54 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
-.review-submit {
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.modal-review-button {
   background-color: #007BFF;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
   width: 100%;
 }
 
-.review-submit:hover {
+.modal-review-button:hover {
   background-color: #0056b3;
+}
+
+.modal-edit-button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 48%;
+}
+
+.modal-edit-button:hover {
+  background-color: #0056b3;
+}
+
+.modal-delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 48%;
+}
+
+.modal-delete-button:hover {
+  background-color: #c82333;
 }
 </style>

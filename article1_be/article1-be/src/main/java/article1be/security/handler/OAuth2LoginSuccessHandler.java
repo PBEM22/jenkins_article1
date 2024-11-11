@@ -39,9 +39,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         UserState userState = principalDetails.getUser().getUserState();
 
         if (userState.equals(UserState.DELETE)) {
-            response.sendRedirect("http://localhost:5173/user/delete");
+            response.sendRedirect("http://localhost:80/user/delete");
         } else if (userState.equals(UserState.BAN)) {
-            response.sendRedirect("http://localhost:5173/user/ban");
+            response.sendRedirect("http://localhost:80/user/ban");
         } else {
             // 권한을 꺼내 List<String> 으로 변환
             List<String> authorities = authentication.getAuthorities().stream()
@@ -87,8 +87,22 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.addCookie(tokenCookie);
             response.addCookie(newMemberCookie);
 
+            log.info("Token Cookie - Name: {}, Value: {}, Path: {}, MaxAge: {}, Secure: {}, HttpOnly: {}",
+                    tokenCookie.getName(), tokenCookie.getValue(), tokenCookie.getPath(),
+                    tokenCookie.getMaxAge(), tokenCookie.getSecure(), tokenCookie.isHttpOnly());
+
+            log.info("New Member Cookie - Name: {}, Value: {}, Path: {}, MaxAge: {}, Secure: {}, HttpOnly: {}",
+                    newMemberCookie.getName(), newMemberCookie.getValue(), newMemberCookie.getPath(),
+                    newMemberCookie.getMaxAge(), newMemberCookie.getSecure(), newMemberCookie.isHttpOnly());
+
+
             // 리다이렉트
-            response.sendRedirect("http://localhost:5173");
+            if(newMember.equals("Y")) {
+                response.sendRedirect("http://localhost:80/user/data");
+            }
+            else {
+                response.sendRedirect("http://localhost:80");
+            }
         }
     }
 

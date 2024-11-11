@@ -55,7 +55,19 @@ public class Board extends BaseTimeEntity {
         this.boardIsBlind = true;
     }
 
+    public void setDelDate() {
+        this.delDate = LocalDateTime.now();
+    }
+
     public void unBlind() {
         this.boardIsBlind = false;
+    }
+
+    // 테스트 전용 메소드
+    public void setBoardSeqAndUserSeqAndIsBlindAndIsNotice(long boardSeq, long userSeq, boolean boardIsBlind, boolean isNotice) {
+        this.boardSeq = boardSeq;
+        this.userSeq = userSeq;
+        this.boardIsBlind = boardIsBlind;
+        this.boardIsNotice = isNotice; // isNotice를 사용하여 필드에 값 설정
     }
 }

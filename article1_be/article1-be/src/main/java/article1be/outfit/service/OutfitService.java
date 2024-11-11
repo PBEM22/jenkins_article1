@@ -78,11 +78,11 @@ public class OutfitService {
         Condition condition = user.getCondition();
         if (condition != null) {
             if (condition.getConditionSeq() == 1) {
-                maxTemp -= 3;
-                minTemp -= 3;
-            } else if (condition.getConditionSeq() == 2) {
                 maxTemp += 3;
                 minTemp += 3;
+            } else if (condition.getConditionSeq() == 2) {
+                maxTemp -= 3;
+                minTemp -= 3;
             }
         }
 
@@ -106,6 +106,8 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), styleSeq, userSeq),
                             calculateScore(o1, requestDTO.getSituationSeq(), styleSeq, userSeq)
                     ))
+                    .peek(outfit -> log.info("복장: " + outfit.getOutfitName() + ", 점수: " +
+                            calculateScore(outfit, requestDTO.getSituationSeq(), styleSeq, userSeq)))
                     .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(), outfit.getOutfitName()))
                     .collect(Collectors.toList());
 
@@ -160,6 +162,7 @@ public class OutfitService {
                             calculateScore(o2, requestDTO.getSituationSeq(), null, null),
                             calculateScore(o1, requestDTO.getSituationSeq(), null, null)
                     ))
+
                     .map(outfit -> new OutfitResponseDTO(outfit.getOutfitSeq(), outfit.getOutfitName()))
                     .collect(Collectors.toList());
 
@@ -174,11 +177,11 @@ public class OutfitService {
         int score = 0;
 
         if (outfitSituationRepository.existsByOutfit_OutfitSeqAndSituation_SituationSeq(outfit.getOutfitSeq(), situationSeq)) {
-            score += 10;
+            score += 100;
         }
 
         if (styleSeq != null && outfitStyleRepository.existsByOutfit_OutfitSeqAndStyle_StyleSeq(outfit.getOutfitSeq(), styleSeq)) {
-            score += 5;
+            score += 20;
         }
 
         if (outfit.getOutfitLevel() == OutfitLevel.REQUIRED) {
@@ -194,7 +197,7 @@ public class OutfitService {
 
         if (userSeq != null) {
             int selectionCount = selectOutfitRepository.countByOutfitAndSelectRecord_UserSeq(outfit, userSeq);
-            score += selectionCount * 3; // 선택 횟수당 3점 가산점 추가
+            score += selectionCount;
         }
 
         return score;

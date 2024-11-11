@@ -201,8 +201,9 @@ public class BoardService {
             return false;
         }
 
-        // 1. DB(BOARD)에 해당 게시글 블라인드 처리
+        // 1. DB(BOARD)에 해당 게시글 블라인드 처리, 삭제일 등록
         board.get().setBlind();
+        board.get().setDelDate();
         boardRepository.save(board.get());
 
         // 2. DB(PICTURE)에 해당 게시글 번호로 된 모든 데이터 블라인드 처리
@@ -211,6 +212,7 @@ public class BoardService {
         // 각 Picture 객체의 블라인드 처리
         for (Picture picture : pictureList) {
             picture.setBlind();
+            picture.setDelDate();
             pictureRepository.save(picture); // 변경된 Picture 객체를 저장
         }
 
@@ -219,6 +221,7 @@ public class BoardService {
 
         for (Reply reply : replyList) {
             reply.setBlind();
+            reply.setDelDate();
             replyRepository.save(reply);
         }
 

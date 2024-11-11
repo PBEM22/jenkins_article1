@@ -1,7 +1,66 @@
+<template>
+  <Container>
+    <div>
+      <RegisterInput
+          text="제목"
+          v-model="title"
+      />
+    </div>
+    <div>
+      <RegisterInput
+          text="내용"
+          v-model="content"
+      />
+    </div>
+    <div>
+      <FileUpload
+          label="이미지 업로드"
+          :imageList="imageList"
+          @update:imageList="imageList = $event"
+      />
+    </div>
+
+    <!-- Uploaded Image 텍스트 추가 -->
+    <div class="uploaded-image-title">
+      <h3>Uploaded Image</h3>
+    </div>
+
+    <!-- 썸네일 이미지 표시 영역 -->
+    <div v-if="boardData.boardPictureList && boardData.boardPictureList.length > 0" class="thumbnail-container">
+      <h3>업로드된 이미지</h3>
+      <div class="thumbnail-gallery">
+        <img
+            v-for="(picture, index) in boardData.boardPictureList"
+            :key="index"
+            :src="picture.pictureUrl"
+            :alt="picture.pictureOriginName"
+            class="thumbnail-image"
+        />
+      </div>
+    </div>
+
+    <div class="upload-notice">
+      <p>이미지를 업로드 하신 후 클릭을 하셔야 본문에 첨부됩니다.</p>
+      <p>이미지 업로드는 최대 15MB까지 가능합니다.</p>
+      <p>총 30개까지 업로드 가능합니다.</p>
+      <p>통신 환경에 따라 고용량 이미지의 업로드가 실패할 수 있습니다.</p>
+      <p class="warning">※ 정보통신망에서 불법촬영물등을 유통할 경우 「전기통신사업법」 제22조의 5 제1항에 따른 삭제.접속차단 등 유통방지에 필요한 조치가 취해지며 「성폭력처벌법」 제14조
+        「청소년성보호법」 제11조에 따라 형사처벌을 받을 수 있습니다.</p>
+    </div>
+
+    <div class="button-container">
+      <NormalButton
+          text="수정"
+          @click="sendData"
+      />
+    </div>
+  </Container>
+</template>
+
 <script setup>
 // vue
-import { ref, watch, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 // axios
 import axios from "axios";
@@ -34,7 +93,7 @@ const boardData = ref({});
 async function fetchData() {
   try {
     const boardSeq = route.params.boardSeq;
-    const response = await axios.get(`http://localhost:8080/board/${boardSeq}`, {
+    const response = await axios.get(`/board/${boardSeq}`, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`
       }
@@ -44,14 +103,9 @@ async function fetchData() {
       boardData.value = response.data;
       console.log("조회된 게시글 데이터", boardData.value);
 
-      // 데이터 구조 확인 및 입력 필드에 값을 설정
       title.value = boardData.value.boardTitle; // 게시글 제목
       content.value = boardData.value.boardContent; // 게시글 내용
 
-      // 이미지 리스트가 존재하면 설정 (예: 서버에서 이미지 URL 리스트 받는 경우)
-      if (boardData.value.imageList) {
-        imageList.value = boardData.value.imageList; // 서버에서 반환된 이미지 리스트
-      }
     } else {
       console.log("게시글 조회 실패", `코드: ${response.status}`);
     }
@@ -71,73 +125,38 @@ watch(imageList, (newList) => {
 
 async function sendData() {
   try {
-    const response = await axios.put(`http://localhost:8080/board/${route.params.boardSeq}`, {
-      boardTitle: title.value,
-      boardContent: content.value,
-      imageList: imageList.value
-    }, {
+    const formData = new FormData();
+    formData.append("boardTitle", title.value);
+    formData.append("boardContent", content.value);
+
+    // 이미지 리스트를 FormData에 추가
+    imageList.value.forEach(image => {
+      formData.append("imageList", image);
+    });
+
+    const response = await axios.put(`/board/${route.params.boardSeq}`, formData, {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`
+        Authorization: `Bearer ${authStore.accessToken}`,
+        'Content-Type': 'multipart/form-data'
       }
     });
 
     if (response.status === 200) {
       console.log("게시글 수정 성공", response.data);
-      router.push(`/board/${route.params.boardSeq}`); // 수정된 게시글 페이지로 이동
+      router.push(`/board/${route.params.boardSeq}`);
+      // console.log("수정 완료");
     }
-
   } catch (error) {
     console.error("게시글 수정 중 오류가 발생했습니다.", error);
   }
+
+  router.push(`/board`);
 }
+
+
 </script>
 
-<template>
-  <Container>
-    <div>
-      <RegisterInput
-          text="제목"
-          v-model="title"
-      />
-    </div>
-    <div>
-      <RegisterInput
-          text="내용"
-          v-model="content"
-      />
-    </div>
-    <div>
-      <FileUpload
-          label="이미지 업로드"
-          :imageList="imageList"
-      @update:imageList="imageList = $event"
-      />
-    </div>
-    <div class="upload-notice">
-      <p>이미지를 업로드 하신 후 클릭을 하셔야 본문에 첨부됩니다.</p>
-      <p>이미지 업로드는 최대 15MB까지 가능합니다.</p>
-      <p>총 30개까지 업로드 가능합니다.</p>
-      <p>통신 환경에 따라 고용량 이미지의 업로드가 실패할 수 있습니다.</p>
-      <p class="warning">※ 정보통신망에서 불법촬영물등을 유통할 경우 「전기통신사업법」 제22조의 5 제1항에 따른 삭제.접속차단 등 유통방지에 필요한 조치가 취해지며 「성폭력처벌법」 제14조
-        「청소년성보호법」 제11조에 따라 형사처벌을 받을 수 있습니다.</p>
-    </div>
-
-    <div class="button-container">
-      <NormalButton
-          text="등록"
-          @click="sendData"
-      />
-    </div>
-  </Container>
-</template>
-
 <style scoped>
-#background {
-  background: #E7F4FF;
-  height: auto; /* 높이를 자동으로 설정 */
-  overflow: auto;
-}
-
 .upload-notice {
   margin-top: 20px; /* 상단 여백 추가 */
   font-size: 8px; /* 글자 크기 설정 */
@@ -156,5 +175,24 @@ async function sendData() {
   display: flex; /* Flexbox 사용 */
   justify-content: center; /* 중앙 정렬 */
   margin-top: 20px; /* 버튼 상단 여백 */
+}
+
+.thumbnail-container {
+  margin-top: 20px; /* 썸네일 상단 여백 */
+}
+
+.thumbnail-gallery {
+  display: flex; /* Flexbox 사용 */
+  flex-wrap: wrap; /* 줄 바꿈 */
+}
+
+.thumbnail-image {
+  width: 100px; /* 썸네일 크기 조정 */
+  height: auto; /* 비율 유지 */
+  margin: 5px; /* 이미지 간격 */
+}
+
+.uploaded-image-title {
+  margin-top: 20px; /* 제목 상단 여백 */
 }
 </style>

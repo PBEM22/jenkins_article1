@@ -35,7 +35,7 @@ public class ReplyService {
                                     .replyContent(reply.getReplyContent())
                                     .regDate(reply.getRegDate())
                                     .delDate(reply.getDelDate())
-                                    .replyIsBlind(reply.getReplyIsBlind())
+                                    .replyIsBlind(reply.isReplyIsBlind())
                                     .build())
                     .toList();
 
@@ -51,7 +51,7 @@ public class ReplyService {
                                     .replyContent(reply.getReplyContent())
                                     .regDate(reply.getRegDate())
                                     .delDate(reply.getDelDate())
-                                    .replyIsBlind(reply.getReplyIsBlind())
+                                    .replyIsBlind(reply.isReplyIsBlind())
                                     .build())
                     .toList();
 
@@ -67,6 +67,7 @@ public class ReplyService {
         if (reply != null) {
             if (Objects.equals(reply.getReplyUserSeq(), SecurityUtil.getCurrentUserSeq()) || SecurityUtil.getCurrentUserAuthorities().equals(UserAuth.ADMIN)) {
                 reply.setBlind();
+                reply.setDelDate();
 
                 return true;
             }

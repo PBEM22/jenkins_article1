@@ -99,7 +99,7 @@ export default {
             Authorization: `Bearer ${authStore.accessToken}`
           }
         });
-        reviews.value = response.data;
+        reviews.value = response.data.sort((a, b) => new Date(b.regDate) - new Date(a.regDate));
         filteredReviews.value = reviews.value;
         currentIndexes.value = Array(reviews.value.length).fill(0);
       } catch (error) {

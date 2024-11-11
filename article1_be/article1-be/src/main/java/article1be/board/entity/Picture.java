@@ -37,4 +37,8 @@ public class Picture {
         this.delDate = LocalDateTime.now();
         this.pictureIsDelete = true;
     }
+
+    public void setDelDate() {
+        this.delDate = LocalDateTime.now();
+    }
 }

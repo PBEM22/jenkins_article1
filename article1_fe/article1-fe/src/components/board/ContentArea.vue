@@ -10,6 +10,7 @@ import {useRoute} from "vue-router";
 import {useAuthStore} from "@/store/authStore.js";
 
 import axios from "axios";
+import router from "@/router/index.js";
 
 const props = defineProps({
   boardTitle: String,
@@ -30,7 +31,7 @@ const emit = defineEmits(["delete"]);
 async function blameBoard() {
   try {
     const boardSeq = route.params.boardSeq;
-    const response = await axios.post(`http://localhost:8080/blame/board/${boardSeq}`, {}, {
+    const response = await axios.post(`/blame/board/${boardSeq}`, {}, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
       }
@@ -47,6 +48,11 @@ async function blameBoard() {
     console.log("게시글 신고 중 오류가 발생했습니다.");
     console.log(error);
   }
+}
+
+// 수정 버튼 클릭 이벤트
+async function goToModifyPage() {
+  router.push(`/board/modify/` + route.params.boardSeq);
 }
 
 // 삭제 버튼 클릭 이벤트
@@ -80,6 +86,7 @@ function deleteBoard() {
     <!-- 신고 / 삭제 -->
     <div class="blame-delete">
       <span class="blame-option" v-on:click="blameBoard">신고하기</span>
+      <span class="blame-option" v-on:click="goToModifyPage">수정하기</span>
       <span class="blame-option" v-on:click="deleteBoard">삭제하기</span>
     </div>
   </div>

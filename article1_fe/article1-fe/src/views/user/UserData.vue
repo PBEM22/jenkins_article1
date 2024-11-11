@@ -1,26 +1,22 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
+import { useAuthStore } from '@/store/authStore.js';
 import PreferenceForm from "@/components/user/PreferenceForm.vue";
 import axios from 'axios';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-
-// 닉네임과 선호도 상태 관리
 const nickname = ref('');
 const conditionSeq = ref(null);
 const styleSeq = ref(null);
 
-// 선호도 업데이트
 const handleUpdatePreference = (preferenceData) => {
   console.log('선호도 업데이트:', preferenceData);
   conditionSeq.value = preferenceData.conditionSeq;
   styleSeq.value = preferenceData.styleSeq;
 };
 
-// 사용자 등록 처리
 const handleRegisterUser = async () => {
-  // 닉네임, 체질, 스타일 값 모두 유효한지 체크
   if (!nickname.value || conditionSeq.value === null || styleSeq.value === null) {
     alert('모든 필드를 입력해주세요.');
     return;
@@ -30,38 +26,53 @@ const handleRegisterUser = async () => {
     const userData = {
       userNickname: nickname.value,
       conditionSeq: conditionSeq.value,
-      styleSeq: styleSeq.value
+      styleSeq: styleSeq.value,
     };
 
-    // 서버에 사용자 정보와 선호도 정보 함께 등록
-    await axios.post('http://localhost:8080/user/data', userData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-      }
-    });
-
+    await axios.post('/user/data', userData); // Authorization 헤더는 기본 설정 사용
     alert('사용자 정보와 선호도가 등록되었습니다.');
-    router.push("/")
+    router.push("/");
   } catch (error) {
     console.error('등록 실패:', error);
 
-    // 백엔드에서 보내는 에러 메시지 처리
     if (error.response && error.response.data) {
       const { status, code, message } = error.response.data;
 
-      if (status === "CONFLICT" && code === "DUPLICATE_NICKNAME") {  // 중복 닉네임 에러 처리
-        alert(message);  // "이미 존재하는 닉네임입니다."
+      if (status === "CONFLICT" && code === "DUPLICATE_NICKNAME") {
+        alert(message);
       } else {
-        // 다른 에러가 발생했을 때
         alert('닉네임 수정 중 오류가 발생했습니다.');
       }
     } else {
-      // 네트워크 에러나 다른 예외 처리
       alert('서버와의 통신에 실패했습니다.');
     }
   }
 };
+
+const authStore = useAuthStore();
+
+watchEffect(() => {
+  if (authStore.token) {
+    localStorage.setItem('accessToken', authStore.token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${authStore.token}`;
+    console.log('Authorization header updated with token:', authStore.token);
+  }
+});
+
+onMounted(() => {
+  const tokenCookie = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('token='));
+
+  if (tokenCookie) {
+    authStore.token = tokenCookie.split('=')[1];
+    console.log(`[AuthStore] Loaded token: ${authStore.token}`);
+  } else {
+    console.log(`[AuthStore] Loaded token: null`);
+  }
+});
 </script>
+
 
 <template>
   <div class="user-registration-form">

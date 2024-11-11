@@ -2,16 +2,16 @@
 import { ref, defineProps, defineEmits, watch } from "vue";
 
 const conditionOptions = ref([
-  { value: 1, label: "더위를 많이 탄다", image: "/src/assets/images/user/Condition-Hot.png" },
-  { value: 2, label: "추위를 많이 탄다", image: "/src/assets/images/user/Condition-Cold.png" },
-  { value: 3, label: "무관", image: "/src/assets/images/situation/none.png" }
+  { value: 1, label: "더위를 많이 탄다", image: "@/assets/images/user/Condition-Hot.png" },
+  { value: 2, label: "추위를 많이 탄다", image: "@/assets/images/user/Condition-Cold.png" },
+  { value: 3, label: "무관", image: "@/assets/images/situation/none.png" }
 ]);
 
 const styleOptions = ref([
-  { value: 1, label: "캐주얼", image: "/src/assets/images/user/Style-Casual.png" },
-  { value: 2, label: "포멀", image: "/src/assets/images/user/Style-Formal.png" },
-  { value: 3, label: "스포티", image: "/src/assets/images/user/Style-Sporty.png" },
-  { value: 4, label: "무관", image: "/src/assets/images/situation/none.png" }
+  { value: 1, label: "캐주얼", image: "@/assets/images/user/Style-Casual.png" },
+  { value: 2, label: "포멀", image: "@/assets/images/user/Style-Formal.png" },
+  { value: 3, label: "스포티", image: "@/assets/images/user/Style-Sporty.png" },
+  { value: 4, label: "무관", image: "@/assets/images/situation/none.png" }
 ]);
 
 // props로 전달 받은 값
@@ -128,8 +128,8 @@ watch([selectedConditionSeq, selectedStyleSeq], () => {
 }
 
 .prefer-option img {
-  width: 250px;                   /* 이미지 너비 */
-  height: 220px;                  /* 이미지 높이 */
+  width: 150px;                   /* 이미지 너비 */
+  height: 120px;                  /* 이미지 높이 */
   object-fit: contain;
   margin-right: 10px;
 }
