@@ -128,8 +128,8 @@ watch([selectedConditionSeq, selectedStyleSeq], () => {
 }
 
 .prefer-option img {
-  width: 250px;                   /* 이미지 너비 */
-  height: 220px;                  /* 이미지 높이 */
+  width: 150px;                   /* 이미지 너비 */
+  height: 120px;                  /* 이미지 높이 */
   object-fit: contain;
   margin-right: 10px;
 }
