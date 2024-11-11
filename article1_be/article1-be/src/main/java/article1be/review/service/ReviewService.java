@@ -158,7 +158,7 @@ public class ReviewService {
                 reviewDto.getWeather(),
                 reviewDto.getLocation(),
                 "BLIND".equals(reviewDto.getReviewStatus()),
-                review.getReviewLikeYn()
+                reviewDto.isReviewLikeYn()
         );
 
         String userNickname = userRepository.findById(review.getUserSeq())
