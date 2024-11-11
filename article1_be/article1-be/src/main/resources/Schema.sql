@@ -14,10 +14,11 @@ DROP TABLE IF EXISTS situation;
 DROP TABLE IF EXISTS style;
 DROP TABLE IF EXISTS `condition`;
 
+
 -- 부모 테이블부터 생성
 CREATE TABLE style (
                        style_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
-                       style_name VARCHAR(50) NOT NULL COMMENT '캐주얼, 포멀, 스포티, 무관',
+                       style_name VARCHAR(50) NOT NULL COMMENT 'CASUAL, FORMAL, SPORTY, NORMAL',
                        PRIMARY KEY (style_seq)
 );
 
@@ -29,6 +30,8 @@ CREATE TABLE `condition` (
 
 CREATE TABLE user (
                       user_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
+                      style_seq BIGINT NULL,
+                      condition_seq BIGINT NULL,
                       user_social_site VARCHAR(50) NOT NULL COMMENT 'KAKAO, NAVER, GOOGLE',
                       user_id VARCHAR(255) NOT NULL,
                       user_name VARCHAR(50) NOT NULL,
@@ -37,29 +40,27 @@ CREATE TABLE user (
                       user_birth_date DATE NULL,
                       user_gender VARCHAR(50) NULL COMMENT 'MALE, FEMALE',
                       user_state VARCHAR(50) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE, BAN, DELETE',
+                      user_auth VARCHAR(50) NOT NULL DEFAULT 'USER' COMMENT 'USER, ADMIN',
                       reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       del_date DATETIME NULL,
-                      user_auth VARCHAR(50) NOT NULL DEFAULT 'USER' COMMENT 'USER, ADMIN',
-                      style_seq BIGINT NULL,
-                      condition_seq BIGINT NULL,
                       PRIMARY KEY (user_seq)
 );
 
 CREATE TABLE outfit (
                         outfit_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
                         outfit_name VARCHAR(50) NOT NULL,
-                        outfit_weather INT NULL COMMENT '악세서리만',
+                        outfit_weather INT NULL,
                         outfit_temp_max DOUBLE NULL,
                         outfit_temp_min DOUBLE NULL,
                         outfit_category VARCHAR(50) NOT NULL COMMENT '상의, 하의, 아우터, 신발, 악세사리',
                         outfit_gender VARCHAR(50) NOT NULL COMMENT 'M, F, N (남, 여, 무관)',
-                        outfit_level VARCHAR(50) NULL COMMENT '권장, 필수, 선택',
+                        outfit_level VARCHAR(50) NULL COMMENT '필수, 권장, 선택',
                         PRIMARY KEY (outfit_seq)
 );
 
 CREATE TABLE situation (
                            situation_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
-                           situation_name VARCHAR(50) NOT NULL COMMENT '일상, 여행, 운동, 데이트, 격식있는자리',
+                           situation_name VARCHAR(50) NOT NULL COMMENT '일상, 여행, 운동, 데이트, 격식 있는 자리',
                            PRIMARY KEY (situation_seq)
 );
 
@@ -85,11 +86,11 @@ CREATE TABLE board (
                        user_seq BIGINT NOT NULL,
                        board_title VARCHAR(50) NOT NULL,
                        board_content VARCHAR(1000) NOT NULL,
+                       board_is_notice BOOLEAN NOT NULL DEFAULT FALSE COMMENT '관리자만 공지 사항 작성 가능',
+                       board_is_blind BOOLEAN NOT NULL DEFAULT FALSE,
                        reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        up_date DATETIME NULL,
                        del_date DATETIME NULL,
-                       board_is_blind BOOLEAN NOT NULL DEFAULT FALSE,
-                       board_is_notice BOOLEAN NOT NULL DEFAULT FALSE COMMENT '관리자만 공지사항 작성 가능',
                        PRIMARY KEY (board_seq)
 );
 
@@ -99,37 +100,36 @@ CREATE TABLE review (
                         select_seq BIGINT NOT NULL,
                         review_content VARCHAR(255) NOT NULL,
                         review_weather DECIMAL(10, 2) NULL,
-                        review_location DECIMAL(10, 2) NULL,
+                        review_location VARCHAR(255) NULL,
                         review_blind BOOLEAN NOT NULL,
                         review_like_yn BOOLEAN NULL,
-                        review_report INT NULL,
                         reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         up_date DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-                        del_date DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+                        del_date DATETIME NULL,
                         PRIMARY KEY (review_seq, user_seq)
 );
 
 CREATE TABLE reply (
                        reply_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
-                       board_seq BIGINT NOT NULL,
                        reply_user_seq BIGINT NOT NULL,
+                       board_seq BIGINT NOT NULL,
                        reply_content VARCHAR(1000) NOT NULL,
+                       reply_is_blind BOOLEAN NOT NULL DEFAULT FALSE,
                        reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        del_date DATETIME NULL,
-                       reply_is_blind BOOLEAN NOT NULL DEFAULT FALSE,
                        PRIMARY KEY (reply_seq)
 );
 
 CREATE TABLE picture (
                          picture_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
                          picture_board_seq BIGINT NOT NULL,
-                         picture_originename VARCHAR(255) NOT NULL,
-                         picture_changedname VARCHAR(255) NOT NULL,
+                         picture_origin_name VARCHAR(255) NOT NULL,
+                         picture_changed_name VARCHAR(255) NOT NULL,
                          picture_url VARCHAR(255) NOT NULL,
                          picture_type VARCHAR(100) NOT NULL,
+                         picture_is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
                          reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          del_date DATETIME NULL,
-                         picture_is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
                          PRIMARY KEY (picture_seq)
 );
 
@@ -157,9 +157,9 @@ CREATE TABLE outfit_situation (
 CREATE TABLE ban (
                      ban_seq BIGINT NOT NULL AUTO_INCREMENT COMMENT 'AUTO-INCREMENT',
                      ban_user_seq BIGINT NOT NULL,
-                     ban_startdate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                     ban_enddate DATETIME NOT NULL,
-                     ban_releasedate DATETIME NULL COMMENT '특별 사면되면 기입하는 컬럼',
+                     ban_start_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     ban_end_date DATETIME NOT NULL,
+                     ban_release_date DATETIME NULL COMMENT '특별 사면 되면 기입하는 컬럼',
                      PRIMARY KEY (ban_seq)
 );
 
@@ -169,16 +169,17 @@ CREATE TABLE blame (
                        blame_board_seq BIGINT NULL,
                        blame_reply_seq BIGINT NULL,
                        blame_review_seq BIGINT NOT NULL,
-                       blame_processingdate DATETIME NULL,
+                       blame_status BOOLEAN NOT NULL DEFAULT TRUE COMMENT '처리 상태 (TRUE : 미처리, FALSE : 처리됨)',
+                       blame_processing_date DATETIME NULL,
                        reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        up_date DATETIME NULL,
-                       blame_status BOOLEAN NOT NULL DEFAULT TRUE COMMENT '처리 상태 (TRUE: 미처리, FALSE: 처리됨)',
                        PRIMARY KEY (blame_seq),
                        CONSTRAINT FK_blame_user FOREIGN KEY (blame_user_seq) REFERENCES user (user_seq) ON DELETE CASCADE,
                        CONSTRAINT FK_blame_board FOREIGN KEY (blame_board_seq) REFERENCES board (board_seq) ON DELETE CASCADE,
                        CONSTRAINT FK_blame_reply FOREIGN KEY (blame_reply_seq) REFERENCES reply (reply_seq) ON DELETE CASCADE,
-                       CONSTRAINT FK_blame_review FOREIGN KEY (blame_review_seq, user_seq) REFERENCES review (review_seq, user_seq) ON DELETE CASCADE
+                       CONSTRAINT FK_blame_review FOREIGN KEY (blame_review_seq) REFERENCES review (review_seq) ON DELETE CASCADE
 );
+
 
 ALTER TABLE user
     ADD CONSTRAINT FK_user_style FOREIGN KEY (style_seq) REFERENCES style (style_seq) ON DELETE CASCADE,
