@@ -36,7 +36,6 @@ public class ReviewService {
                             .map(user -> user.getUserNickname())
                             .orElse("Unknown User");
 
-                    // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
                     List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                             .map(selectOutfit -> new OutfitResponseDTO(
                                     selectOutfit.getOutfit().getOutfitSeq(),
@@ -122,7 +121,6 @@ public class ReviewService {
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
-        // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
         List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                 .map(selectOutfit -> new OutfitResponseDTO(
                         selectOutfit.getOutfit().getOutfitSeq(),
@@ -163,7 +161,6 @@ public class ReviewService {
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
-        // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
         List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                 .map(selectOutfit -> new OutfitResponseDTO(
                         selectOutfit.getOutfit().getOutfitSeq(),

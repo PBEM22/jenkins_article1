@@ -72,7 +72,6 @@ export default {
     const authStore = useAuthStore();
     const router = useRouter();
 
-    // Pagination state
     const currentPage = ref(1);
     const itemsPerPage = 10;
 
@@ -98,9 +97,8 @@ export default {
       }
     };
 
-    // 검색 기능 - 버튼 클릭 시 실행
     const searchUsers = () => {
-      currentPage.value = 1; // 검색 후 첫 페이지로 초기화
+      currentPage.value = 1;
       filteredUsers.value = userList.value.filter(user => {
         if (searchField.value === '전체') {
           return Object.values(user).some(value =>
@@ -111,17 +109,14 @@ export default {
       });
     };
 
-    // 필터링된 사용자 리스트 - ref로 변경하여 수동으로 업데이트
     const filteredUsers = ref([]);
 
-    // 페이지별로 표시할 사용자 리스트
     const paginatedUsers = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       return filteredUsers.value.slice(start, end);
     });
 
-    // 총 페이지 수 계산
     const totalPages = computed(() => {
       return Math.ceil(filteredUsers.value.length / itemsPerPage);
     });
