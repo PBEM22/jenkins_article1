@@ -16,4 +16,5 @@ public interface SelectOutfitRepository extends JpaRepository<SelectOutfit, Long
 
     @Query("SELECT so FROM SelectOutfit so JOIN FETCH so.outfit WHERE so.selectRecord.selectSeq = :selectSeq")
     List<SelectOutfit> findBySelectRecord_SelectSeqWithOutfit(@Param("selectSeq") Long selectSeq);
+
 }

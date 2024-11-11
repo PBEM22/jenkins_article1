@@ -124,4 +124,16 @@ public class UserController {
         return ResponseEntity.ok(userSelectOutfit);
     }
 
+    @GetMapping("/outfit/stats")
+    @Operation(summary = "선택 복장 통계 조회", description = "로그인 한 회원이 자신의 선택 복장 카테고리별 통계 조회")
+    public ResponseEntity<SelectOutfitStatsResponseDTO> getUserSelectedOutfitStats(
+            @RequestParam String startDate,
+            @RequestParam String endDate
+    ){
+        Long userSeq = SecurityUtil.getCurrentUserSeq();
+        SelectOutfitStatsResponseDTO response = userService.getSelectOutfitStats(userSeq,startDate,endDate);
+        return ResponseEntity.ok(response);
+    }
+
+
 }
