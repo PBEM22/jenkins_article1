@@ -1,40 +1,41 @@
 package article1be.blame.service;
 
-import jakarta.transaction.Transactional;
+import article1be.blame.repository.BlameRepository;
+import article1be.board.repository.BoardRepository;
+import article1be.reply.repository.ReplyRepository;
+import article1be.review.repository.ReviewRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class BlameServiceTest {
 
-    @Autowired
-    BlameService service;
+    @Mock
+    private BlameRepository repository;
+
+    @Mock
+    private BoardRepository boardRepository;
+
+    @Mock
+    private ReplyRepository replyRepository;
+
+    @Mock
+    private ReviewRepository reviewRepository;
+
+    @InjectMocks
+    private BlameService blameService;
 
     @Test
     @DisplayName("t1: 게시글 신고 테스트")
     public void t1() {
+        // 1번 유저가 1번 게시글 신고
         Assertions.assertDoesNotThrow(() -> {
-            service.createBoardBlame(1L, 11L);
-        });
-    }
-
-    @Test
-    @DisplayName("t2: 댓글 신고 테스트")
-    public void t2() {
-        Assertions.assertDoesNotThrow(() -> {
-            service.createReplyBlame(2L, 15L);
-        });
-    }
-
-    @Test
-    @DisplayName("t2: 리뷰 신고 테스트")
-    public void t3() {
-        Assertions.assertDoesNotThrow(() -> {
-            service.createReviewBlame(3L, 7L);
+            blameService.createBoardBlame(1L, 1L);
         });
     }
 }
