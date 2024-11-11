@@ -55,6 +55,10 @@ public class Board extends BaseTimeEntity {
         this.boardIsBlind = true;
     }
 
+    public void setDelDate() {
+        this.delDate = LocalDateTime.now();
+    }
+
     public void unBlind() {
         this.boardIsBlind = false;
     }

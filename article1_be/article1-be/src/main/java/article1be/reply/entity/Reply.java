@@ -25,6 +25,10 @@ public class Reply {
         this.replyIsBlind = true;
     }
 
+    public void setDelDate() {
+        this.delDate = LocalDateTime.now();
+    }
+
     public Reply create(ReplyDTO replyDTO) {
         Reply reply = new Reply();
 
