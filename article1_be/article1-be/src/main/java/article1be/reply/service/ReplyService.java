@@ -67,6 +67,7 @@ public class ReplyService {
         if (reply != null) {
             if (Objects.equals(reply.getReplyUserSeq(), SecurityUtil.getCurrentUserSeq()) || SecurityUtil.getCurrentUserAuthorities().equals(UserAuth.ADMIN)) {
                 reply.setBlind();
+                reply.setDelDate();
 
                 return true;
             }
