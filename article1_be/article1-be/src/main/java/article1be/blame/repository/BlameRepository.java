@@ -14,4 +14,6 @@ public interface BlameRepository extends JpaRepository<Blame, Long> {
     List<Blame> findByBlameReplySeq(long replySeq);
 
     List<Blame> findByBlameReviewSeq(long reviewSeq);
+
+    boolean existsByUserIdAndBoardId(long l, long l1);
 }
