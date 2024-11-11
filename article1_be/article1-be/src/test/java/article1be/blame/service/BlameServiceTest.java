@@ -78,7 +78,7 @@ class BlameServiceTest {
     @DisplayName("t4: 이미 신고된 게시글 신고 테스트 - 예외 케이스")
     public void t4() {
         // Mock 설정
-        Mockito.when(repository.existsByUserIdAndBoardId(1L, 1L)).thenReturn(true);
+        Mockito.when(repository.existsByUserSeqAndBoardSeq(1L, 1L)).thenReturn(true);
 
         Assertions.assertThrows(AlreadyReportedException.class, () -> {
             blameService.createBoardBlame(1L, 1L);
