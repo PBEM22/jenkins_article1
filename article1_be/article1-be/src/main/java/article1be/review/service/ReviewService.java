@@ -56,7 +56,9 @@ public class ReviewService {
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
                             review.getRegDate(),
+                            review.getDelDate(),
                             outfits
+
                     );
                 })
                 .collect(Collectors.toList());
@@ -94,6 +96,7 @@ public class ReviewService {
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
                             review.getRegDate(),
+                            review.getDelDate(),
                             outfits
                     );
                 })
@@ -140,6 +143,7 @@ public class ReviewService {
                 review.getReviewLikeYn(),
                 review.getReviewBlind(),
                 review.getRegDate(),
+                review.getDelDate(),
                 outfits
         );
     }
@@ -180,6 +184,7 @@ public class ReviewService {
                 review.getReviewLikeYn(),
                 review.getReviewBlind(),
                 review.getRegDate(),
+                review.getDelDate(),
                 outfits
         );
     }

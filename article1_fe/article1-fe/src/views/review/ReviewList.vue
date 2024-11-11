@@ -54,7 +54,6 @@
       </div>
     </div>
 
-    <!-- Pagination Component -->
     <Pagination
         :currentPage="currentPage"
         :totalPages="totalPages"
@@ -79,7 +78,7 @@ export default {
     const searchQuery = ref('');
     const reviews = ref([]);
     const reportedReviews = ref([]);
-    const currentIndexes = ref([]); // 각 리뷰의 슬라이드 시작 인덱스
+    const currentIndexes = ref([]);
 
     const currentPage = ref(1);
     const itemsPerPage = 10;
@@ -92,7 +91,7 @@ export default {
           }
         });
         reviews.value = response.data;
-        currentIndexes.value = Array(reviews.value.length).fill(0); // 각 리뷰에 대한 슬라이드 시작 인덱스 초기화
+        currentIndexes.value = Array(reviews.value.length).fill(0);
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
@@ -100,6 +99,10 @@ export default {
 
     const filteredReviews = computed(() => {
       return reviews.value.filter((review) => {
+        if (review.delDate !== null) {
+          return false;
+        }
+
         if (selectedCategory.value === 'all') {
           return true;
         } else if (selectedCategory.value === 'author') {

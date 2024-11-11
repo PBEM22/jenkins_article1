@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "Review")
@@ -39,6 +41,9 @@ public class Review extends BaseTimeEntity {
 
     @Column(name = "review_like_yn", nullable = false)
     private Boolean reviewLikeYn; // 좋아요 여부
+
+    @Column(name = "del_date", insertable = false, updatable = false)
+    private LocalDateTime delDate; // 삭제 날짜
 
 
     public Review(Long userSeq, Long selectSeq, String reviewContent, Double reviewWeather,
