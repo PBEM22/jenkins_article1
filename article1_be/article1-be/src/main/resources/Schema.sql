@@ -168,7 +168,7 @@ CREATE TABLE blame (
                        blame_user_seq BIGINT NOT NULL,
                        blame_board_seq BIGINT NULL,
                        blame_reply_seq BIGINT NULL,
-                       blame_review_seq BIGINT NOT NULL,
+                       blame_review_seq BIGINT NULL,
                        blame_status BOOLEAN NOT NULL DEFAULT TRUE COMMENT '처리 상태 (TRUE : 미처리, FALSE : 처리됨)',
                        blame_processing_date DATETIME NULL,
                        reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
