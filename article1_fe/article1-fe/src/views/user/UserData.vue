@@ -29,7 +29,7 @@ const handleRegisterUser = async () => {
       styleSeq: styleSeq.value,
     };
 
-    await axios.post('http://localhost:8080/user/data', userData); // Authorization 헤더는 기본 설정 사용
+    await axios.post('/user/data', userData); // Authorization 헤더는 기본 설정 사용
     alert('사용자 정보와 선호도가 등록되었습니다.');
     router.push("/");
   } catch (error) {

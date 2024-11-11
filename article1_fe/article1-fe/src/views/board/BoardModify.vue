@@ -93,7 +93,7 @@ const boardData = ref({});
 async function fetchData() {
   try {
     const boardSeq = route.params.boardSeq;
-    const response = await axios.get(`http://localhost:8080/board/${boardSeq}`, {
+    const response = await axios.get(`/board/${boardSeq}`, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`
       }
@@ -134,7 +134,7 @@ async function sendData() {
       formData.append("imageList", image);
     });
 
-    const response = await axios.put(`http://localhost:8080/board/${route.params.boardSeq}`, formData, {
+    const response = await axios.put(`/board/${route.params.boardSeq}`, formData, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
         'Content-Type': 'multipart/form-data'

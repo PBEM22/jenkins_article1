@@ -79,7 +79,7 @@ logging:
 
 springdoc:
   swagger-ui:
-    path: /
+    path: /boot/swagger
     groups-order: DESC # path, query, body, response 순으로 출력
 
 token:
