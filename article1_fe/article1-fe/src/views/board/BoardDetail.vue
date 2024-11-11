@@ -84,7 +84,7 @@ async function fetchReplyList() {
     if (response.status === 200) {
       replyList.value = response.data;
       console.log("조회된 댓글 데이터", replyList.value);
-    } else if(response.status === 404) {
+    } else if (response.status === 404) {
       console.log("게시글에 댓글이 없습니다.")
     } else {
       console.log("댓글 조회 실패", `코드: ${response.status}`);
@@ -160,55 +160,53 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="background">
-    <Container>
-      <TitleBar
-          :user-seq="boardData.userSeq"
-          :reg-data="boardData.regDate"
-      />
-      <ContentArea
-          :board-title="boardData.boardTitle"
-          :board-content="boardData.boardContent"
-          :board-picture-list="boardData.boardPictureList"
-          @delete="openModal"
-      />
-      <div class="buttons">
-        <NormalButton @click="goToList" text="목록"/>
-        <NormalButton @click="goToRegister" text="글쓰기"/>
-      </div>
-      <template v-if="replyList.length > 0">
-        <hr class="divider"/>
-        <div class="replies">
-          <table class="reply-table">
-            <tbody>
-            <tr v-for="reply in replyList" :key="reply.replySeq">
-              <td>
-                <ReplyLi
-                    :user-seq="reply.replyUserSeq"
-                    :reply-content="reply.replyContent"
-                    :reg-date="reply.regDate"
-                    :reply-seq="reply.replySeq"
-                    @delete="handleDeleteReply"
-                />
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </template>
+  <Container>
+    <TitleBar
+        :user-seq="boardData.userSeq"
+        :reg-data="boardData.regDate"
+    />
+    <ContentArea
+        :board-title="boardData.boardTitle"
+        :board-content="boardData.boardContent"
+        :board-picture-list="boardData.boardPictureList"
+        @delete="openModal"
+    />
+    <div class="buttons">
+      <NormalButton @click="goToList" text="목록"/>
+      <NormalButton @click="goToRegister" text="글쓰기"/>
+    </div>
+    <template v-if="replyList.length > 0">
       <hr class="divider"/>
-      <div class="reply-input-container">
-        <ReplyInput @submit="handleCommentSubmit"/>
+      <div class="replies">
+        <table class="reply-table">
+          <tbody>
+          <tr v-for="reply in replyList" :key="reply.replySeq">
+            <td>
+              <ReplyLi
+                  :user-seq="reply.replyUserSeq"
+                  :reply-content="reply.replyContent"
+                  :reg-date="reply.regDate"
+                  :reply-seq="reply.replySeq"
+                  @delete="handleDeleteReply"
+              />
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
+    </template>
+    <hr class="divider"/>
+    <div class="reply-input-container">
+      <ReplyInput @submit="handleCommentSubmit"/>
+    </div>
 
-      <!-- 모달 추가 -->
-      <Modal
-          v-if="showModal"
-          :on-confirm="confirmDelete"
-          :on-cancel="cancelDelete"
-      />
-    </Container>
-  </div>
+    <!-- 모달 추가 -->
+    <Modal
+        v-if="showModal"
+        :on-confirm="confirmDelete"
+        :on-cancel="cancelDelete"
+    />
+  </Container>
 </template>
 
 <style scoped>
