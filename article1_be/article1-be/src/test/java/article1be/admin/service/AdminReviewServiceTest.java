@@ -48,7 +48,7 @@ class AdminReviewServiceTest {
     @Test
     void testGetAllReviews() {
         // given
-        Review review = new Review(1L, 1L, "xxx", 22.5, 126.8, false, false);
+        Review review = new Review(1L, 1L, "xxx", 22.5, "신대방", false, false);
         User user = new User(
                 UserSocialSite.KAKAO,
                 "test@ekakao.com",
@@ -89,7 +89,7 @@ class AdminReviewServiceTest {
     @Test
     void testUpdateReviewStatus() {
         // given
-        Review review = new Review(1L, 1L, "xxxx", 22.5, 126.8, false, false);
+        Review review = new Review(1L, 1L, "xxxx", 22.5, "신대방", false, false);
         AdminReviewDTO.ReviewStatusUpdateRequest request = new AdminReviewDTO.ReviewStatusUpdateRequest(1L, true);
 
         when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
