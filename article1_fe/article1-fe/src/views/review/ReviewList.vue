@@ -24,12 +24,31 @@
         <div class="table-cell">{{ review.userNickname }}</div>
         <div class="table-cell">{{ review.location }}</div>
         <div class="table-cell">{{ review.weather }}°C</div>
+
         <div class="table-cell review-content">
           <p>{{ review.reviewContent }}</p>
+
+          <!-- 옷 정보 슬라이더 추가 -->
+          <div v-if="review.outfits && review.outfits.length > 0" class="outfit-slider">
+            <button class="slider-btn" @click="scrollOutfits(index, -1)">←</button>
+            <div class="outfit-images">
+              <img
+                  v-for="outfit in getVisibleOutfits(review.outfits, index)"
+                  :key="outfit.outfitSeq"
+                  :src="getImageUrl(outfit.outfitSeq)"
+                  :alt="outfit.outfitName"
+                  class="outfit-image"
+              />
+            </div>
+            <button class="slider-btn" @click="scrollOutfits(index, 1)">→</button>
+          </div>
         </div>
+
         <div class="table-cell date-time">
           <div class="reg-date">{{ review.regDate }}</div>
-          <div class="like-indicator">좋아요 {{ review.reviewLikeYn ? "👍" : "👎" }}</div>
+          <div class="like-indicator">
+            {{ review.reviewLikeYn ? '좋아요 👍' : '싫어요 👎' }}
+          </div>
           <button class="report-btn" @click="reportReview(review.reviewSeq)">신고</button>
         </div>
       </div>
@@ -47,8 +66,8 @@
 <script>
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '@/store/authStore'; // authStore 경로 확인 필요
-import Pagination from '@/components/common/Pagination.vue'; // Pagination 컴포넌트 경로 확인 필요
+import { useAuthStore } from '@/store/authStore';
+import Pagination from '@/components/common/Pagination.vue';
 
 export default {
   components: {
@@ -59,8 +78,9 @@ export default {
     const selectedCategory = ref('all');
     const searchQuery = ref('');
     const reviews = ref([]);
+    const reportedReviews = ref([]);
+    const currentIndexes = ref([]); // 각 리뷰의 슬라이드 시작 인덱스
 
-    // Pagination state
     const currentPage = ref(1);
     const itemsPerPage = 10;
 
@@ -72,6 +92,7 @@ export default {
           }
         });
         reviews.value = response.data;
+        currentIndexes.value = Array(reviews.value.length).fill(0); // 각 리뷰에 대한 슬라이드 시작 인덱스 초기화
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
@@ -90,14 +111,12 @@ export default {
       });
     });
 
-    // 페이지별로 표시할 리뷰 계산
     const paginatedReviews = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       return filteredReviews.value.slice(start, end);
     });
 
-    // 총 페이지 수 계산
     const totalPages = computed(() => {
       return Math.ceil(filteredReviews.value.length / itemsPerPage);
     });
@@ -108,9 +127,39 @@ export default {
       }
     };
 
-    const reportReview = (reviewSeq) => {
-      console.log(`Review ${reviewSeq} reported.`);
-      // 신고 처리 로직을 추가할 수 있습니다.
+    const reportReview = async (reviewSeq) => {
+      if (reportedReviews.value.includes(reviewSeq)) {
+        alert('이미 신고된 리뷰입니다.');
+        return;
+      }
+
+      try {
+        await axios.post(`/blame/review/${reviewSeq}`, {}, {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`
+          }
+        });
+        reportedReviews.value.push(reviewSeq);
+        alert('신고가 완료되었습니다.');
+      } catch (error) {
+        console.error("Failed to report review:", error);
+        alert('신고에 실패하였습니다. 다시 시도해 주세요.');
+      }
+    };
+
+    const getVisibleOutfits = (outfits, reviewIndex) => {
+      const startIndex = currentIndexes.value[reviewIndex];
+      return outfits.slice(startIndex, startIndex + 2); // 최대 2개의 옷 이미지를 반환
+    };
+
+    const scrollOutfits = (reviewIndex, direction) => {
+      const maxIndex = Math.max(0, reviews.value[reviewIndex].outfits.length - 2);
+      currentIndexes.value[reviewIndex] += direction;
+      if (currentIndexes.value[reviewIndex] < 0) {
+        currentIndexes.value[reviewIndex] = maxIndex;
+      } else if (currentIndexes.value[reviewIndex] > maxIndex) {
+        currentIndexes.value[reviewIndex] = 0;
+      }
     };
 
     onMounted(fetchReviews);
@@ -125,8 +174,16 @@ export default {
       currentPage,
       totalPages,
       goToPage,
+      reportedReviews,
+      getVisibleOutfits,
+      scrollOutfits
     };
   },
+  methods: {
+    getImageUrl(outfitSeq) {
+      return new URL(`/src/assets/images/outfits/${outfitSeq}.png`, import.meta.url).href;
+    }
+  }
 };
 </script>
 
@@ -180,20 +237,19 @@ h2 {
   padding: 10px;
   background-color: #cce4ff;
   border-radius: 8px;
-}
-
-.header-cell {
-  text-align: center;
   font-weight: bold;
-  color: #555;
 }
 
 .table-row {
   display: grid;
   grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
   align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd; /* 일정한 밑줄을 각 행에 적용 */
+}
+
+.table-cell {
+  padding: 10px 5px; /* 셀마다 균일한 패딩 설정 */
 }
 
 .review-content {
@@ -224,9 +280,39 @@ h2 {
 
 .report-btn {
   background-color: transparent;
-  border: none;
-  color: #888;
+  border: 1px solid #ddd;
+  color: #555;
   cursor: pointer;
   font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+.outfit-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.outfit-images {
+  display: flex;
+  overflow-x: hidden;
+  gap: 10px;
+  max-width: 150px;
+}
+
+.outfit-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.slider-btn {
+  background-color: #ddd;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 </style>

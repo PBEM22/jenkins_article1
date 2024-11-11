@@ -107,52 +107,54 @@ onMounted(() => {
 
 <template>
   <Container>
-    <table>
-      <tbody>
-      <!-- 공지사항 표시 (최대 2개) -->
-      <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
-        <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                       @click="goToDetailPage(item.boardSeq)"
-                       :title="item.boardTitle"
-                       :content="item.boardContent"
-                       :date="formatDate(item.regDate)"
-                       :writer="item.userSeq"
-                       :imageUrl="item.boardPictureList[0]?.pictureUrl"
-        />
-        <BoardNoticeLi v-else
-                       @click="goToDetailPage(item.boardSeq)"
-                       :title="item.boardTitle"
-                       :content="item.boardContent"
-                       :date="formatDate(item.regDate)"
-                       :writer="item.userSeq"
-                       :imageUrl="null"
-        />
-      </tr>
-      <tr v-else>
-        <td colspan="5" class="no-results">조회 결과가 없습니다.</td> <!-- colspan을 추가하여 전체 열을 차지하게 함 -->
-      </tr>
+    <template v-if="noticeList && regularPosts">
+      <table>
+        <tbody>
+        <!-- 공지사항 표시 (최대 2개) -->
+        <tr v-if="noticeList && noticeList.length > 0" v-for="item in noticeList.slice(0, 2)" :key="item.boardSeq">
+          <BoardNoticeLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
+                         @click="goToDetailPage(item.boardSeq)"
+                         :title="item.boardTitle"
+                         :content="item.boardContent"
+                         :date="formatDate(item.regDate)"
+                         :writer="item.userSeq"
+                         :imageUrl="item.boardPictureList[0]?.pictureUrl"
+          />
+          <BoardNoticeLi v-else
+                         @click="goToDetailPage(item.boardSeq)"
+                         :title="item.boardTitle"
+                         :content="item.boardContent"
+                         :date="formatDate(item.regDate)"
+                         :writer="item.userSeq"
+                         :imageUrl="null"
+          />
+        </tr>
 
-      <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
-      <tr v-if="regularPosts && regularPosts.length > 0" v-for="item in regularPosts" :key="item.boardSeq">
-        <BoardLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
-                 @click="goToDetailPage(item.boardSeq)"
-                 :title="item.boardTitle"
-                 :content="item.boardContent"
-                 :date="formatDate(item.regDate)"
-                 :writer="item.userSeq"
-                 :imageUrl="item.boardPictureList[0]?.pictureUrl"
-        />
-        <BoardLi v-else
-                 @click="goToDetailPage(item.boardSeq)"
-                 :title="item.boardTitle"
-                 :content="item.boardContent"
-                 :date="formatDate(item.regDate)"
-                 :writer="item.userSeq"
-                 :imageUrl="null"
-        />
-      </tr>
-      </tbody>
-    </table>
+        <!-- 모든 일반 게시물 표시 (공지사항 제외) -->
+        <tr v-if="regularPosts && regularPosts.length > 0" v-for="item in regularPosts" :key="item.boardSeq">
+          <BoardLi v-if="item.boardPictureList && item.boardPictureList.length > 0"
+                   @click="goToDetailPage(item.boardSeq)"
+                   :title="item.boardTitle"
+                   :content="item.boardContent"
+                   :date="formatDate(item.regDate)"
+                   :writer="item.userSeq"
+                   :imageUrl="item.boardPictureList[0]?.pictureUrl"
+          />
+          <BoardLi v-else
+                   @click="goToDetailPage(item.boardSeq)"
+                   :title="item.boardTitle"
+                   :content="item.boardContent"
+                   :date="formatDate(item.regDate)"
+                   :writer="item.userSeq"
+                   :imageUrl="null"
+          />
+        </tr>
+        </tbody>
+      </table>
+    </template>
+    <template v-else>
+      <td colspan="5" class="no-results">조회 결과가 없습니다.</td> <!-- colspan을 추가하여 전체 열을 차지하게 함 -->
+    </template>
     <div class="button-container">
       <NormalButton
           @click="goToRegister"

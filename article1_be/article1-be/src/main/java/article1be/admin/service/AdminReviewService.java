@@ -4,6 +4,8 @@ import article1be.admin.dto.AdminReviewDTO;
 import article1be.admin.repository.AdminReviewRepository;
 import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
+import article1be.outfit.dto.OutfitResponseDTO;
+import article1be.outfit.repository.SelectOutfitRepository;
 import article1be.review.entity.Review;
 import article1be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,23 @@ public class AdminReviewService {
 
     private final AdminReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final SelectOutfitRepository selectOutfitRepository;
 
     // 전체 리뷰 목록 조회
     public List<AdminReviewDTO.ReviewInfo> getAllReviews() {
-        List<Review> reviews = reviewRepository.findAll();
-        return reviews.stream()
+        return reviewRepository.findAll().stream()
                 .map(review -> {
                     String userNickname = userRepository.findById(review.getUserSeq())
                             .map(user -> user.getUserNickname())
                             .orElse("Unknown User");
+
+                    List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq())
+                            .stream()
+                            .map(selectOutfit -> new OutfitResponseDTO(
+                                    selectOutfit.getOutfit().getOutfitSeq(),
+                                    selectOutfit.getOutfit().getOutfitName()
+                            ))
+                            .collect(Collectors.toList());
 
                     return new AdminReviewDTO.ReviewInfo(
                             review.getReviewSeq(),
@@ -35,10 +45,10 @@ public class AdminReviewService {
                             review.getReviewLocation(),
                             review.getReviewWeather(),
                             review.getReviewContent(),
-                            review.getReviewBlind() ? "BLIND" : "ACTIVE",
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
-                            review.getRegDate()
+                            review.getRegDate(),
+                            outfits // 의상 정보 포함
                     );
                 })
                 .collect(Collectors.toList());

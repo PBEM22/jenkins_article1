@@ -81,7 +81,8 @@ public class BlameService {
     // 리뷰 신고
     @Transactional
     public void createReviewBlame(long reviewSeq, long userSeq) {
-        blameRepository.save(Blame.builder()
+
+                 blameRepository.save(Blame.builder()
                 .blameUserSeq(userSeq)
                 .blameBoardSeq(null)
                 .blameReplySeq(null)
