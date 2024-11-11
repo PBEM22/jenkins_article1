@@ -45,7 +45,7 @@ function moveToItem(move) {
       item = '/map';
       break;
     case 'review':
-      item = '/review';
+      item = isAdmin.value ? '/admin/review' : '/review';
       break;
     case 'board':
       item = '/board';
