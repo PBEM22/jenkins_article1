@@ -44,7 +44,7 @@ class ReviewServiceTest {
     @Test
     void testGetAllReviews() {
         // given
-        Review review = new Review(1L, 1L, "xxxx", 22.5, 126.8, false, false);
+        Review review = new Review(1L, 1L, "xxxx", 22.5, "신대방", false, false);
         User user = new User(UserSocialSite.KAKAO, "test@kakao.com", "hyun", "010-1234-5678",
                 LocalDate.of(1990, 1, 1), UserGender.MALE, UserState.ACTIVE, UserAuth.USER);
 
