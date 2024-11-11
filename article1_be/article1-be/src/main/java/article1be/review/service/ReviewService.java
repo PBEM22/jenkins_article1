@@ -36,7 +36,6 @@ public class ReviewService {
                             .map(user -> user.getUserNickname())
                             .orElse("Unknown User");
 
-                    // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
                     List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                             .map(selectOutfit -> new OutfitResponseDTO(
                                     selectOutfit.getOutfit().getOutfitSeq(),
@@ -57,7 +56,9 @@ public class ReviewService {
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
                             review.getRegDate(),
+                            review.getDelDate(),
                             outfits
+
                     );
                 })
                 .collect(Collectors.toList());
@@ -95,6 +96,7 @@ public class ReviewService {
                             review.getReviewLikeYn(),
                             review.getReviewBlind(),
                             review.getRegDate(),
+                            review.getDelDate(),
                             outfits
                     );
                 })
@@ -114,7 +116,7 @@ public class ReviewService {
                 reviewDto.getWeather(),
                 reviewDto.getLocation(),
                 "BLIND".equals(reviewDto.getReviewStatus()),
-                false
+                reviewDto.isReviewLikeYn()
         );
         review = reviewRepository.save(review);
 
@@ -122,7 +124,6 @@ public class ReviewService {
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
-        // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
         List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                 .map(selectOutfit -> new OutfitResponseDTO(
                         selectOutfit.getOutfit().getOutfitSeq(),
@@ -142,6 +143,7 @@ public class ReviewService {
                 review.getReviewLikeYn(),
                 review.getReviewBlind(),
                 review.getRegDate(),
+                review.getDelDate(),
                 outfits
         );
     }
@@ -156,14 +158,13 @@ public class ReviewService {
                 reviewDto.getWeather(),
                 reviewDto.getLocation(),
                 "BLIND".equals(reviewDto.getReviewStatus()),
-                review.getReviewLikeYn()
+                reviewDto.isReviewLikeYn()
         );
 
         String userNickname = userRepository.findById(review.getUserSeq())
                 .map(user -> user.getUserNickname())
                 .orElse("Unknown User");
 
-        // Fetch Join을 사용하여 selectOutfits와 관련된 outfit 정보 한 번에 가져오기
         List<OutfitResponseDTO> outfits = selectOutfitRepository.findBySelectRecord_SelectSeqWithOutfit(review.getSelectSeq()).stream()
                 .map(selectOutfit -> new OutfitResponseDTO(
                         selectOutfit.getOutfit().getOutfitSeq(),
@@ -183,6 +184,7 @@ public class ReviewService {
                 review.getReviewLikeYn(),
                 review.getReviewBlind(),
                 review.getRegDate(),
+                review.getDelDate(),
                 outfits
         );
     }

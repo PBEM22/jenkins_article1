@@ -5,6 +5,7 @@ import article1be.common.exception.ErrorCode;
 import article1be.outfit.entity.SelectOutfit;
 import article1be.outfit.entity.SelectRecord;
 import article1be.outfit.entity.Style;
+import article1be.outfit.repository.SelectOutfitCustomRepository;
 import article1be.outfit.repository.SelectOutfitRepository;
 import article1be.outfit.repository.SelectRecordRepository;
 import article1be.security.util.SecurityUtil;
@@ -25,10 +26,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,6 +40,7 @@ public class UserService implements UserDetailsService {
     private final ConditionRepository conditionRepository;
     private final SelectRecordRepository selectRecordRepository;
     private final SelectOutfitRepository selectOutfitRepository;
+    private final SelectOutfitCustomRepository selectOutfitCustomRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userSeq) throws UsernameNotFoundException {
@@ -230,4 +230,32 @@ public class UserService implements UserDetailsService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public SelectOutfitStatsResponseDTO getSelectOutfitStats(Long userSeq, String startDate, String endDate) {
+        User user = userRepository.findByUserSeqWithStyleAndCondition(userSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+        LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+
+        List<Object[]> results = selectOutfitCustomRepository.findStatsByDateRange(start, end);
+
+        // 카테고리별로 데이터 그룹화
+        Map<String, List<OutfitStatsDTO>> groupedByCategory = results.stream()
+                .map(row -> new OutfitStatsDTO(
+                        (String) row[0],
+                        ((Number) row[1]).longValue(), // outfitSeq
+                        (String) row[2],              // outfitName
+                        ((Number) row[3]).longValue(), // selectionCount
+                        ((Number) row[4]).doubleValue() // percentage
+                ))
+                .collect(Collectors.groupingBy(OutfitStatsDTO::getCategory)); // getCategory()로 그룹화
+
+        // Map을 DTO 리스트로 변환
+        List<CategoryStatsDTO> categories = groupedByCategory.entrySet().stream()
+                .map(entry -> new CategoryStatsDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        return new SelectOutfitStatsResponseDTO(startDate, endDate, categories);
+    }
+
 }

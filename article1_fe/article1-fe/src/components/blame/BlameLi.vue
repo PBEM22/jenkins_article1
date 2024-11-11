@@ -1,6 +1,7 @@
 <script setup>
 import {defineEmits, defineProps, ref} from 'vue';
 import axios from "axios";
+import {useRouter} from "vue-router"; // router 가져오기
 import {useAuthStore} from "@/store/authStore.js"; // authStore 가져오기
 
 const props = defineProps({
@@ -13,28 +14,29 @@ const props = defineProps({
 
 const emit = defineEmits(['update:status']); // 이벤트 정의
 const authStore = useAuthStore(); // authStore 초기화
+const router = useRouter(); // router 초기화
 
 // 상태 변경 요청 함수
 const updateStatus = async (newStatus) => {
-  if (newStatus === 'false') { // 상태가 false로 변경될 때만 요청
-    let url;
-    const data = ref({})
+  let url;
+  const data = ref({});
 
-    // type에 따라 URL 설정
+  if (newStatus === 'false') {
+    // 상태를 false로 변경
     switch (props.type) {
       case '게시글':
         url = `/admin/board/setting`;
         data.value = {
           boardSeq: props.seq,
           isBlind: true
-        }
+        };
         break;
       case '댓글':
         url = `/admin/reply/setting`;
         data.value = {
           replySeq: props.seq,
           isBlind: true
-        }
+        };
         break;
       case '리뷰':
         url = `/admin/review/status`;
@@ -48,24 +50,21 @@ const updateStatus = async (newStatus) => {
         return;
     }
   } else {
-    let url;
-    const data = ref({})
-
-    // type에 따라 URL 설정
+    // 상태를 true로 변경
     switch (props.type) {
       case '게시글':
         url = `/admin/board/setting`;
         data.value = {
           boardSeq: props.seq,
           isBlind: false
-        }
+        };
         break;
       case '댓글':
         url = `/admin/reply/setting`;
         data.value = {
           replySeq: props.seq,
           isBlind: false
-        }
+        };
         break;
       case '리뷰':
         url = `/admin/review/status`;
@@ -81,7 +80,7 @@ const updateStatus = async (newStatus) => {
   }
 
   try {
-    const response = await axios.put(url, data, {
+    const response = await axios.put(url, data.value, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`
       }
@@ -98,16 +97,25 @@ const updateStatus = async (newStatus) => {
 
   emit('update:status', newStatus); // 상태 변경 이벤트 발생
 };
+
+// 게시글 상세 페이지로 이동
+const goToDetail = () => {
+  if (props.type === '게시글') {
+    router.push(`/board/${props.seq}`);
+  } else {
+    console.error('게시글 타입이 아닙니다. 상세 페이지 이동이 지원되지 않습니다.');
+  }
+};
 </script>
 
 <template>
-  <div class="review-card">
+  <div class="review-card" @click="goToDetail">
     <div class="item">{{ seq }}</div>
     <div class="item">{{ type }}</div>
     <div class="item">{{ content }}</div>
     <div class="item">{{ writer }}</div>
     <div class="item">
-      <select :value="status" @change="event => updateStatus(event.target.value)">
+      <select :value="status" @click.stop @change="event => updateStatus(event.target.value)">
         <option value="true">블라인드</option>
         <option value="false">해제</option>
       </select>
@@ -123,6 +131,12 @@ const updateStatus = async (newStatus) => {
   background-color: #f9f9f9;
   padding: 8px;
   margin: 8px 0;
+  cursor: pointer; /* 클릭 가능 표시 */
+  transition: background-color 0.3s;
+}
+
+.review-card:hover {
+  background-color: #f0f0f0; /* 마우스 오버 시 배경 색 변경 */
 }
 
 .item {
@@ -132,5 +146,9 @@ const updateStatus = async (newStatus) => {
 
 .item:nth-child(3) {
   flex: 3;
+}
+
+select {
+  cursor: pointer;
 }
 </style>

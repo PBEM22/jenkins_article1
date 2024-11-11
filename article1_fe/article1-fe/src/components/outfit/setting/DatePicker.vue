@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { useSelectedInfoStore } from "@/store/selectedInfoStore";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
@@ -31,12 +32,14 @@ export default {
       minDate: today,
       maxDate: maxDate,
       displayDateFormat: "yyyy년 MM월 dd일",
-      buttonText: "Select", // 버튼 초기 텍스트
-      isButtonDisabled: false, // 버튼 비활성화 여부
+      buttonText: "선택",
+      isButtonDisabled: false,
     };
   },
   methods: {
     handleDateChange() {
+      this.store.setDate(this.selectedDate);
+
       // 날짜가 변경되었을 때 버튼 텍스트를 "선택 완료"로 설정하고 버튼을 비활성화
       this.buttonText = "선택 완료";
       this.isButtonDisabled = true;
@@ -53,8 +56,13 @@ export default {
       }
     },
   },
+  computed: {
+    store() {
+      return useSelectedInfoStore();
+    },
+  },
   mounted() {
-     this.updateButtonText();
+    this.updateButtonText();
   },
 };
 </script>

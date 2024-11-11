@@ -57,7 +57,7 @@ const filteredBoard = computed(() => {
   const searchTerm = searchQuery.value.toLowerCase();
 
   return board.value
-      .filter(item => userSeqSet.has(item.userSeq)) // userSeq가 같은 게시글 필터링
+      .filter(item => userSeqSet.has(item.userSeq))
       .filter(item => {
         return (
             item.boardTitle.toLowerCase().includes(searchTerm) || item.boardContent.toLowerCase().includes(searchTerm)
@@ -71,11 +71,13 @@ const totalPages = computed(() => {
 
 const paginatedBoard = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
+
   return filteredBoard.value.slice(start, start + itemsPerPage);
 });
 
 const goToPage = (page) => {
   if (page < 1 || page > totalPages.value) return;
+
   currentPage.value = page;
 };
 
@@ -95,24 +97,24 @@ onMounted(() => {
     <div class="header">
       <h1>내가 작성한 게시글</h1>
       <div class="search-container">
-        <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="검색어 입력"
-            class="search-input"
-        />
+        <input type="text" v-model="searchQuery" placeholder="검색어 입력" class="search-input"/>
         <button class="search-button" @click="currentPage = 1">검색</button>
       </div>
     </div>
 
-    <div class="board-list">
-      <div class="board-item" v-for="item in paginatedBoard" :key="item.boardSeq">
-        <div class="board-details">
-          <div>제목 : {{ item.boardTitle }}</div>
-          <div>내용 : {{ item.boardContent }}</div>
-          <div>등록일 : {{ item.regDate }}</div>
-          <div>이름 : {{ detail.find(user => user.userSeq === item.userSeq)?.userName }}</div>
-        </div>
+    <div class="board-table">
+      <div class="table-header">
+        <span class="header-cell">등록일</span>
+        <span class="header-cell">제목</span>
+        <span class="header-cell">내용</span>
+        <span class="header-cell">이름</span>
+      </div>
+
+      <div class="table-row" v-for="item in paginatedBoard" :key="item.boardSeq">
+        <div class="table-cell">{{ item.regDate.slice(0, 10) }}</div>
+        <div class="table-cell">{{ item.boardTitle }}</div>
+        <div class="table-cell">{{ item.boardContent }}</div>
+        <div class="table-cell">{{ detail.find(user => user.userSeq === item.userSeq)?.userName }}</div>
       </div>
     </div>
 
@@ -158,18 +160,33 @@ onMounted(() => {
   background-color: #0056b3;
 }
 
-.board-list {
-  display: flex;
-  flex-direction: column;
+.board-table {
+  background-color: #f9f9ff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-.board-item {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  margin-bottom: 1rem;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 1fr;
+  padding: 10px;
+  background-color: #cce4ff;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center; /* 가운데 정렬 추가 */
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 1fr;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-cell {
+  padding: 10px 5px;
+  text-align: center;
 }
 </style>

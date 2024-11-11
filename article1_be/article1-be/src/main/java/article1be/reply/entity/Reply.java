@@ -13,16 +13,20 @@ public class Reply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long replySeq;
-    Long boardSeq;
-    Long replyUserSeq;
+    long replySeq;
+    long boardSeq;
+    long replyUserSeq;
     String replyContent;
     LocalDateTime regDate;
     LocalDateTime delDate;
-    Boolean replyIsBlind;
+    boolean replyIsBlind;
 
     public void setBlind() {
         this.replyIsBlind = true;
+    }
+
+    public void setDelDate() {
+        this.delDate = LocalDateTime.now();
     }
 
     public Reply create(ReplyDTO replyDTO) {

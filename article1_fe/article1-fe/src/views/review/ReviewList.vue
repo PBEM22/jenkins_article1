@@ -45,7 +45,7 @@
         </div>
 
         <div class="table-cell date-time">
-          <div class="reg-date">{{ review.regDate }}</div>
+          <div class="reg-date">{{ review.regDate.slice(0, 10) }}</div>
           <div class="like-indicator">
             {{ review.reviewLikeYn ? '좋아요 👍' : '싫어요 👎' }}
           </div>
@@ -54,7 +54,6 @@
       </div>
     </div>
 
-    <!-- Pagination Component -->
     <Pagination
         :currentPage="currentPage"
         :totalPages="totalPages"
@@ -79,7 +78,7 @@ export default {
     const searchQuery = ref('');
     const reviews = ref([]);
     const reportedReviews = ref([]);
-    const currentIndexes = ref([]); // 각 리뷰의 슬라이드 시작 인덱스
+    const currentIndexes = ref([]);
 
     const currentPage = ref(1);
     const itemsPerPage = 10;
@@ -91,8 +90,8 @@ export default {
             Authorization: `Bearer ${authStore.accessToken}`
           }
         });
-        reviews.value = response.data;
-        currentIndexes.value = Array(reviews.value.length).fill(0); // 각 리뷰에 대한 슬라이드 시작 인덱스 초기화
+        reviews.value = response.data.sort((a, b) => new Date(b.regDate) - new Date(a.regDate));
+        currentIndexes.value = Array(reviews.value.length).fill(0);
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       }
@@ -100,6 +99,10 @@ export default {
 
     const filteredReviews = computed(() => {
       return reviews.value.filter((review) => {
+        if (review.delDate !== null) {
+          return false;
+        }
+
         if (selectedCategory.value === 'all') {
           return true;
         } else if (selectedCategory.value === 'author') {
@@ -233,16 +236,17 @@ h2 {
 
 .table-header {
   display: grid;
-  grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 2fr 1fr;
   padding: 10px;
   background-color: #cce4ff;
   border-radius: 8px;
   font-weight: bold;
+  text-align: center;
 }
 
 .table-row {
   display: grid;
-  grid-template-columns: 0.7fr 0.7fr 0.7fr 3fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 2fr 1fr;
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #ddd; /* 일정한 밑줄을 각 행에 적용 */
@@ -250,6 +254,7 @@ h2 {
 
 .table-cell {
   padding: 10px 5px; /* 셀마다 균일한 패딩 설정 */
+  text-align: center;
 }
 
 .review-content {
@@ -293,6 +298,7 @@ h2 {
   align-items: center;
   gap: 10px;
   margin-top: 10px;
+  justify-content: center;
 }
 
 .outfit-images {

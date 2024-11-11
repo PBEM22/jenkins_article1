@@ -1,5 +1,9 @@
 <template>
   <div class="recommendation-container">
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>복장을 추천 중입니다. 잠시만 기다려주세요.</p>
+    </div>
     <div class="title">{{ title }}</div>
     <div class="content-wrapper">
       <!-- 왼쪽 섹션 -->
@@ -9,9 +13,11 @@
           <div class="carousel-container">
             <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
               <div
-                  v-for="item in items"
+                  v-for="(item, index) in items"
                   :key="item.outfitSeq"
                   class="item-card"
+                  :class="{
+                    'first-item': index === 0}"
                   @click="alertGuest"
               >
                 <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
@@ -31,9 +37,11 @@
           <div class="carousel-container">
             <div class="carousel" :style="{ transform: `translateX(-${carouselOffsets[category]}px)` }">
               <div
-                  v-for="item in items"
+                  v-for="(item, index) in items"
                   :key="item.outfitSeq"
                   class="item-card"
+                  :class="{
+                    'first-item': index === 0}"
                   @click="alertGuest"
               >
                 <img :src="getImageSrc(item.outfitSeq)" alt="Outfit Image" />
@@ -57,6 +65,7 @@ import { useRouter } from "vue-router";
 export default {
   data() {
     return {
+      isLoading: true,
       outfits: {
         TOP: [],
         BOTTOM: [],
@@ -101,6 +110,7 @@ export default {
     async fetchOutfitRecommendations() {
       const store = useSelectedInfoStore();
       try {
+        this.isLoading = true;
         let date = new Date(store.selectedDate);
         date.setHours(date.getHours() + 9);
         const response = await axios.post("http://localhost:8080/guest/outfit/recommendations", {
@@ -112,6 +122,8 @@ export default {
         this.outfits = response.data;
       } catch (error) {
         console.error("추천 데이터를 불러오지 못했습니다:", error);
+      } finally {
+        this.isLoading = false; // 로딩 상태 종료
       }
     },
     getCategoryName(category) {
@@ -196,6 +208,11 @@ export default {
   background-color: #f9f9f9;
 }
 
+.item-card.first-item {
+  border: 2px solid #ff9800; /* 가장 앞 복장의 테두리를 강조 */
+  background-color: #fff5e6; /* 강조된 배경색 */
+}
+
 .item-card img {
   width: 100%;
   height: 100%;
@@ -236,11 +253,51 @@ export default {
 }
 
 .save-button-container {
-  margin-top: 70px; /* 선택 완료 버튼 위 간격 축소 */
+  margin-top: 70px;
 }
 
 .save-button-container button {
-  padding: 5px 10px; /* 버튼 크기 줄이기 */
-  font-size: 0.9rem; /* 버튼 텍스트 크기 축소 */
+  padding: 5px 10px;
+  font-size: 0.9rem;
 }
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.spinner {
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay p {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #555;
+  font-weight: bold;
+}
+
+
 </style>

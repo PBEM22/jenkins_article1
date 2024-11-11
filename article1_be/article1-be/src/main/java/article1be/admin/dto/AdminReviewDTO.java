@@ -22,7 +22,7 @@ public class AdminReviewDTO {
         private Long reviewSeq;         // 리뷰 번호
         private Long userSeq;           // 유저 번호
         private String userNickname;    // 유저 닉네임
-        private double location;        // 위치 정보
+        private String location;        // 위치 정보
         private double weather;         // 날씨 정보
         private String reviewContent;   // 리뷰 내용
         private boolean reviewLikeYn;

@@ -1,58 +1,55 @@
 package article1be.reply.service;
 
-import article1be.board.dto.BoardDTO;
-import article1be.board.dto.RequestBoard;
-import article1be.board.entity.Board;
-import article1be.reply.dto.ReplyDTO;
-import jakarta.transaction.Transactional;
+import article1be.reply.entity.Reply;
+import article1be.reply.repository.ReplyRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class ReplyServiceTest {
 
-    @Autowired
+    @Mock
+    private ReplyRepository replyRepository;
+
+    @InjectMocks
     private ReplyService service;
 
     @Test
     @DisplayName("t1: 댓글 목록 조회 테스트")
     public void t1() {
+        // Mock 데이터 생성
+        List<Reply> mockReplyList = new ArrayList<>();
+        mockReplyList.add(new Reply());
 
-        List<ReplyDTO> list = service.getReplyList(1L);
+        // Mock 설정
+        Mockito.when(replyRepository.findByBoardSeqAndReplyIsBlindFalse(1L)).thenReturn(mockReplyList);
 
-        Assertions.assertDoesNotThrow(() -> {
-            if (list == null) {
-                throw new RuntimeException("댓글 목록 조회에 실패하였습니다.");
-            } else if (list.size() < 1) {
-                System.out.println("등록된 댓글이 없습니다.");
-            } else {
-                System.out.println("조회에 성공하였습니다.");
-                list.forEach(System.out::println);
-            }
-        });
+        // Assertions
+        Assertions.assertNotNull(service.getReplyList(1L));
+        Assertions.assertEquals(mockReplyList.size(), service.getReplyList(1L).size());
+        Assertions.assertEquals(mockReplyList.get(0).getBoardSeq(), service.getReplyList(1L).get(0).getBoardSeq());
     }
 
     @Test
-    @DisplayName("t2: 댓글 삭제")
+    @DisplayName("t2: 블라인드 처리된 전체 댓글 조회")
     public void t2() {
+        // Mock 데이터 생성
+        List<Reply> mockReplyList = new ArrayList<>();
+        mockReplyList.add(new Reply());
 
-        boolean result = service.deleteReply(1L);
+        Mockito.when(replyRepository.findByReplyIsBlindTrue()).thenReturn(mockReplyList);
 
-        Assertions.assertDoesNotThrow(() -> {
-            if (result) {
-                System.out.println("게시글 삭제 성공");
-            } else {
-                System.out.println("게시글 삭제 실패");
-            }
-        });
+        // Assertions
+        Assertions.assertNotNull(service.getReplyList(-999L));
+        Assertions.assertEquals(mockReplyList.size(), service.getReplyList(-999L).size());
     }
 }

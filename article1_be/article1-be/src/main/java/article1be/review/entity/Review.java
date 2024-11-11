@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "Review")
@@ -32,7 +34,7 @@ public class Review extends BaseTimeEntity {
     private Double reviewWeather;  // 날씨 정보
 
     @Column(name = "review_location", nullable = false)
-    private Double reviewLocation; // 위치 정보
+    private String reviewLocation; // 위치 정보
 
     @Column(name = "review_blind", nullable = false)
     private Boolean reviewBlind;  // 블라인드 여부
@@ -40,9 +42,12 @@ public class Review extends BaseTimeEntity {
     @Column(name = "review_like_yn", nullable = false)
     private Boolean reviewLikeYn; // 좋아요 여부
 
+    @Column(name = "del_date", insertable = false, updatable = false)
+    private LocalDateTime delDate; // 삭제 날짜
+
 
     public Review(Long userSeq, Long selectSeq, String reviewContent, Double reviewWeather,
-                  Double reviewLocation, Boolean reviewBlind, Boolean reviewLikeYn) {
+                  String reviewLocation, Boolean reviewBlind, Boolean reviewLikeYn) {
         this.userSeq = userSeq;
         this.selectSeq = selectSeq;
         this.reviewContent = reviewContent;
@@ -54,7 +59,7 @@ public class Review extends BaseTimeEntity {
 
 
     // 리뷰 내용 업데이트
-    public void updateReview(String reviewContent, Double reviewWeather, Double reviewLocation,
+    public void updateReview(String reviewContent, Double reviewWeather, String reviewLocation,
                              Boolean reviewBlind, Boolean reviewLikeYn) {
         this.reviewContent = reviewContent;
         this.reviewWeather = reviewWeather;
