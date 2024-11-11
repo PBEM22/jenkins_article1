@@ -62,7 +62,7 @@
 import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '@/store/authStore'; // authStore의 경로에 맞게 설정
+import { useAuthStore } from '@/store/authStore';
 
 export default {
   setup() {

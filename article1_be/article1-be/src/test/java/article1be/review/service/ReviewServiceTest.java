@@ -78,7 +78,6 @@ class ReviewServiceTest {
 
         // then
         assertNotNull(createdReview);
-        System.out.println(createdReview);
     }
 
     @DisplayName("리뷰 업데이트 테스트")
@@ -99,6 +98,5 @@ class ReviewServiceTest {
 
         // then
         assertNotNull(updatedReview);
-        System.out.println(updatedReview);
     }
 }
