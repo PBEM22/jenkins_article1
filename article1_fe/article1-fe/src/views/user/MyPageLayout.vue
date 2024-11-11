@@ -14,13 +14,13 @@
         <ul class="left_menu" role="menu">
           <!-- router-link를 사용하여 라우팅을 관리 -->
           <li class="left_item" role="menuitem">
-            <router-link to="/mypage/detail" class="menu_text" exact-active-class="active-link">회원정보</router-link>
+            <router-link to="/mypage/detail" class="menu_text" exact-active-class="active-link">회원 정보</router-link>
           </li>
           <li class="left_item" role="menuitem">
             <router-link to="/mypage/preference" class="menu_text" exact-active-class="active-link">선호도</router-link>
           </li>
           <li class="left_item" role="menuitem">
-            <router-link to="/mypage/outfit/list" class="menu_text" exact-active-class="active-link">아웃핏 이력조회</router-link>
+            <router-link to="/mypage/outfit/list" class="menu_text" exact-active-class="active-link">아웃핏 이력 조회</router-link>
           </li>
           <li class="left_item" role="menuitem">
             <router-link to="/mypage/outfit/stats" class="menu_text" exact-active-class="active-link">아웃핏 통계</router-link>
