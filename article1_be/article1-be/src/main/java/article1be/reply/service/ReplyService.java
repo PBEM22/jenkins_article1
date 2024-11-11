@@ -35,7 +35,7 @@ public class ReplyService {
                                     .replyContent(reply.getReplyContent())
                                     .regDate(reply.getRegDate())
                                     .delDate(reply.getDelDate())
-                                    .replyIsBlind(reply.getReplyIsBlind())
+                                    .replyIsBlind(reply.isReplyIsBlind())
                                     .build())
                     .toList();
 
@@ -51,7 +51,7 @@ public class ReplyService {
                                     .replyContent(reply.getReplyContent())
                                     .regDate(reply.getRegDate())
                                     .delDate(reply.getDelDate())
-                                    .replyIsBlind(reply.getReplyIsBlind())
+                                    .replyIsBlind(reply.isReplyIsBlind())
                                     .build())
                     .toList();
 
