@@ -51,7 +51,7 @@ function moveToItem(move) {
       item = '/board';
       break;
     case 'mypage':
-      item = '/mypage';
+      item = '/mypage/detail';
       break;
     case 'blame':
       item = '/blame';
