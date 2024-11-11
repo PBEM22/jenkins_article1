@@ -21,7 +21,7 @@ export default [
     },
     {
         // 게시글 수정
-        path: '/board/:boardSeq',
+        path: '/board/modify/:boardSeq',
         component: BoardModify
     }
 ];

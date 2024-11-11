@@ -63,7 +63,7 @@ class ReviewServiceTest {
     @Test
     void testCreateReview() {
         // given
-        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "hyun", "신대방", 22.5, "xxxx", "ACTIVE", false, false, LocalDateTime.of(2023, 1, 1, 0, 0), List.of());
+        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "hyun", "신대방", 22.5, "xxxx", "ACTIVE", false, false, LocalDateTime.of(2023, 1, 1, 0, 0), LocalDateTime.of(2024, 1, 1, 0, 0), List.of());
 
         Review savedReview = new Review(1L, 1L, "xxxxx", 22.5, "신대방", false, false);
         User user = new User(UserSocialSite.KAKAO, "test@kakao.com", "hyun", "010-1234-5678",
@@ -85,7 +85,7 @@ class ReviewServiceTest {
     void testUpdateReview() {
         // given
         Review review = new Review(1L, 1L, "xxxxx", 22.5, "신대방", true, true);
-        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "hyun", "신대방", 22.5, "xxxx", "ACTIVE", false, false, LocalDateTime.of(2023, 1, 1, 0, 0), List.of());
+        ReviewDTO reviewDto = new ReviewDTO(1L, 1L, 1L, "hyun", "신대방", 22.5, "xxxx", "ACTIVE", false, false, LocalDateTime.of(2023, 1, 1, 0, 0),LocalDateTime.of(2024, 1, 1, 0, 0), List.of());
 
         User user = new User(UserSocialSite.KAKAO, "test@kakao.com", "hyun", "010-1234-5678",
                 LocalDate.of(1990, 1, 1), UserGender.MALE, UserState.ACTIVE, UserAuth.USER);

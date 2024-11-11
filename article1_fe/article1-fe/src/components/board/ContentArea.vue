@@ -10,6 +10,7 @@ import {useRoute} from "vue-router";
 import {useAuthStore} from "@/store/authStore.js";
 
 import axios from "axios";
+import router from "@/router/index.js";
 
 const props = defineProps({
   boardTitle: String,
@@ -49,6 +50,11 @@ async function blameBoard() {
   }
 }
 
+// 수정 버튼 클릭 이벤트
+async function goToModifyPage() {
+  router.push(`/board/modify/` + route.params.boardSeq);
+}
+
 // 삭제 버튼 클릭 이벤트
 function deleteBoard() {
   emit("delete"); // 부모에게 삭제 이벤트를 전달
@@ -80,6 +86,7 @@ function deleteBoard() {
     <!-- 신고 / 삭제 -->
     <div class="blame-delete">
       <span class="blame-option" v-on:click="blameBoard">신고하기</span>
+      <span class="blame-option" v-on:click="goToModifyPage">수정하기</span>
       <span class="blame-option" v-on:click="deleteBoard">삭제하기</span>
     </div>
   </div>

@@ -23,5 +23,6 @@ public class ReviewDTO {
     private boolean reviewLikeYn;    // 좋아요 유무
     private boolean reviewBlind;
     private LocalDateTime regDate;
+    private LocalDateTime delDate;
     private List<OutfitResponseDTO> outfits; // 옷 정보 추가
 }
