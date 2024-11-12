@@ -13,7 +13,9 @@
 
 | [![](https://avatars.githubusercontent.com/u/173455095?v=4)](https://github.com/SANGHYUN0519) | [![](https://avatars.githubusercontent.com/u/158060587?v=4)](https://github.com/ygc1994) | [![](https://avatars.githubusercontent.com/u/173458380?v=4)](https://github.com/JIYOUNG-22) | [![](https://avatars.githubusercontent.com/u/103546300?v=4)](https://github.com/Pangtaek) | [![](https://avatars.githubusercontent.com/u/94957124?v=4)](https://github.com/person76) | [<img src="https://github.com/user-attachments/assets/4d62fcb6-1511-4e22-86da-1704a26180d9" width="450" />](https://github.com/PBEM22) |
 |--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| 박상현                                                                                  | 연건창                                                                                    | 윤지영                                                                                     | 임광택                                                                                | 임서연                                                                                     | 임채륜                                                                                                                                    |
+| <p align="center">박상현</p> | <p align="center">연건창</p> | <p align="center">윤지영</p> | <p align="center">임광택</p> | <p align="center">임서연</p> | <p align="center">임채륜</p> |
+
+<br>
 
 ## 🛠️ 기술 스택
 
@@ -36,6 +38,7 @@
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 <img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
 
+<br>
 
 ## 📜 목차
 1. [프로젝트 개요](#1-프로젝트-개요)
@@ -926,6 +929,7 @@ pipeline {
 <br>
 
 ## 11. Jenkins CI/CD 테스트 결과
+![CI/CD](/images/CICD/CICD.gif)
 
 <br>
 
