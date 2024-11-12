@@ -20,11 +20,6 @@
       />
     </div>
 
-    <!-- Uploaded Image 텍스트 추가 -->
-    <div class="uploaded-image-title">
-      <h3>Uploaded Image</h3>
-    </div>
-
     <!-- 썸네일 이미지 표시 영역 -->
     <div v-if="boardData.boardPictureList && boardData.boardPictureList.length > 0" class="thumbnail-container">
       <h3>업로드된 이미지</h3>
@@ -59,14 +54,14 @@
 
 <script setup>
 // vue
-import { onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {onMounted, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 
 // axios
 import axios from "axios";
 
 // store
-import { useAuthStore } from "@/store/authStore.js";
+import {useAuthStore} from "@/store/authStore.js";
 
 // component
 import Container from "@/components/board/Container.vue";
@@ -119,21 +114,39 @@ onMounted(() => {
   fetchData();
 });
 
+// 이미지 리스트 변경 감지
 watch(imageList, (newList) => {
   console.log("업로드된 이미지 리스트:", newList);
 });
 
+// 게시글 수정 데이터 전송
 async function sendData() {
   try {
     const formData = new FormData();
     formData.append("boardTitle", title.value);
     formData.append("boardContent", content.value);
 
-    // 이미지 리스트를 FormData에 추가
-    imageList.value.forEach(image => {
-      formData.append("imageList", image);
+    // 이미지 리스트를 FormData에 추가 (Blob으로 변환)
+    imageList.value.forEach(({name, src}) => {
+      const byteString = atob(src.split(',')[1]);
+      const mimeString = src.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], {type: mimeString});
+
+      // Blob을 FormData에 추가
+      formData.append("imageList", blob, name);
     });
 
+    // FormData의 내용을 로그로 출력하여 확인
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    // 서버에 PUT 요청
     const response = await axios.put(`/board/${route.params.boardSeq}`, formData, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
@@ -141,19 +154,17 @@ async function sendData() {
       }
     });
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       console.log("게시글 수정 성공", response.data);
       router.push(`/board/${route.params.boardSeq}`);
-      // console.log("수정 완료");
+    } else {
+      console.log("수정 실패");
+      console.log(response.status);
     }
   } catch (error) {
     console.error("게시글 수정 중 오류가 발생했습니다.", error);
   }
-
-  router.push(`/board`);
 }
-
-
 </script>
 
 <style scoped>

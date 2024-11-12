@@ -121,28 +121,28 @@ public class BoardController {
         }
     }
 
-    // 게시글 수정
-    @Operation(
-            summary = "게시글 수정",
-            description = "등록된 게시글의 제목, 내용, 첨부 사진을 수정(작성자만 가능)"
-    )
-    @PutMapping(value = "/{boardSeq}")
-    public ResponseEntity<String> updateBoard(
-            @PathVariable("boardSeq") Long boardSeq,
-            @RequestBody RequestBoard modData
-    ) {
-        try {
-            Board updatedBoard = service.upDateBoard(boardSeq, modData);
+        // 게시글 수정
+        @Operation(
+                summary = "게시글 수정",
+                description = "등록된 게시글의 제목, 내용, 첨부 사진을 수정(작성자만 가능)"
+        )
+        @PutMapping(value = "/{boardSeq}")
+        public ResponseEntity<String> updateBoard(
+                @PathVariable("boardSeq") Long boardSeq,
+                @ModelAttribute RequestBoard modData
+        ) {
+            try {
+                Board updatedBoard = service.upDateBoard(boardSeq, modData);
 
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/board/{boardSeq}")
-                    .buildAndExpand(updatedBoard.getBoardSeq())
-                    .toUri();
+                URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/board/{boardSeq}")
+                        .buildAndExpand(updatedBoard.getBoardSeq())
+                        .toUri();
 
-            return ResponseEntity.created(location).body("게시글이 성공적으로 수정되었습니다.");
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 수정 중 오류가 발생했습니다.");
+                return ResponseEntity.created(location).body("게시글이 성공적으로 수정되었습니다.");
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 수정 중 오류가 발생했습니다.");
+            }
         }
-    }
 }

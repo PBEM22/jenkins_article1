@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class RequestBoard {
 
-    String BoardTitle;
-    String BoardContent;
-    List<MultipartFile> imageList;
+    private String boardTitle;
+    private String boardContent;
+    private List<MultipartFile> imageList;
 }
