@@ -238,6 +238,25 @@ public class BoardService {
             Board board = optionalBoard.get(); // Board 객체를 꺼냄
             board.update(modData); // update 메소드 호출
 
+            if (modData.getImageList() != null && !modData.getImageList().isEmpty()) {
+                for (MultipartFile image : modData.getImageList()) {
+                    AmazonS3Service.MetaData metaData = amazonS3Service.upload(image);
+                    log.info("업로드 성공");
+
+                    RequestPicture requestPicture = new RequestPicture();
+                    requestPicture.setPictureBoardSeq(board.getBoardSeq());
+                    requestPicture.setPictureOriginName(metaData.getOriginalFileName());
+                    requestPicture.setPictureChangedName(metaData.getChangeFileName());
+                    requestPicture.setPictureUrl(metaData.getUrl());
+                    requestPicture.setPictureType(metaData.getType());
+
+                    Picture picture = new Picture();
+                    picture.create(requestPicture);
+                    pictureRepository.save(picture);
+                    log.info("DB 저장 성공, {}", picture.getPictureBoardSeq());
+                }
+            }
+
             return boardRepository.save(board); // 변경사항 저장
         } else {
             throw new EntityNotFoundException("게시글을 찾을 수 없습니다."); // 게시글이 없을 경우 예외 처리
