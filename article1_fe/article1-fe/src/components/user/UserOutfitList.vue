@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, onMounted, watch} from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore.js';
 import Pagination from '@/components/common/Pagination.vue';
@@ -9,10 +9,10 @@ const selectedRecords = ref([]);
 const selectedOutfit = ref([]);
 const detail = ref([]);
 const myReview = ref([]);
+const existingReview = ref(null);
 const selectedOutfitId = ref(null);
 const reviewText = ref('');
 const feedback = ref('');
-const existingReview = ref(null);
 const startDate = ref('');
 const endDate = ref('');
 const currentPage = ref(1);
@@ -41,9 +41,7 @@ const fetchDataSelectedRecords = async () => {
           }
         });
 
-        if (reviewResponse.status === 200) {
-          existingReview.value = reviewResponse.data;
-        }
+        if (reviewResponse.status === 200) existingReview.value = reviewResponse.data;
       }
     } else console.error("아웃핏 이력 조회 실패", response.status);
   } catch (error) {
@@ -64,14 +62,16 @@ const fetchDataSelectedOutfit = async (selectSeq) => {
 
     if (response.status === 200) {
       selectedOutfit.value.push(response.data);
-
-      console.log(selectedOutfit.value);
     } else console.error("아웃핏 이력 조회 실패", response.status);
   } catch (error) {
     console.error("데이터 fetching 중 에러 발생:", error);
 
     alert("아웃핏 정보를 가져오는 중 오류가 발생했습니다. 다시 시도해 주세요.");
   }
+};
+
+const getImageUrl = (seq) => {
+  return new URL(`/src/assets/images/outfits/${seq}.png`, import.meta.url).href;
 };
 
 const filteredSelectedRecords = computed(() => {
@@ -344,19 +344,49 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="outfit-list">
-      <div class="outfit-item" v-for="item in paginatedSelectedRecords" :key="item.selectSeq">
-        <div class="outfit-details">
-          <div>selectDate : {{ item.selectDate.slice(0, 10) }}</div>
-          <div>customDate : {{ item.customDate.slice(0, 10) }}</div>
-          <div>위치 : {{ item.customLocation }}</div>
-          <div>날씨 : {{ item.curTemp }}°C</div>
-          <div>아웃핏</div>
-          <div>상의 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.topName.replace(/_/g, ' ') }}</div>
-          <div>하의 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.bottomName.replace(/_/g, ' ') }}</div>
-          <div>신발 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.shoesName.replace(/_/g, ' ') }}</div>
-          <div>아우터 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.outerName.replace(/_/g, ' ') }}</div>
-          <div>악세서리 : {{ selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.accessoryNames.join(', ').replace(/_/g, ' ') }}</div>
+    <div class="outfit-table">
+      <div class="table-header">
+        <span class="header-cell">선택일</span>
+        <span class="header-cell">위치</span>
+        <span class="header-cell">날씨</span>
+        <span class="header-cell">아웃핏</span>
+      </div>
+
+      <div class="table-row" v-for="item in paginatedSelectedRecords" :key="item.selectSeq">
+        <div class="table-cell">{{ item.selectDate.slice(0, 10) }}</div>
+        <div class="table-cell">{{ item.customLocation }}</div>
+        <div class="table-cell">{{ item.curTemp }}°C</div>
+        <div class="outfit-images">
+          <img
+              class="outfit-image"
+              v-if="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.topSeq"
+              :src="getImageUrl(selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq).topSeq)"
+              :alt="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)"
+          />
+          <img
+              class="outfit-image"
+              v-if="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.bottomSeq"
+              :src="getImageUrl(selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq).bottomSeq)"
+              :alt="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)"
+          />
+          <img
+              class="outfit-image"
+              v-if="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.shoesSeq"
+              :src="getImageUrl(selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq).shoesSeq)"
+              :alt="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)"
+          />
+          <img
+              class="outfit-image"
+              v-if="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.outerSeq"
+              :src="getImageUrl(selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq).outerSeq)"
+              :alt="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)"
+          />
+          <img
+              class="outfit-image"
+              v-if="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)?.accessorySeq"
+              :src="getImageUrl(selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq).accessorySeq)"
+              :alt="selectedOutfit.find(outfit => outfit.selectSeq === item.selectSeq)"
+          />
         </div>
         <button class="review-button" @click="openModal(item.selectSeq)">리뷰 작성하기</button>
       </div>
@@ -421,20 +451,47 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.outfit-list {
-  display: flex;
-  flex-direction: column;
+.outfit-table {
+  background-color: #f9f9ff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-.outfit-item {
-  display: flex;
-  justify-content: space-between;
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr 1fr;
+  padding: 10px;
+  background-color: #cce4ff;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr 1fr;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  margin-bottom: 1rem;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-cell {
+  padding: 10px 5px;
+  text-align: center;
+}
+
+.outfit-images {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.outfit-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .review-button {

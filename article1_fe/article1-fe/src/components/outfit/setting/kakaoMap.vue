@@ -59,7 +59,6 @@ export default {
           reject("Kakao API Key가 설정되지 않았습니다.");
           return;
         }
-        console.log(kakaoApiKey);
 
         const script = document.createElement("script");
         script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&libraries=services&autoload=false`;
