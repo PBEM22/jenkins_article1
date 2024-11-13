@@ -4,6 +4,8 @@ import article1be.common.exception.CustomException;
 import article1be.common.exception.ErrorCode;
 import article1be.user.service.UserService;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +63,16 @@ public class JwtUtil {
                 null,
                 Collections.singletonList(new SimpleGrantedAuthority(userDetails.getAuthorities().toString().replaceAll("[^a-zA-Z]", "")))
         );
+    }
+
+    // id 추출
+    public String getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject(); // 사용자 ID가 subject로 저장된 경우
     }
 
 }

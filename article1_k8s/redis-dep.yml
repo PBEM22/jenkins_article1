@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session-redis
+  template:
+    metadata:
+      labels:
+        app: session-redis
+    spec:
+      containers:
+        - name: session-redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
