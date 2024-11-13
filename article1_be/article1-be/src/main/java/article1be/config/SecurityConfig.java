@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final SocialLoginService socialLoginService;
     private final Environment env;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,14 +53,14 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
 //                        .loginPage("/loginForm") // 프론트엔드 로그인 페이지로 설정 예정
                         .userInfoEndpoint(user -> user.userService(socialLoginService))
-                        .successHandler(new OAuth2LoginSuccessHandler(env)) // JWT 발행 로직이 포함된 핸들러
+                        .successHandler(new OAuth2LoginSuccessHandler(redisTemplate, env)) // JWT 발행 로직이 포함된 핸들러
                         .failureHandler(new OAuth2LoginFailureHandler())
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
         // OAuth2LoginAuthenticationFilter 앞에 JwtAuthenticationProcessingFilter 추가
-        http.addFilterBefore(new JwtAuthenticationProcessingFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationProcessingFilter(jwtUtil, redisTemplate), OAuth2LoginAuthenticationFilter.class);
 
         // 인증, 인가 실패 핸들러 설정
         http.exceptionHandling(

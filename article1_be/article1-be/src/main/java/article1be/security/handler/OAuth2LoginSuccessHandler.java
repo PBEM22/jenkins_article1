@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    private final RedisTemplate<String, Object> redisTemplate;
     private final Environment env;
 
     @Override
@@ -37,6 +39,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info("회원 상태 확인: {}", principalDetails.getUser().getUserState());
         UserState userState = principalDetails.getUser().getUserState();
+        String userId = principalDetails.getUser().getUserId();
 
         if (userState.equals(UserState.DELETE)) {
             response.sendRedirect("http://localhost:80/user/delete");
@@ -65,6 +68,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                     .compact();
 
             log.info("토큰 생성 확인 : {}", token);
+
+            redisTemplate.opsForValue().set("session:" + userId, token);
 
             // 쿠키에 토큰 설정
             Cookie tokenCookie = new Cookie("token", token);

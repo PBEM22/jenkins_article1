@@ -5,7 +5,6 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"  # SSL 리디렉션 비활성화
     nginx.ingress.kubernetes.io/rewrite-target: /$2   # URL 경로 재작성
-    kubernetes.io/ingress.class: nginx                 # Ingress 컨트롤러 지정
 spec:
   ingressClassName: nginx
   rules:

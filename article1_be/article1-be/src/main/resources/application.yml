@@ -5,8 +5,20 @@ spring:
     username: ${db.username}
     password: ${db.password}
 
+
   profiles:
     include: aws
+
+  session:
+    store-type: redis
+    redis:
+      namespace: spring:session
+
+  data:
+    redis:
+      host: session-redis
+      password: 1234
+      port: 6379
 
   jpa:
     hibernate:
@@ -86,5 +98,10 @@ token:
   expiration_time: 7200000
   secret: ${SECRET_KEY}
 
+server:
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
 
 
