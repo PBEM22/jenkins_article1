@@ -56,7 +56,7 @@ public class SecurityConfig {
                         .successHandler(new OAuth2LoginSuccessHandler(redisTemplate, env)) // JWT 발행 로직이 포함된 핸들러
                         .failureHandler(new OAuth2LoginFailureHandler())
                 ).sessionManagement(
-                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 );
 
         // OAuth2LoginAuthenticationFilter 앞에 JwtAuthenticationProcessingFilter 추가

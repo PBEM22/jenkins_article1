@@ -69,7 +69,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             log.info("토큰 생성 확인 : {}", token);
 
-            redisTemplate.opsForValue().set("session:" + userId, token);
+//            redisTemplate.opsForValue().set("session:" + userId, token);
 
             // 쿠키에 토큰 설정
             Cookie tokenCookie = new Cookie("token", token);
