@@ -273,6 +273,8 @@ public class OpenWeatherService {
      */
     public ResponseMainWeatherDTO getMainWeatherData(LocalDateTime inputLocalDateTime, String lat, String lon) throws UnsupportedEncodingException {
 
+        log.info("inputLocalDateTime {}", inputLocalDateTime);
+
         // 다음날 00시 계산
         LocalDateTime tomorrowTime = getTomorrowTime(inputLocalDateTime);
 
