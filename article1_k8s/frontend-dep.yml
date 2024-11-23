@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-container
-          image: dlacofbs/article1_vue:latest
+          image: dlacofbs/article1_vue:v37
           imagePullPolicy: Always
           ports:
             - containerPort: 80
