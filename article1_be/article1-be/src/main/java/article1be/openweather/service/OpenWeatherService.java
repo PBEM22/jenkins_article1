@@ -273,8 +273,6 @@ public class OpenWeatherService {
      */
     public ResponseMainWeatherDTO getMainWeatherData(LocalDateTime inputLocalDateTime, String lat, String lon) throws UnsupportedEncodingException {
 
-        log.info("inputLocalDateTime {}", inputLocalDateTime);
-
         // 다음날 00시 계산
         LocalDateTime tomorrowTime = getTomorrowTime(inputLocalDateTime);
 
@@ -338,11 +336,6 @@ public class OpenWeatherService {
 
         // 전체 데이터 리스트에서 현재 시간 ~ 사용자가 입력한 시간까지 제외하기
         List<WeatherListDTO> weatherListDTOS = openWeather5DayDTO.getList().subList(excludeCnt, openWeather5DayDTO.getList().size());
-
-        log.info("cnt {}", cnt);
-        log.info("excludeCnt {}", excludeCnt);
-        log.info("openWeather5DayDTO.weatherList {}", openWeather5DayDTO.getList());
-        log.info("weatherListDTOS {}", weatherListDTOS);
 
         // 반환할 객체 인스턴스 할당
         ResponseMainWeatherDTO responseMainWeatherDTO = new ResponseMainWeatherDTO();

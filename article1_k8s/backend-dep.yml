@@ -130,6 +130,10 @@ spec:
                   name: secret
                   key: SECRET_KEY
 
+            # 시간대 설정
+            - name: TZ
+              value: "Asia/Seoul"
+
           args:
             - "/usr/local/bin/dockerize"
             - "-wait"
@@ -139,3 +143,18 @@ spec:
             - "java"
             - "-jar"
             - "app.jar"
+
+#          # /etc/localtime 및 /etc/timezone 마운트
+#          volumeMounts:
+#            - name: tz-config
+#              mountPath: /etc/localtime
+#              readOnly: true
+#            - name: tz-config
+#              mountPath: /etc/timezone
+#              readOnly: true
+#
+#      volumes:
+#        - name: tz-config
+#          hostPath:
+#            path: /etc/localtime  # 호스트의 로컬 시간 파일 마운트
+#            type: File

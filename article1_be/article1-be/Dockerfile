@@ -9,13 +9,19 @@ FROM openjdk:17-alpine
 WORKDIR /app
 EXPOSE 8080
 
-# dockerize 설치
-RUN apk add --no-cache curl && \
-    curl -sSL https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-alpine-linux-amd64-v0.6.1.tar.gz | tar -C /usr/local/bin -xzv
+
+# tzdata 설치 및 시간대 설정
+RUN apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime \
+    && echo "Asia/Seoul" > /etc/timezone
+
+# curl 및 dockerize 설치
+RUN apk add --no-cache curl \
+    && curl -sSL https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-alpine-linux-amd64-v0.6.1.tar.gz | tar -C /usr/local/bin -xzv
 
 # 빌드된 JAR 파일을 복사
 ARG JAR_FILE=build/libs/*.jar
 COPY --from=builder /app/${JAR_FILE} app.jar
 
 # ENTRYPOINT 설정
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
